@@ -7,6 +7,7 @@ import globalStyles from "./GlobalStyles";
 
 import createGlobalTheme from "./theme";
 import Routes from "./Routes";
+import Auth from "./components/Auth";
 
 function App() {
     return (
@@ -14,6 +15,7 @@ function App() {
             {globalStyles}
             <CssBaseline/>
             <SnackbarProvider maxSnack={3} autoHideDuration={5000}>
+                <Auth/>
                 <BrowserRouter>
                     <Routes/>
                 </BrowserRouter>
