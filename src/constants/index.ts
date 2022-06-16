@@ -1,4 +1,4 @@
-export const BASE_URL = '/event-manager'
+export const BASE_URL = '/anbor'
 
 export enum UserRolesEnum {
     ADMIN = "ADMIN",
@@ -10,6 +10,6 @@ export const UserRolesMap = new Map(
     [
         [UserRolesEnum.ADMIN, 'Админ'],
         [UserRolesEnum.WAREHOUSEMAN, 'Завсклад'],
-        [UserRolesEnum.ACCOUNTANT, 'Бухгалтер'],
+        [UserRolesEnum.ACCOUNTANT, 'Материальный бухгалтер'],
     ]
 )

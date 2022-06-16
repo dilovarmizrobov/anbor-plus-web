@@ -11,4 +11,4 @@ const Page: React.FC<{title: string}> = ({title}) => {
     );
 };
 
-export default Page;
+export default React.memo(Page);

@@ -16,15 +16,15 @@ class AuthService {
         )
     }
 
-    login = (email: string, password: string) => new Promise((resolve, reject) => {
+    login = (login: string, password: string) => new Promise((resolve, reject) => {
         const params = new URLSearchParams()
-        params.append('email', email)
+        params.append('login', login)
         params.append('password', password)
 
         api.post('authenticate', params)
             .then((response) => {
                 let data = response.data
-                const user: IUser = {name: data.name, role: data.role}
+                const user: IUser = {fullName: data.fullName, role: data.role}
 
                 this.setUserAndJwtInSession(data.jwt, user)
 

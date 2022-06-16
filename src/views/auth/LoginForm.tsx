@@ -16,23 +16,23 @@ const StyledCircularProgress = styled(CircularProgress)(() => ({
 }))
 
 type IFormInput = {
-    email: string;
+    login: string;
     password: string;
 };
 
 const loginValidationSchema = Yup.object().shape({
-    email: Yup.string().max(255).required('Имя пользователя обязательное поле!'),
+    login: Yup.string().max(255).required('Имя пользователя обязательное поле!'),
     password: Yup.string().max(255).required('Введите пароль')
 });
 
 const LoginForm: React.FC<{onSubmitFailure: (message: string) => void}> = ({onSubmitFailure}) => {
     return (
         <Formik
-            initialValues={{email: '', password: ''}}
+            initialValues={{login: '', password: ''}}
             validationSchema={loginValidationSchema}
             onSubmit={async (values, {setStatus, setSubmitting}) => {
                 try {
-                    await authService.login(values.email, values.password)
+                    await authService.login(values.login, values.password)
                     window.location.reload()
                 } catch (error: any) {
                     setStatus({ success: false });
@@ -44,17 +44,17 @@ const LoginForm: React.FC<{onSubmitFailure: (message: string) => void}> = ({onSu
             {(props: FormikProps<IFormInput>) => (
                 <form noValidate onSubmit={props.handleSubmit}>
                     <TextField
-                        error={Boolean(props.touched.email && props.errors.email)}
+                        error={Boolean(props.touched.login && props.errors.login)}
                         fullWidth
-                        helperText={props.touched.email && props.errors.email}
+                        helperText={props.touched.login && props.errors.login}
                         label="Имя Пользователя"
                         margin="normal"
-                        name="email"
+                        name="login"
                         autoComplete="on"
                         onBlur={props.handleBlur}
                         onChange={props.handleChange}
                         type="text"
-                        value={props.values.email}
+                        value={props.values.login}
                         variant="outlined"
                     />
                     <TextField
