@@ -1,6 +1,22 @@
 import {UserRolesEnum} from "../constants";
 
 export interface IUser {
-    name: string;
+    fullName: string;
     role: UserRolesEnum;
+}
+
+export interface IUserResponse {
+    id: number;
+    fullName: string;
+    role: UserRolesEnum;
+    // warehouse: [];
+    phoneNumber: string;
+}
+
+export interface IUserRequest {
+    id?: number;
+    fullName: string;
+    role: UserRolesEnum;
+    phoneNumber: string;
+    password: string;
 }

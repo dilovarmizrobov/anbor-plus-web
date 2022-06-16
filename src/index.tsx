@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import 'react-perfect-scrollbar/dist/css/styles.css';
+import 'nprogress/nprogress.css';
+import {Provider} from "react-redux";
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {Provider} from "react-redux";
 import {store} from "./store";
 
 const root = ReactDOM.createRoot(
