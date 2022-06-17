@@ -4,17 +4,13 @@ import Page from "../../../components/Page";
 import {
     Box,
     Card,
-    Container, IconButton,
-    InputAdornment,
+    Container, InputAdornment,
     Table, TableBody,
     TableCell,
-    TableContainer, TableHead, TablePagination, TableRow,
-    TextField
+    TableContainer, TableHead, TablePagination, TableRow, TextField,
 } from "@mui/material";
-import {FiEdit, FiSearch} from "react-icons/fi";
 import Header from "./Header";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import {NavLink as RouterLink} from "react-router-dom";
 import {
     changePage,
     changeQuery,
@@ -31,7 +27,8 @@ import {useSnackbar} from "notistack";
 import LoadingTableBody from "../../../components/LoadingTableBody";
 import DeleteButtonTable from "../../../components/DeleteButtonTable";
 import {UserRolesMap} from "../../../constants";
-
+import EditButtonTable from "../../../components/EditButtonTable";
+import {FiSearch} from "react-icons/fi";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -40,8 +37,8 @@ const Root = styled('div')(({theme}) => ({
 }))
 
 const UsersListView = () => {
-    const {page, rowsPerPage, query, rowsLoading, rowsError, rows, rowsCount, rowsPerPageOptions,
-        rowsUpdate} = useAppSelector(selectUserList)
+    const {page, rowsPerPage, query, rowsLoading, rowsError, rows, rowsCount,
+        rowsPerPageOptions} = useAppSelector(selectUserList)
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
     const debouncedQuery = useDebounce(query, 500)
@@ -65,14 +62,14 @@ const UsersListView = () => {
         })()
 
         return () => {cancel = true}
-    }, [enqueueSnackbar, dispatch, page, rowsPerPage, debouncedQuery, rowsUpdate])
+    }, [enqueueSnackbar, dispatch, page, rowsPerPage, debouncedQuery])
 
     return (
         <>
             <Page title="Пользователи"/>
             <Root>
                 <Container maxWidth="xl">
-                    <Header />
+                    <Header/>
                     <Card sx={{mt: 3}}>
                         <PerfectScrollbar>
                             <Box minWidth={750}>
@@ -102,7 +99,7 @@ const UsersListView = () => {
                                             <TableCell>Должность</TableCell>
                                             <TableCell>Склад</TableCell>
                                             <TableCell>Логин</TableCell>
-                                            <TableCell />
+                                            <TableCell/>
                                         </TableRow>
                                     </TableHead>
                                     {rows.length > 0 ? (
@@ -114,13 +111,7 @@ const UsersListView = () => {
                                                     <TableCell>row.warehouse</TableCell>
                                                     <TableCell>{row.phoneNumber}</TableCell>
                                                     <TableCell>
-                                                        <IconButton
-                                                            size="large"
-                                                            component={RouterLink}
-                                                            to={`/users/${row.id}/edit`}
-                                                        >
-                                                            <FiEdit size={20} />
-                                                        </IconButton>
+                                                        <EditButtonTable to={`/users/${row.id}/edit`} />
                                                         <DeleteButtonTable
                                                             rowId={row.id}
                                                             onDelete={userService.deleteUser}

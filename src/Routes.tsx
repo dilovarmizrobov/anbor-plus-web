@@ -37,6 +37,14 @@ const routes: CustomRouteObject[] = [
                         element: <HomePageView/>,
                     },
                     {
+                        path: '/settings/warehouse',
+                        element: <HomePageView/>,
+                    },
+                    {
+                        path: '/settings/objects',
+                        element: <HomePageView/>,
+                    },
+                    {
                         path: '/users',
                         element: <UsersListView/>,
                     },
