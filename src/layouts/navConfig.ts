@@ -43,6 +43,10 @@ export const navConfigMain: INavConfig[] = [
                         title: 'Обьекты',
                         href: '/objects',
                     },
+                    {
+                        title: 'Предприятия',
+                        href: '/enterprises',
+                    },
                 ],
             },
         ]

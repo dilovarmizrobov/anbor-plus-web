@@ -3,6 +3,7 @@ import authReducer from "./reducers/authSlice"
 import {userListSlice} from "./reducers/userSlice";
 import {objectListSlice} from './reducers/objectSlice';
 import {warehouseListSlice} from "./reducers/warehouseSlice";
+import {enterpriseListSlice} from "./reducers/enterpriseSlice";
 
 export const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
         userList: userListSlice.reducer,
         objectList: objectListSlice.reducer,
         warehouseList: warehouseListSlice.reducer,
+        enterpriseList: enterpriseListSlice.reducer
     },
 })
 
