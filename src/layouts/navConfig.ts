@@ -22,12 +22,6 @@ export const navConfigMain: INavConfig[] = [
         subheader: 'Главная',
         items: [
             {
-                title: 'Пользователи',
-                icon: FaUserFriends,
-                href: '/users',
-                perm: PERMISSIONS.LIST.USER,
-            },
-            {
                 title: 'Home',
                 icon: FaUserFriends,
                 href: '/home',
@@ -37,12 +31,13 @@ export const navConfigMain: INavConfig[] = [
                 icon: MdSettings,
                 children: [
                     {
-                        title: 'Склады',
-                        href: '/settings/warehouse',
+                        title: 'Пользователи',
+                        href: '/users',
+                        perm: PERMISSIONS.LIST.USER,
                     },
                     {
-                        title: 'Обьекты',
-                        href: '/settings/objects',
+                        title: 'Склады',
+                        href: '/warehouses',
                     },
                 ],
             },

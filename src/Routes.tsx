@@ -11,6 +11,9 @@ import hasPermission from "./utils/hasPermisson";
 import UsersListView from "./views/user/list/UsersListView";
 import UserCreateView from "./views/user/form/UserCreateView";
 import UserEditView from "./views/user/form/UserEditView";
+import WarehouseListView from "./views/warehouse/list/WarehouseListView";
+import WarehouseCreateView from "./views/warehouse/form/WarehouseCreateView";
+import WarehouseEditView from "./views/warehouse/form/WarehouseEditView";
 
 interface CustomRouteObject extends RouteObject {
     perm?: UserRolesEnum[],
@@ -37,14 +40,6 @@ const routes: CustomRouteObject[] = [
                         element: <HomePageView/>,
                     },
                     {
-                        path: '/settings/warehouse',
-                        element: <HomePageView/>,
-                    },
-                    {
-                        path: '/settings/objects',
-                        element: <HomePageView/>,
-                    },
-                    {
                         path: '/users',
                         element: <UsersListView/>,
                     },
@@ -55,6 +50,18 @@ const routes: CustomRouteObject[] = [
                     {
                         path: '/users/:userId/edit',
                         element: <UserEditView/>,
+                    },
+                    {
+                        path: '/warehouses',
+                        element: <WarehouseListView/>,
+                    },
+                    {
+                        path: '/warehouses/create',
+                        element: <WarehouseCreateView/>,
+                    },
+                    {
+                        path: '/warehouses/:warehouseId/edit',
+                        element: <WarehouseEditView/>,
                     },
                 ]
             }
