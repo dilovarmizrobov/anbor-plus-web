@@ -10,6 +10,8 @@ import errorMessageHandler from "../../../utils/errorMessageHandler";
 import userService from "../../../services/userService";
 import LoadingLayout from "../../../components/LoadingLayout";
 import Form from "./Form";
+import {IWarehouseOption} from "../../../models/IWarehouse";
+import warehouseService from "../../../services/WarehouseService";
 
 const Root = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.default,
@@ -24,6 +26,7 @@ const UserEditView = () => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(false)
     const [user, setUser] = useState<IUserResponse>()
+    const [warehouses, setWarehouses] = useState<IWarehouseOption[]>([])
 
     useEffect(() => {
         let cancel = false;
@@ -33,8 +36,12 @@ const UserEditView = () => {
                 setLoading(true)
 
                 const data: any = await userService.getUser(userId || '')
+                const dataWarehouses: any = await warehouseService.getOptionWarehouses()
 
-                if (!cancel) setUser(data)
+                if (!cancel) {
+                    setUser(data)
+                    setWarehouses(dataWarehouses)
+                }
             } catch (error: any) {
                 !cancel && setError(true)
                 enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
@@ -49,12 +56,12 @@ const UserEditView = () => {
     return (
         <>
             <Page title="Изменение пользователя"/>
-            {user ? (
+            {!loading && !error && user ? (
                 <Root>
                     <Container maxWidth="xl">
                         <Header title={user.fullName}/>
                         <Box mt={3}>
-                            <Form user={user}/>
+                            <Form user={user} warehouses={warehouses}/>
                         </Box>
                     </Container>
                 </Root>

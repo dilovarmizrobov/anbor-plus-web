@@ -107,7 +107,7 @@ const UsersListView = () => {
                                                     <TableRow hover key={row.id}>
                                                         <TableCell>{row.fullName}</TableCell>
                                                         <TableCell>{UserRolesMap.get(row.role)}</TableCell>
-                                                        <TableCell>row.warehouse</TableCell>
+                                                        <TableCell>{row.warehouse?.name || '-'}</TableCell>
                                                         <TableCell>{row.phoneNumber}</TableCell>
                                                         <TableCell sx={{width: 120}}>
                                                             <EditButtonTable to={`/users/${row.id}/edit`} />

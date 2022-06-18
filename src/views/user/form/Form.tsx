@@ -8,8 +8,9 @@ import {UserRolesEnum, UserRolesMap} from "../../../constants";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
 import userService from "../../../services/userService";
 import {Box, Button, Card, CardContent, Grid, MenuItem, TextField} from "@mui/material";
+import {IWarehouseOption} from "../../../models/IWarehouse";
 
-const Form: React.FC<{user?: IUserResponse}> = ({user}) => {
+const Form: React.FC<{user?: IUserResponse, warehouses: IWarehouseOption[]}> = ({user, warehouses}) => {
     const {enqueueSnackbar} = useSnackbar();
     const navigate = useNavigate();
 
@@ -17,6 +18,7 @@ const Form: React.FC<{user?: IUserResponse}> = ({user}) => {
         initialValues: {
             fullName: user?.fullName || '',
             role: user?.role || UserRolesEnum.WAREHOUSEMAN,
+            warehouseId: user?.warehouse?.id || 0,
             phoneNumber: user?.phoneNumber || '',
             password: '',
         },
@@ -26,6 +28,12 @@ const Form: React.FC<{user?: IUserResponse}> = ({user}) => {
             password: Yup.string().max(255),
         }),
         onSubmit: async (values, {setStatus, setSubmitting}) => {
+            let warehouseId = values.warehouseId
+
+            if (values.role !== UserRolesEnum.WAREHOUSEMAN) {
+                delete values.warehouseId
+            }
+
             try {
                 if (user) {
                     values.id = user.id!
@@ -43,6 +51,7 @@ const Form: React.FC<{user?: IUserResponse}> = ({user}) => {
             } catch (error: any) {
                 setStatus({success: false});
                 setSubmitting(false);
+                values.warehouseId = warehouseId
 
                 enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
             }
@@ -82,7 +91,9 @@ const Form: React.FC<{user?: IUserResponse}> = ({user}) => {
                                         label="Должность"
                                         name="role"
                                         onBlur={formik.handleBlur}
-                                        onChange={formik.handleChange}
+                                        onChange={(e) => {
+                                            formik.handleChange(e)
+                                        }}
                                         required
                                         value={formik.values.role}
                                         variant="outlined"
@@ -109,6 +120,44 @@ const Form: React.FC<{user?: IUserResponse}> = ({user}) => {
                                         }
                                     </TextField>
                                 </Grid>
+                                {formik.values.role === UserRolesEnum.WAREHOUSEMAN && (
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            select
+                                            error={Boolean(formik.touched.warehouseId && formik.errors.warehouseId)}
+                                            fullWidth
+                                            helperText={formik.touched.warehouseId && formik.errors.warehouseId}
+                                            label="Склад"
+                                            name="warehouseId"
+                                            onBlur={formik.handleBlur}
+                                            onChange={formik.handleChange}
+                                            required
+                                            value={formik.values.warehouseId || ''}
+                                            variant="outlined"
+                                            InputLabelProps={{shrink: true}}
+                                            SelectProps={{
+                                                MenuProps: {
+                                                    variant: "selectedMenu",
+                                                    anchorOrigin: {
+                                                        vertical: "bottom",
+                                                        horizontal: "left"
+                                                    },
+                                                    transformOrigin: {
+                                                        vertical: "top",
+                                                        horizontal: "left"
+                                                    },
+                                                }
+                                            }}
+                                        >
+                                            {warehouses.map(item => (
+                                                <MenuItem key={item.id} value={item.id}>
+                                                    {item.name}
+                                                </MenuItem>
+                                            ))
+                                            }
+                                        </TextField>
+                                    </Grid>
+                                )}
                                 <Grid item xs={12}>
                                     <TextField
                                         error={Boolean(formik.touched.phoneNumber && formik.errors.phoneNumber)}

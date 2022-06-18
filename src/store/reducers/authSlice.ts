@@ -2,6 +2,7 @@ import {IUser} from "../../models/IUser";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "../index";
 import authService from "../../services/AuthService";
+import {IWarehouseOption} from "../../models/IWarehouse";
 
 interface initialStateInterface {
     user: IUser | null;
@@ -34,10 +35,14 @@ export const authSlice = createSlice({
             state.user = null
             state.isAuthenticated = false
         },
+        updateWarehouse: (state, action: PayloadAction<IWarehouseOption>) => {
+            state.user!.warehouse = action.payload
+            authService.setUserInSession(state.user!)
+        }
     }
 })
 
-export const {login, logout} = authSlice.actions
+export const {login, logout, updateWarehouse} = authSlice.actions
 
 export const selectAuth = (state: RootState) => state.auth
 
