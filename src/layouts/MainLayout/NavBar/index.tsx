@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Box, Divider, Drawer, Hidden, List, ListItem, ListSubheader, Typography} from "@mui/material";
+import {Box, Divider, Drawer, Hidden, List, ListSubheader, Typography} from "@mui/material";
 import { useLocation } from 'react-router';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {useAppSelector} from "../../../store/hooks";
@@ -8,6 +8,7 @@ import {UserRolesMap} from "../../../constants";
 import NavItem from "./NavItem";
 import hasPermission from "../../../utils/hasPermisson";
 import {INavConfig, INavItem} from "../../navConfig";
+import NavCollapseItem from "./NavCollapseItem";
 
 const filterNavItem = (items: INavItem[]) => items.filter(item => item.perm ? hasPermission(item.perm) : true)
 
@@ -47,32 +48,21 @@ const Index: React.FC<{openMobile: boolean, onMobileClose: VoidFunction, navConf
                 </Box>
                 <Divider />
                 <Box p={2}>
-                    {
-                        navConfig.map((config, index) => {
-                            const items = filterNavItem(config.items)
+                    {navConfig.map((config, index) => {
+                        const items = filterNavItem(config.items)
 
-                            return items.length > 0 && (
-                                <List key={index}
-                                      subheader={(
-                                          <ListSubheader disableGutters disableSticky>{config.subheader}</ListSubheader>
-                                      )}
-                                >
-                                    {
-                                        items.map((item, index) => (
-                                            <ListItem disablePadding key={index}>
-                                                <NavItem
-                                                    key={index}
-                                                    href={item.href}
-                                                    icon={item.icon}
-                                                    title={item.title}
-                                                />
-                                            </ListItem>
-                                        ))
-                                    }
-                                </List>
-                            )
-                        })
-                    }
+                        return items.length > 0 && (
+                            <List key={index}
+                                  subheader={(
+                                      <ListSubheader disableGutters disableSticky>{config.subheader}</ListSubheader>
+                                  )}
+                            >
+                                {items.map((item, index) => item.children
+                                    ? <NavCollapseItem key={index} item={item}/>
+                                    : <NavItem key={index} item={item}/>)}
+                            </List>
+                        )
+                    })}
                 </Box>
             </PerfectScrollbar>
         </Box>

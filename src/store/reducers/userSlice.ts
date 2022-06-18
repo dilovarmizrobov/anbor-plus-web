@@ -11,7 +11,6 @@ interface initialStateListInterface {
     rows: IUserResponse[];
     rowsCount: number;
     rowsPerPageOptions: number[],
-    rowsUpdate: boolean;
 }
 
 const initialStateList: initialStateListInterface = {
@@ -23,7 +22,6 @@ const initialStateList: initialStateListInterface = {
     rows: [],
     rowsCount: 0,
     rowsPerPageOptions: [20, 30, 50],
-    rowsUpdate: true,
 }
 
 export const userListSlice = createSlice({
@@ -65,7 +63,6 @@ export const userListSlice = createSlice({
         deleteRow: (state, action: PayloadAction<number>) => {
             let index = state.rows.findIndex(row => row.id === action.payload)
             state.rows.splice(index, 1)
-            state.rowsUpdate = !state.rowsUpdate
         }
     }
 })
