@@ -17,6 +17,9 @@ import ObjectEditView from "./views/object/form/ObjectEditView";
 import WarehouseListView from "./views/warehouse/list/WarehouseListView";
 import WarehouseCreateView from "./views/warehouse/form/WarehouseCreateView";
 import WarehouseEditView from "./views/warehouse/form/WarehouseEditView";
+import EnterpriseListView from "./views/enterprise/list/EnterpriseListView";
+import EnterpriseCreateView from "./views/enterprise/form/EnterpriseCreateView";
+import EnterpriseEditView from "./views/enterprise/form/EnterpriseEditView";
 
 interface CustomRouteObject extends RouteObject {
     perm?: UserRolesEnum[],
@@ -77,6 +80,18 @@ const routes: CustomRouteObject[] = [
                     {
                         path: '/warehouses/:warehouseId/edit',
                         element: <WarehouseEditView/>,
+                    },
+                    {
+                        path: '/enterprises',
+                        element: <EnterpriseListView/>,
+                    },
+                    {
+                        path: '/enterprises/create',
+                        element: <EnterpriseCreateView/>,
+                    },
+                    {
+                        path: '/enterprises/:enterpriseId/edit',
+                        element: <EnterpriseEditView/>,
                     },
                 ]
             }
