@@ -11,6 +11,9 @@ import hasPermission from "./utils/hasPermisson";
 import UsersListView from "./views/user/list/UsersListView";
 import UserCreateView from "./views/user/form/UserCreateView";
 import UserEditView from "./views/user/form/UserEditView";
+import ObjectListView from "./views/object/list/ObjectListView";
+import ObjectCreateView from "./views/object/form/ObjectCreateView";
+import ObjectEditView from "./views/object/form/ObjectEditView";
 
 interface CustomRouteObject extends RouteObject {
     perm?: UserRolesEnum[],
@@ -47,6 +50,18 @@ const routes: CustomRouteObject[] = [
                     {
                         path: '/users/:userId/edit',
                         element: <UserEditView/>,
+                    },
+                    {
+                        path: '/objects',
+                        element: <ObjectListView/>,
+                    },
+                    {
+                        path: '/objects/create',
+                        element: <ObjectCreateView/>,
+                    },
+                    {
+                        path: '/objects/:objectId/edit',
+                        element: <ObjectEditView/>,
                     },
                 ]
             }

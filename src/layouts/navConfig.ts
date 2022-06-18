@@ -31,6 +31,11 @@ export const navConfigMain: INavConfig[] = [
                 href: '/users',
                 perm: PERMISSIONS.LIST.USER,
             },
+            {
+                title: 'Обьекты',
+                icon: FaUserFriends,
+                href: '/objects',
+            },
         ]
     },
 ]
