@@ -9,3 +9,8 @@ export interface IWarehouseRequest {
     name: string;
     enterpriseName: string;
 }
+
+export interface IWarehouseOption {
+    id: number;
+    name: string;
+}

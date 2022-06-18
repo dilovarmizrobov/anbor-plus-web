@@ -4,11 +4,12 @@ import { useLocation } from 'react-router';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {useAppSelector} from "../../../store/hooks";
 import {selectAuth} from "../../../store/reducers/authSlice";
-import {UserRolesMap} from "../../../constants";
+import {UserRolesEnum, UserRolesMap} from "../../../constants";
 import NavItem from "./NavItem";
 import hasPermission from "../../../utils/hasPermisson";
 import {INavConfig, INavItem} from "../../navConfig";
 import NavCollapseItem from "./NavCollapseItem";
+import AutocompleteInput from "./AutocompleteInput";
 
 const filterNavItem = (items: INavItem[]) => items.filter(item => item.perm ? hasPermission(item.perm) : true)
 
@@ -46,6 +47,13 @@ const Index: React.FC<{openMobile: boolean, onMobileClose: VoidFunction, navConf
                         </Typography>
                     </Box>
                 </Box>
+                {
+                    (user!.role === UserRolesEnum.ADMIN || user!.role === UserRolesEnum.ACCOUNTANT) && (
+                        <Box px={2} my={3}>
+                            <AutocompleteInput />
+                        </Box>
+                    )
+                }
                 <Divider />
                 <Box p={2}>
                     {navConfig.map((config, index) => {

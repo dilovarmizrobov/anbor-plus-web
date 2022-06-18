@@ -1,8 +1,9 @@
 import {IUser} from "../models/IUser";
 import api from "../utils/api";
+import {UserRolesEnum} from "../constants";
 
 class AuthService {
-    setAxiosInterceptors = (onLogout: VoidFunction) => {
+    setAxiosInterceptors = (user: IUser, onLogout: VoidFunction) => {
         api.interceptors.response.use(
             (response) => response,
             (error) => {
@@ -14,6 +15,20 @@ class AuthService {
                 return Promise.reject(error);
             }
         )
+
+        return api.interceptors.request.use((config) => {
+            if ((user.role === UserRolesEnum.ADMIN || user.role === UserRolesEnum.ACCOUNTANT) && user.warehouse) {
+                if (config.params) {
+                    config.params.warehouseId = user.warehouse!.id
+                } else {
+                    config.params = {warehouseId: user.warehouse!.id}
+                }
+            }
+
+            return config;
+        }, (error) => {
+            return Promise.reject(error);
+        })
     }
 
     login = (login: string, password: string) => new Promise((resolve, reject) => {
@@ -25,6 +40,10 @@ class AuthService {
             .then((response) => {
                 let data = response.data
                 const user: IUser = {fullName: data.fullName, role: data.role}
+
+                if (data.role === UserRolesEnum.ADMIN || data.role === UserRolesEnum.ACCOUNTANT) {
+                    user.warehouse = data.warehouse || undefined
+                }
 
                 this.setUserAndJwtInSession(data.jwt, user)
 
