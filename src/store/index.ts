@@ -4,6 +4,7 @@ import {userListSlice} from "./reducers/userSlice";
 import {objectListSlice} from './reducers/objectSlice';
 import {warehouseListSlice} from "./reducers/warehouseSlice";
 import {enterpriseListSlice} from "./reducers/enterpriseSlice";
+import {providerListSlice} from "./reducers/providerSlice";
 
 export const store = configureStore({
     reducer: {
@@ -11,7 +12,8 @@ export const store = configureStore({
         userList: userListSlice.reducer,
         objectList: objectListSlice.reducer,
         warehouseList: warehouseListSlice.reducer,
-        enterpriseList: enterpriseListSlice.reducer
+        enterpriseList: enterpriseListSlice.reducer,
+        providerList: providerListSlice.reducer
     },
 })
 
