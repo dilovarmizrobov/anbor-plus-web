@@ -90,40 +90,40 @@ const UsersListView = () => {
                                         variant="outlined"
                                     />
                                 </Box>
+                                <TableContainer>
+                                    <Table>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>ФИО</TableCell>
+                                                <TableCell>Должность</TableCell>
+                                                <TableCell>Склад</TableCell>
+                                                <TableCell>Логин</TableCell>
+                                                <TableCell/>
+                                            </TableRow>
+                                        </TableHead>
+                                        {rows.length > 0 ? (
+                                            <TableBody>
+                                                {rows.map(row => (
+                                                    <TableRow hover key={row.id}>
+                                                        <TableCell>{row.fullName}</TableCell>
+                                                        <TableCell>{UserRolesMap.get(row.role)}</TableCell>
+                                                        <TableCell>row.warehouse</TableCell>
+                                                        <TableCell>{row.phoneNumber}</TableCell>
+                                                        <TableCell sx={{width: 120}}>
+                                                            <EditButtonTable to={`/users/${row.id}/edit`} />
+                                                            <DeleteButtonTable
+                                                                rowId={row.id}
+                                                                onDelete={userService.deleteUser}
+                                                                handleDelete={(rowId: number) => dispatch(deleteRow(rowId))}
+                                                            />
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        ) : <LoadingTableBody loading={rowsLoading} error={rowsError}/>}
+                                    </Table>
+                                </TableContainer>
                             </Box>
-                            <TableContainer>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>ФИО</TableCell>
-                                            <TableCell>Должность</TableCell>
-                                            <TableCell>Склад</TableCell>
-                                            <TableCell>Логин</TableCell>
-                                            <TableCell/>
-                                        </TableRow>
-                                    </TableHead>
-                                    {rows.length > 0 ? (
-                                        <TableBody>
-                                            {rows.map(row => (
-                                                <TableRow hover key={row.id}>
-                                                    <TableCell>{row.fullName}</TableCell>
-                                                    <TableCell>{UserRolesMap.get(row.role)}</TableCell>
-                                                    <TableCell>row.warehouse</TableCell>
-                                                    <TableCell>{row.phoneNumber}</TableCell>
-                                                    <TableCell>
-                                                        <EditButtonTable to={`/users/${row.id}/edit`} />
-                                                        <DeleteButtonTable
-                                                            rowId={row.id}
-                                                            onDelete={userService.deleteUser}
-                                                            handleDelete={(rowId: number) => dispatch(deleteRow(rowId))}
-                                                        />
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    ) : <LoadingTableBody loading={rowsLoading} error={rowsError}/>}
-                                </Table>
-                            </TableContainer>
                         </PerfectScrollbar>
                         <TablePagination
                             component="div"
