@@ -15,7 +15,7 @@ const Root = styled('div')(({theme}) => ({
 const ObjectCreateView = () => {
     return (
         <>
-            <Page title="Создание Обьекты"/>
+            <Page title="Создание обьекта"/>
             <Root>
                 <Container maxWidth='xl'>
                     <Header/>

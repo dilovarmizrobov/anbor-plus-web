@@ -58,7 +58,7 @@ const Form: React.FC<{ object?: IObject }> = ({object}) => {
                                         autoFocus
                                         helperText={formik.touched.name && formik.errors.name}
                                         label="Название"
-                                        placeholder="Введите название"
+                                        placeholder="Введите название обьекта"
                                         name="name"
                                         onBlur={formik.handleBlur}
                                         onChange={formik.handleChange}

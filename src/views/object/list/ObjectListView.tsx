@@ -5,7 +5,6 @@ import {
     Box,
     Card,
     Container,
-    IconButton,
     InputAdornment,
     Table,
     TableBody,
@@ -18,8 +17,7 @@ import {
 } from "@mui/material";
 import Header from "./Header";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import {FiEdit, FiSearch} from "react-icons/fi";
-import {NavLink as RouterLink} from "react-router-dom";
+import {FiSearch} from "react-icons/fi";
 import {useAppDispatch, useAppSelector} from "../../../store/hooks";
 import {
     changePage,
@@ -38,6 +36,7 @@ import errorMessageHandler from "../../../utils/errorMessageHandler";
 import objectService from "../../../services/objectService";
 import LoadingTableBody from "../../../components/LoadingTableBody";
 import DeleteButtonTable from "../../../components/DeleteButtonTable";
+import EditButtonTable from "../../../components/EditButtonTable";
 
 
 const Root = styled('div')(({theme}) => ({
@@ -120,6 +119,7 @@ const ObjectListView = () => {
                                         <TableHead>
                                             <TableRow>
                                                 <TableCell>Название</TableCell>
+                                                <TableCell/>
                                             </TableRow>
                                         </TableHead>
                                         {
@@ -129,14 +129,8 @@ const ObjectListView = () => {
                                                         rows.map((row) => (
                                                             <TableRow hover key={row.id}>
                                                                 <TableCell>{row.name}</TableCell>
-                                                                <TableCell style={{width: 165}}>
-                                                                    <IconButton
-                                                                        size="large"
-                                                                        component={RouterLink}
-                                                                        to={`/objects/${row.id}/edit`}
-                                                                    >
-                                                                        <FiEdit size={20}/>
-                                                                    </IconButton>
+                                                                <TableCell sx={{width: 120}}>
+                                                                    <EditButtonTable to={`/objects/${row.id}/edit`} />
                                                                     <DeleteButtonTable
                                                                         rowId={row.id!}
                                                                         onDelete={objectService.deleteObject}

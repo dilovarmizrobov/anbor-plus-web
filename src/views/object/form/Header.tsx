@@ -8,12 +8,12 @@ const Header: React.FC<{ title?: string }> = ({title}) => (
         <Grid item>
             <Breadcrumbs separator={<NavigateNextIcon/>} aria-label="breadcrumb">
                 <Link underline="hover" color="inherit" to="/objects" component={RouterLink}>
-                    Создание Обьекта
+                    Обьекты
                 </Link>
-                <Typography color="text.primary">{title ? 'Изменение' : 'Создание'}</Typography>
+                <Typography color="text.primary">{title ? title : 'Создание'}</Typography>
             </Breadcrumbs>
             <Typography variant="h5" color="textPrimary">
-                {title ? 'Изменение Обьекта' : 'Создание Обьекта'}
+                {title ? 'Изменение обьекта' : 'Создание обьекта'}
             </Typography>
         </Grid>
     </Grid>

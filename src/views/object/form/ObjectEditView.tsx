@@ -48,7 +48,7 @@ const ObjectEditView = () => {
 
     return (
         <>
-            <Page title="Изминение название" />
+            <Page title="Изменение обьекта" />
             {
                 object ? (
                     <Root>
