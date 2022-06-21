@@ -17,7 +17,7 @@ class AuthService {
         )
 
         return api.interceptors.request.use((config) => {
-            if ((user.role === UserRolesEnum.ADMIN || user.role === UserRolesEnum.ACCOUNTANT) && user.warehouse) {
+            if (user && (user.role === UserRolesEnum.ADMIN || user.role === UserRolesEnum.ACCOUNTANT) && user.warehouse) {
                 if (config.params) {
                     config.params.warehouseId = user.warehouse!.id
                 } else {

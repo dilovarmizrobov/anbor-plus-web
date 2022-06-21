@@ -13,7 +13,7 @@ const Auth: React.FC = () => {
         api.interceptors.request.eject(interceptor);
         let interceptorRequest = authService.setAxiosInterceptors(user!, () => dispatch(logout()))
         setInterceptor(interceptorRequest)
-    }, [dispatch])
+    }, [dispatch, user])
 
     return <></>
 }
