@@ -36,6 +36,10 @@ export const navConfigMain: INavConfig[] = [
                         perm: PERMISSIONS.LIST.USER,
                     },
                     {
+                        title: 'Материалы',
+                        href: '/materials',
+                    },
+                    {
                         title: 'Склады',
                         href: '/warehouses',
                     },

@@ -1,5 +1,3 @@
-import {IWarehouseRequest} from "./IWarehouse";
-
 export interface IEnterpriseResponse  {
     id : number;
     name: string;

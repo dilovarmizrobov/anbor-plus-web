@@ -13,3 +13,17 @@ export const UserRolesMap = new Map(
         [UserRolesEnum.ACCOUNTANT, 'Материальный бухгалтер'],
     ]
 )
+
+export enum MaterialUnitEnum {
+    TON = "TON",
+    THING = "THING",
+    LITRE = "LITRE",
+}
+
+export const MaterialUnitMap = new Map(
+    [
+        [MaterialUnitEnum.TON, 'тонна'],
+        [MaterialUnitEnum.THING, 'шт'],
+        [MaterialUnitEnum.LITRE, 'литр'],
+    ]
+)
