@@ -27,6 +27,11 @@ export const navConfigMain: INavConfig[] = [
                 href: '/home',
             },
             {
+                title: 'Приходы',
+                icon: FaUserFriends,
+                href: '/incomes',
+            },
+            {
                 title: 'Настройки',
                 icon: MdSettings,
                 children: [

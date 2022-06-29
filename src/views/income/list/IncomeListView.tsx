@@ -1,36 +1,37 @@
 import React, {useEffect} from 'react';
-import Page from "../../../components/Page";
 import {styled} from "@mui/material/styles";
+import Page from "../../../components/Page";
+import Header from "./Header";
 import {
     Box,
     Card,
-    Container,
-    InputAdornment,
-    Table, TableBody, TableCell,
+    Container, Grid,
+    Table, TableBody,
+    TableCell,
     TableContainer,
-    TableHead, TablePagination,
+    TableHead,
+    TablePagination,
     TableRow,
-    TextField
 } from "@mui/material";
-import Header from "./Header";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import {FiSearch} from "react-icons/fi";
 import {useAppDispatch, useAppSelector} from "../../../store/hooks";
-import {
-    changePage, changeQuery, changeRowsPerPage, deleteRow, getListError,
-    getListPending,
-    getListSuccess,
-    reset,
-    selectMaterial
-} from "../../../store/reducers/materialSlice";
 import {useSnackbar} from "notistack";
-import useDebounce from "../../../hooks/useDebounce";
-import materialService from "../../../services/MaterialService";
+import {selectIncomeList} from "../../../store/reducers/incomeSlice";
+import {
+    reset,
+    changeStartDate,
+    changeEndDate,
+    changePage,
+    changeRowsPerPage,
+    getListError,
+    getListPending,
+    getListSuccess
+} from "../../../store/reducers/incomeSlice";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
+import incomeService from "../../../services/IncomeService";
+import PerfectScrollbar from "react-perfect-scrollbar";
 import LoadingTableBody from "../../../components/LoadingTableBody";
 import EditButtonTable from "../../../components/EditButtonTable";
-import DeleteButtonTable from "../../../components/DeleteButtonTable";
-import {MaterialUnitMap} from "../../../constants";
+import CustomDatePicker from "../../../components/CustomDatePicker";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -38,21 +39,20 @@ const Root = styled('div')(({theme}) => ({
     paddingBottom: theme.spacing(3)
 }))
 
-const MaterialListView = () => {
+const IncomeListView = () => {
     const {
         page,
-        query,
         rowsPerPage,
         rowsLoading,
         rowsError,
         rows,
         rowsCount,
         rowsPerPageOptions,
-    } = useAppSelector(selectMaterial)
-
+        startDate,
+        endDate,
+    } = useAppSelector(selectIncomeList)
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
-    const debouncedQuery = useDebounce(query, 500)
 
     useEffect(() => () => {
         dispatch(reset())
@@ -64,7 +64,7 @@ const MaterialListView = () => {
         (async () => {
             try {
                 dispatch(getListPending())
-                const data: any = await materialService.getListMaterial(page + 1, rowsPerPage, debouncedQuery)
+                const data: any = await incomeService.getListIncome(page + 1, rowsPerPage, startDate, endDate)
 
                 if (!cancel) dispatch(getListSuccess({rows: data.content, rowsCount: data.totalElements}))
 
@@ -77,11 +77,11 @@ const MaterialListView = () => {
         return () => {
             cancel = true
         }
-    }, [enqueueSnackbar, dispatch, page, rowsPerPage, debouncedQuery])
+    }, [enqueueSnackbar, dispatch, page, rowsPerPage, startDate, endDate])
 
     return (
         <>
-            <Page title="Предприятия"/>
+            <Page title="Приходы"/>
             <Root>
                 <Container maxWidth="xl">
                     <Header/>
@@ -89,29 +89,25 @@ const MaterialListView = () => {
                         <PerfectScrollbar>
                             <Box minWidth={750} sx={{mb: 2}}>
                                 <Box mx={2} my={3}>
-                                    <TextField
-                                        sx={{width: 400}}
-                                        size="small"
-                                        InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment position="start">
-                                                    <FiSearch/>
-                                                </InputAdornment>
-                                            )
-                                        }}
-                                        onChange={(event) => dispatch(changeQuery(event.target.value))}
-                                        placeholder="Поиск"
-                                        value={query}
-                                        variant="outlined"
-                                    />
+                                    <Grid container spacing={4}>
+                                        <Grid item>
+                                            <CustomDatePicker changeDate={changeStartDate} label={'От'} />
+                                        </Grid>
+                                        <Grid item>
+                                            <CustomDatePicker changeDate={changeEndDate} label={'До'} />
+                                        </Grid>
+                                    </Grid>
                                 </Box>
                                 <TableContainer>
                                     <Table>
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell>Наименование</TableCell>
-                                                <TableCell>Марка</TableCell>
-                                                <TableCell>Единица измерения</TableCell>
+                                                <TableCell>№</TableCell>
+                                                <TableCell>Дата</TableCell>
+                                                <TableCell>Категория</TableCell>
+                                                <TableCell>Сумма прихода</TableCell>
+                                                <TableCell>От кого</TableCell>
+                                                <TableCell>Комментарий</TableCell>
                                                 <TableCell/>
                                             </TableRow>
                                         </TableHead>
@@ -119,20 +115,18 @@ const MaterialListView = () => {
                                             rows.length > 0 ? (
                                                 <TableBody>
                                                     {
-                                                        rows.map((row) =>(
+                                                        rows.map(row => (
                                                             <TableRow hover key={row.id}>
-                                                                <TableCell>{row.name}</TableCell>
-                                                                <TableCell>{row.marks.map(mark => mark.name).join(', ')}</TableCell>
-                                                                <TableCell>{MaterialUnitMap.get(row.unit)}</TableCell>
+                                                                <TableCell>{row.id}</TableCell>
+                                                                <TableCell>{row.createdDate}</TableCell>
+                                                                <TableCell>{row.categories.join(", ")}</TableCell>
+                                                                <TableCell>{row.total}</TableCell>
+                                                                <TableCell>{row.fromWho}</TableCell>
+                                                                <TableCell>{row.comment}</TableCell>
                                                                 <TableCell style={{ width: 165 }}>
                                                                     <EditButtonTable
-                                                                        to={`/materials/${row.id}/edit`}
+                                                                        to={`/incomes/${row.id}/edit`}
                                                                     />
-                                                                    <DeleteButtonTable
-                                                                        rowId={row.id!}
-                                                                        onDelete={materialService.deleteMaterial}
-                                                                        handleDelete={(rowId: number) => dispatch(deleteRow(rowId))}
-                                                                        />
                                                                 </TableCell>
                                                             </TableRow>
                                                         ))
@@ -159,7 +153,7 @@ const MaterialListView = () => {
                 </Container>
             </Root>
         </>
-    );
+    )
 };
 
-export default MaterialListView;
+export default IncomeListView;
