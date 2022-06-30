@@ -141,7 +141,7 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
                                 formik.setFieldValue('mark', undefined)
                             }}
                             fullWidth
-                            isOptionEqualToValue={(option, value) => option.name === value.name}
+                            isOptionEqualToValue={(option, value) => option.id === value.id}
                             getOptionLabel={(option) => option.name}
                             options={materials}
                             loading={materialLoading}

@@ -1,19 +1,31 @@
 import apiHelper from "./ApiHelper";
-import {IncomeTypeEnum} from "../constants";
-import {IIncomeRequest} from "../models/IIncome";
+import {IncomeFilterPriceTypeEnum, IncomeTypeEnum} from "../constants";
+import {IIncomeRequest, PriceEditRequest} from "../models/IIncome";
 import api from "../utils/api";
 
 class IncomeService {
     getIncome = (incomeId: string) => apiHelper.get(`/overheads/${incomeId}`)
 
-    getListIncome = (page: number, size: number, startDate?: string, endDate?: string) =>
-        apiHelper.get(`/overheads`, {size, page, startDate, endDate})
+    getListIncome = (page: number, size: number, startDate?: string, endDate?: string, filterPriceType?: IncomeFilterPriceTypeEnum, filterIncomeFromWho?: string) => {
+        let extraParams: any = {};
+
+        filterPriceType && (extraParams.priceType = filterPriceType)
+
+        filterIncomeFromWho && (extraParams.fromWho = filterIncomeFromWho)
+
+        return apiHelper.get(`/overheads`, {size, page, startDate, endDate, extraParams})
+    }
 
     getOptionProviders = (type: IncomeTypeEnum) => apiHelper.get(`/overheads/${type}/option`)
 
     getOptionMaterials = (query: string) => apiHelper.get(`/materials/find`, {search: query})
 
     getOptionMarks = (materialId: number) => apiHelper.get(`/materials/marks/${materialId}`)
+
+    getListIncomeMaterial = (incomeId: string, page: number, size: number) =>
+        apiHelper.get(`/overheads/${incomeId}/items`, {size, page})
+
+    getIncomeTotalInfo = (incomeId: string) => apiHelper.get(`/overheads/${incomeId}/total-info`)
 
     postNewIncome = (income: IIncomeRequest, images: File[]) => new Promise((resolve, reject) => {
         let formData = new FormData();
@@ -42,6 +54,8 @@ class IncomeService {
             .then(response => resolve(response.data))
             .catch(error => reject(error))
     })
+
+    putMaterialPriceEdit = (priceEdit: PriceEditRequest) => apiHelper.put<PriceEditRequest>('/overheads/change-item-price', priceEdit)
 }
 
 const incomeService = new IncomeService()

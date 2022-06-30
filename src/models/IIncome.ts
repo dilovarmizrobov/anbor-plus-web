@@ -37,6 +37,7 @@ export interface IIncomeResponse {
     imageNames: string[];
     overheadItems: IIncomeMaterial[]
 }
+
 export interface IIncomeListResponse {
     id: number;
     createdDate: string;
@@ -58,4 +59,36 @@ export interface IIncomeMaterialMarkOption {
     name: string;
     sku: string;
     // residue: number;
+}
+
+export interface PriceHistory {
+    id: number;
+    createdBy: string;
+    createdDate: string;
+    price: number;
+    comment?: string;
+}
+
+export interface PriceEditRequest {
+    itemId: number;
+    price: number;
+    comment: string;
+}
+
+export interface IIncomeMaterialListResponse {
+    id: number;
+    material: string;
+    mark: string;
+    sku: string;
+    qty: number;
+    unit: MaterialUnitEnum;
+    price?: number;
+    total?: number;
+    priceHistory: PriceHistory[];
+}
+
+export interface IIncomeTotalInfo {
+    fromWho: string;
+    total: number;
+    warehouse: string;
 }

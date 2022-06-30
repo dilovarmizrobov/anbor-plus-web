@@ -7,10 +7,13 @@ import {enterpriseListSlice} from "./reducers/enterpriseSlice";
 import {providerListSlice} from "./reducers/providerSlice";
 import {materialListSlice} from "./reducers/materialSlice";
 import {incomeListSlice} from "./reducers/incomeSlice";
+import {incomeMaterialListSlice} from "./reducers/incomeMaterialSlice";
+import {previewImageSlice} from "./reducers/previewImageSlice";
 
 export const store = configureStore({
     reducer: {
         auth: authReducer,
+        previewImage: previewImageSlice.reducer,
         userList: userListSlice.reducer,
         objectList: objectListSlice.reducer,
         warehouseList: warehouseListSlice.reducer,
@@ -18,6 +21,7 @@ export const store = configureStore({
         providerList: providerListSlice.reducer,
         materialList: materialListSlice.reducer,
         incomeList: incomeListSlice.reducer,
+        incomeMaterialList: incomeMaterialListSlice.reducer,
     },
 })
 

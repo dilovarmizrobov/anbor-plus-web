@@ -42,3 +42,15 @@ export const IncomeTypeMap = new Map(
         [IncomeTypeEnum.ENTERPRISE, 'Предприятия'],
     ]
 )
+
+export enum IncomeFilterPriceTypeEnum {
+    CHANGED_PRICE = 'CHANGED_PRICE',
+    WITHOUT_PRICE = 'WITHOUT_PRICE'
+}
+
+export const IncomeFilterPriceTypeMap = new Map(
+    [
+        [IncomeFilterPriceTypeEnum.WITHOUT_PRICE, 'Без цены'],
+        [IncomeFilterPriceTypeEnum.CHANGED_PRICE, 'Измененная цена'],
+    ]
+)

@@ -17,6 +17,7 @@ interface ParamsInterface {
     responseType?: ResponseType;
     locationId?: number;
     barcode?: string;
+    priceType?: string;
 }
 
 class ApiHelper {

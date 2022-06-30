@@ -29,6 +29,7 @@ import MaterialEditView from "./views/material/form/MaterialEditView";
 import IncomeCreateView from "./views/income/form/IncomeCreateView";
 import IncomeListView from "./views/income/list/IncomeListView";
 import IncomeEditView from "./views/income/form/IncomeEditView";
+import IncomeMaterialListView from "./views/income/list/material/IncomeMaterialListView";
 
 interface CustomRouteObject extends RouteObject {
     perm?: UserRolesEnum[],
@@ -65,6 +66,10 @@ const routes: CustomRouteObject[] = [
                     {
                         path: '/incomes/:incomeId/edit',
                         element: <IncomeEditView/>,
+                    },
+                    {
+                        path: '/incomes/:incomeId/materials',
+                        element: <IncomeMaterialListView/>,
                     },
                     {
                         path: '/users',

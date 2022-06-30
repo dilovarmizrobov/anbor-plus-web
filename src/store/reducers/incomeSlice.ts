@@ -1,24 +1,26 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "../index";
 import {IIncomeListResponse} from "../../models/IIncome";
+import {IncomeFilterPriceTypeEnum, IncomeTypeEnum} from "../../constants";
 
 interface initialStateListInterface {
     startDate?: string,
     endDate?: string,
     page: number;
     rowsPerPage: number;
-    query: string;
     rowsCount: number;
     rows: IIncomeListResponse[];
     rowsLoading: boolean;
     rowsError: boolean;
     rowsPerPageOptions: number[],
+    filterPriceType?: IncomeFilterPriceTypeEnum;
+    filterIncomeType?: IncomeTypeEnum;
+    filterIncomeFromWho?: string;
 }
 
 const initialStateList: initialStateListInterface = {
     page: 0,
     rowsPerPage: 20,
-    query: '',
     rowsCount: 0,
     rows: [],
     rowsLoading: false,
@@ -51,6 +53,16 @@ export const incomeListSlice = createSlice({
             state.rowsPerPage = action.payload;
             state.page = 0;
         },
+        setFilterPriceType: (state, action: PayloadAction<IncomeFilterPriceTypeEnum>) => {
+            state.filterPriceType = state.filterPriceType === action.payload ? undefined : action.payload
+            state.page = 0;
+        },
+        setFilterIncomeType: (state, action: PayloadAction<IncomeTypeEnum | undefined>) => {
+            state.filterIncomeType = action.payload
+        },
+        setFilterIncomeFromWho: (state, action: PayloadAction<string | undefined>) => {
+            state.filterIncomeFromWho = action.payload
+        },
         getListPending: (state) => {
             state.rows = [];
             state.rowsLoading = true;
@@ -81,7 +93,10 @@ export const {
     getListPending,
     getListSuccess,
     getListError,
-    deleteRow
+    deleteRow,
+    setFilterPriceType,
+    setFilterIncomeType,
+    setFilterIncomeFromWho
 } = incomeListSlice.actions
 
 export const selectIncomeList = (state: RootState) => state.incomeList
