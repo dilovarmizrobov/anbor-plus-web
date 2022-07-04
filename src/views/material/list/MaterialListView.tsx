@@ -61,20 +61,19 @@ const MaterialListView = () => {
     useEffect(() => {
         let cancel = false;
 
-        (
-            async () => {
-                try {
-                    dispatch(getListPending())
-                    const data: any = await materialService.getListMaterial(page + 1, rowsPerPage, debouncedQuery)
+        (async () => {
+            try {
+                dispatch(getListPending())
+                const data: any = await materialService.getListMaterial(page + 1, rowsPerPage, debouncedQuery)
 
-                    if (!cancel) dispatch(getListSuccess({rows: data.content, rowsCount: data.totalElements}))
+                if (!cancel) dispatch(getListSuccess({rows: data.content, rowsCount: data.totalElements}))
 
-                }catch (error:any) {
-                    dispatch(getListError())
-                    enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
-                }
+            } catch (error:any) {
+                dispatch(getListError())
+                enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
             }
-        )()
+        })()
+
         return () => {
             cancel = true
         }

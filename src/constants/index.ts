@@ -1,4 +1,5 @@
 export const BASE_URL = '/anbor'
+export const PATH_OVERHEADS_IMAGE = '/anbor/overheads/load-image/'
 
 export enum UserRolesEnum {
     ADMIN = "ADMIN",
@@ -27,3 +28,34 @@ export const MaterialUnitMap = new Map(
         [MaterialUnitEnum.LITRE, 'литр'],
     ]
 )
+
+export enum IncomeTypeEnum {
+    PROVIDER = "PROVIDER",
+    FACILITY = "FACILITY",
+    ENTERPRISE = "ENTERPRISE",
+}
+
+export const IncomeTypeMap = new Map(
+    [
+        [IncomeTypeEnum.PROVIDER, 'Снабженцы'],
+        [IncomeTypeEnum.FACILITY, 'Объекты'],
+        [IncomeTypeEnum.ENTERPRISE, 'Предприятия'],
+    ]
+)
+
+export enum IncomeFilterPriceTypeEnum {
+    CHANGED_PRICE = 'CHANGED_PRICE',
+    WITHOUT_PRICE = 'WITHOUT_PRICE'
+}
+
+export const IncomeFilterPriceTypeMap = new Map(
+    [
+        [IncomeFilterPriceTypeEnum.WITHOUT_PRICE, 'Без цены'],
+        [IncomeFilterPriceTypeEnum.CHANGED_PRICE, 'Измененная цена'],
+    ]
+)
+
+export enum OverheadTypeEnum {
+    OUTCOME = "OUTCOME",
+    INCOME = "INCOME"
+}

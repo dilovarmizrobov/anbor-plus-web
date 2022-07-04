@@ -24,5 +24,5 @@ export interface IMaterialRequest {
     categoryId: number;
     name: string;
     unit: MaterialUnitEnum;
-    marks: IMaterialMark[]
+    marks: IMaterialMark[];
 }
