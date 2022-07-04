@@ -1,5 +1,5 @@
 import apiHelper from "./ApiHelper";
-import {IncomeFilterPriceTypeEnum, IncomeTypeEnum} from "../constants";
+import {IncomeFilterPriceTypeEnum, IncomeTypeEnum, OverheadTypeEnum} from "../constants";
 import {IIncomeRequest, PriceEditRequest} from "../models/IIncome";
 import api from "../utils/api";
 
@@ -13,7 +13,7 @@ class IncomeService {
 
         filterIncomeFromWho && (extraParams.fromWho = filterIncomeFromWho)
 
-        return apiHelper.get(`/overheads`, {size, page, startDate, endDate, extraParams})
+        return apiHelper.get(`/overheads/all/${OverheadTypeEnum.INCOME}`, {size, page, startDate, endDate, extraParams})
     }
 
     getOptionProviders = (type: IncomeTypeEnum) => apiHelper.get(`/overheads/${type}/option`)
@@ -34,7 +34,7 @@ class IncomeService {
 
         for (let i = 0; i < images.length; i++) formData.append('images', images[i])
 
-        api.post(`overheads`, formData)
+        api.post(`overheads/all/${OverheadTypeEnum.INCOME}`, formData)
             .then(response => resolve(response.data))
             .catch(error => reject(error))
     })

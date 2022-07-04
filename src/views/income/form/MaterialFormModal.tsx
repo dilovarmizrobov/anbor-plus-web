@@ -15,7 +15,7 @@ import {
     DialogTitle,
     Grid,
     InputAdornment, MenuItem,
-    TextField
+    TextField, Typography
 } from "@mui/material";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
 import {useSnackbar} from "notistack";
@@ -49,7 +49,7 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
             material: material?.material
         },
         validationSchema: Yup.object({
-            qty: Yup.number().required(),
+            qty: Yup.number().not([0], 'Выберите значение').required(),
             materialId: Yup.number().not([0], 'Выберите значение').required(),
             markId: Yup.number().not([0], 'Выберите значение').required(),
         }),
@@ -82,7 +82,7 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
     }, [])
 
     useEffect(() => {
-        if (query !== '' && query !== formik.values.material?.name) {
+        if (query !== formik.values.material?.name) {
             (async () => {
                 try {
                     setMaterialLoading(true)
@@ -234,23 +234,34 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
                         />
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <TextField
-                            error={formik.touched.qty && Boolean(formik.errors.qty)}
-                            fullWidth
-                            helperText={formik.touched.qty && formik.errors.qty}
-                            label="Количество"
-                            placeholder="Введите количество"
-                            name="qty"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            required
-                            value={formik.values.qty}
-                            variant="outlined"
-                            InputLabelProps={{shrink: true}}
-                            InputProps={{
-                                endAdornment: <InputAdornment position="end">{formik.values.material && MaterialUnitMap.get(formik.values.material.unit)}</InputAdornment>
-                            }}
-                        />
+                        <Grid container spacing={2} alignItems='center'>
+                            <Grid item xs>
+                                <TextField
+                                    error={formik.touched.qty && Boolean(formik.errors.qty)}
+                                    fullWidth
+                                    helperText={formik.touched.qty && formik.errors.qty}
+                                    label="Количество"
+                                    placeholder="Введите количество"
+                                    name="qty"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    required
+                                    value={formik.values.qty || ''}
+                                    variant="outlined"
+                                    InputLabelProps={{shrink: true}}
+                                    InputProps={{
+                                        endAdornment: <InputAdornment position="end">{formik.values.material && MaterialUnitMap.get(formik.values.material.unit)}</InputAdornment>
+                                    }}
+                                />
+                            </Grid>
+                            {formik.values.mark?.balance && (
+                                <Grid item>
+                                    <Typography>
+                                        ост. {Number(formik.values.mark.balance) + Number(formik.values.qty)}
+                                    </Typography>
+                                </Grid>
+                            )}
+                        </Grid>
                     </Grid>
                 </Grid>
             </DialogContent>

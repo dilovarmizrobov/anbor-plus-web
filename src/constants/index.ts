@@ -54,3 +54,8 @@ export const IncomeFilterPriceTypeMap = new Map(
         [IncomeFilterPriceTypeEnum.CHANGED_PRICE, 'Измененная цена'],
     ]
 )
+
+export enum OverheadTypeEnum {
+    OUTCOME = "OUTCOME",
+    INCOME = "INCOME"
+}

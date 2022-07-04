@@ -58,7 +58,7 @@ export interface IIncomeMaterialMarkOption {
     id: number;
     name: string;
     sku: string;
-    // residue: number;
+    balance: number;
 }
 
 export interface PriceHistory {

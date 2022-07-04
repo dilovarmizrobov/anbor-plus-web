@@ -11,7 +11,7 @@ const NavCollapseItem: React.FC<{item: INavItem}> = ({item}) => {
     const location = useLocation();
 
     useEffect(() => {
-        let index = item.children!.findIndex(item => location.pathname.includes(item.href!))
+        let index = item.children!.findIndex(item => location.pathname === item.href!)
 
         setActive(index > -1)
         setOpen(index > -1)
