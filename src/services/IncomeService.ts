@@ -34,7 +34,7 @@ class IncomeService {
 
         for (let i = 0; i < images.length; i++) formData.append('images', images[i])
 
-        api.post(`overheads/all/${OverheadTypeEnum.INCOME}`, formData)
+        api.post(`overheads/${OverheadTypeEnum.INCOME}`, formData)
             .then(response => resolve(response.data))
             .catch(error => reject(error))
     })
