@@ -53,7 +53,7 @@ const MaterialEditView = () => {
         })()
 
         return () => {cancel = true}
-    }, [enqueueSnackbar, navigate])
+    }, [enqueueSnackbar, navigate, materialId])
 
     return (
         <>

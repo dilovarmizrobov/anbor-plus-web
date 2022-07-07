@@ -26,3 +26,8 @@ export interface IMaterialRequest {
     unit: MaterialUnitEnum;
     marks: IMaterialMark[]
 }
+
+export interface IMaterialOption {
+    id: number;
+    name: string;
+}
