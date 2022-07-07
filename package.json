@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "author": "Abadtech",
-  "proxy": "http://192.168.8.120:8080",
+  "proxy": "http://192.168.8.116:8080",
   "dependencies": {
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",

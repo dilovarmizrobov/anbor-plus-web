@@ -9,6 +9,7 @@ import {materialListSlice} from "./reducers/materialSlice";
 import {incomeListSlice} from "./reducers/incomeSlice";
 import {incomeMaterialListSlice} from "./reducers/incomeMaterialSlice";
 import {previewImageSlice} from "./reducers/previewImageSlice";
+import { warehouseBalanceSlice } from './reducers/warehouseBalanceSlice';
 
 export const store = configureStore({
     reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
         materialList: materialListSlice.reducer,
         incomeList: incomeListSlice.reducer,
         incomeMaterialList: incomeMaterialListSlice.reducer,
+        warehouseBalance: warehouseBalanceSlice.reducer,
     },
 })
 

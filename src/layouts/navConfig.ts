@@ -32,6 +32,11 @@ export const navConfigMain: INavConfig[] = [
                 href: '/incomes',
             },
             {
+                title: 'Остаток',
+                icon: FaUserFriends,
+                href: '/warehouse-balance',
+            },
+            {
                 title: 'Настройки',
                 icon: MdSettings,
                 children: [

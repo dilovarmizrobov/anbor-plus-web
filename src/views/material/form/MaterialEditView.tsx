@@ -5,11 +5,13 @@ import {Box, Container} from "@mui/material";
 import Header from "./Header";
 import Form from "./Form";
 import {useSnackbar} from "notistack";
-import {ICategoryOption, IMaterialResponse} from "../../../models/IMaterial";
+import {IMaterialResponse} from "../../../models/IMaterial";
+import {ICategoryOption} from "../../../models";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
 import materialService from "../../../services/MaterialService";
 import LoadingLayout from "../../../components/LoadingLayout";
 import {useNavigate, useParams} from "react-router-dom";
+import appService from "../../../services/AppService";
 
 const Root = styled('div')(({theme}) => ({
     backgroundColor: theme.palette.background.default,
@@ -33,7 +35,7 @@ const MaterialEditView = () => {
         (async () => {
             try {
                 const data: any = await materialService.getMaterial(materialId || '')
-                const dataCategories: any = await materialService.getOptionCategories()
+                const dataCategories: any = await appService.getOptionCategories()
 
                 if (!cancel) {
                     if (dataCategories.length === 0) {
