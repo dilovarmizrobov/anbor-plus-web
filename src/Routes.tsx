@@ -26,6 +26,11 @@ import ProviderEditView from "./views/provider/form/ProviderEditView";
 import MaterialListView from "./views/material/list/MaterialListView";
 import MaterialCreateView from "./views/material/form/MaterialCreateView";
 import MaterialEditView from "./views/material/form/MaterialEditView";
+import IncomeCreateView from "./views/income/form/IncomeCreateView";
+import IncomeListView from "./views/income/list/IncomeListView";
+import IncomeEditView from "./views/income/form/IncomeEditView";
+import IncomeMaterialListView from "./views/income/list/material/IncomeMaterialListView";
+import WarehouseBalanceListView from "./views/warehouse-balance/WarehouseBalanceListView";
 import OutcomeCreateView from "./views/outcome/form/OutcomeCreateView";
 import OutcomeListView from "./views/outcome/list/OutcomeListView";
 import OutcomeEditView from "./views/outcome/form/OutcomeEditView";
@@ -54,6 +59,26 @@ const routes: CustomRouteObject[] = [
                     {
                         path: '/home',
                         element: <HomePageView/>,
+                    },
+                    {
+                        path: '/incomes',
+                        element: <IncomeListView/>,
+                    },
+                    {
+                        path: '/incomes/create',
+                        element: <IncomeCreateView/>,
+                    },
+                    {
+                        path: '/incomes/:incomeId/edit',
+                        element: <IncomeEditView/>,
+                    },
+                    {
+                        path: '/incomes/:incomeId/materials',
+                        element: <IncomeMaterialListView/>,
+                    },
+                    {
+                        path: '/warehouse-balance',
+                        element: <WarehouseBalanceListView/>,
                     },
                     {
                         path: '/users',

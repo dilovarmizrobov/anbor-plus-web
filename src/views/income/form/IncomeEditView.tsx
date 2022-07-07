@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {styled} from "@mui/material/styles";
 import Page from "../../../components/Page";
-import {Box, Container} from "@mui/material";
 import Header from "./Header";
+import {Box, Container} from "@mui/material";
 import Form from "./Form";
 import {useSnackbar} from "notistack";
-import {ICategoryOption} from "../../../models";
-import errorMessageHandler from "../../../utils/errorMessageHandler";
+import {useParams} from "react-router-dom";
+import {IIncomeOption, IIncomeResponse} from "../../../models/IIncome";
 import LoadingLayout from "../../../components/LoadingLayout";
-import {useNavigate} from "react-router-dom";
-import appService from "../../../services/AppService";
+import errorMessageHandler from "../../../utils/errorMessageHandler";
+import incomeService from "../../../services/IncomeService";
 
 const Root = styled('div')(({theme}) => ({
     backgroundColor: theme.palette.background.default,
@@ -18,25 +18,25 @@ const Root = styled('div')(({theme}) => ({
     paddingBottom: theme.spacing(3)
 }))
 
-const MaterialCreateView = () => {
+const IncomeEditView = () => {
     const {enqueueSnackbar} = useSnackbar()
-    const navigate = useNavigate()
+    const { incomeId } = useParams()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
-    const [categories, setCategories] = useState<ICategoryOption[]>([])
+    const [income, setIncome] = useState<IIncomeResponse>()
+    const [providers, setProviders] = useState<IIncomeOption[]>([])
 
     useEffect(() => {
         let cancel = false;
 
         (async () => {
             try {
-                const dataCategories: any = await appService.getOptionCategories()
+                const data = await incomeService.getIncome(incomeId || '') as IIncomeResponse
+                const providersData = await incomeService.getOptionProviders(data.typeFrom) as IIncomeOption[]
 
                 if (!cancel) {
-                    if (dataCategories.length === 0) {
-                        navigate(-1)
-                        enqueueSnackbar('Добавьте с начала категории', {variant: 'info'})
-                    } else setCategories(dataCategories)
+                    setIncome(data)
+                    setProviders(providersData)
                 }
             } catch (error: any) {
                 !cancel && setError(true)
@@ -47,17 +47,17 @@ const MaterialCreateView = () => {
         })()
 
         return () => {cancel = true}
-    }, [enqueueSnackbar, navigate])
+    }, [enqueueSnackbar, incomeId])
 
     return (
         <>
-            <Page title="Создание материала"/>
-            {!loading && !error && categories.length ? (
+            <Page title="Изменение прихода"/>
+            {!loading && !error && income ? (
                 <Root>
                     <Container maxWidth="xl">
-                        <Header />
+                        <Header title={income.throwWhom} />
                         <Box mt={3}>
-                            <Form categories={categories} />
+                            <Form income={income} prevProviders={providers}/>
                         </Box>
                     </Container>
                 </Root>
@@ -66,4 +66,4 @@ const MaterialCreateView = () => {
     );
 };
 
-export default MaterialCreateView;
+export default IncomeEditView;

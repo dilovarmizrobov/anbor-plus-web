@@ -1,10 +1,5 @@
 import {MaterialUnitEnum} from "../constants";
 
-export interface ICategoryOption {
-    id: number;
-    name: string;
-}
-
 export interface IMaterialMark {
     id?: number;
     name: string;
@@ -24,7 +19,7 @@ export interface IMaterialRequest {
     categoryId: number;
     name: string;
     unit: MaterialUnitEnum;
-    marks: IMaterialMark[]
+    marks: IMaterialMark[];
 }
 
 export interface IMaterialOption {
