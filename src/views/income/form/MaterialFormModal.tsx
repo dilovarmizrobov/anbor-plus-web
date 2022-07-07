@@ -54,7 +54,11 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
             markId: Yup.number().not([0], 'Выберите значение').required(),
         }),
         onSubmit: (values) => {
-            material ? onEditAccept(values) : onAddAccept(values)
+            if (material) {
+                values.id = material.id
+                onEditAccept(values)
+            } else onAddAccept(values)
+
             onClose()
         }
     })
@@ -254,7 +258,7 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
                                     }}
                                 />
                             </Grid>
-                            {formik.values.mark?.balance && (
+                            {formik.values.mark && (
                                 <Grid item>
                                     <Typography>
                                         ост. {Number(formik.values.mark.balance) + Number(formik.values.qty)}

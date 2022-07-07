@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {ICategoryOption, IMaterialMark, IMaterialRequest, IMaterialResponse} from "../../../models/IMaterial";
+import {IMaterialMark, IMaterialRequest, IMaterialResponse} from "../../../models/IMaterial";
+import {ICategoryOption} from "../../../models";
 import {useSnackbar} from "notistack";
 import {useNavigate} from "react-router-dom";
 import {useFormik} from "formik";
