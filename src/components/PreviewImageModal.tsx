@@ -1,6 +1,6 @@
 import React from 'react';
-import {useAppDispatch, useAppSelector} from "../../../store/hooks";
-import {selectPreviewImage, setPreviewImageUrl} from "../../../store/reducers/previewImageSlice";
+import {useAppDispatch, useAppSelector} from "../store/hooks";
+import {selectPreviewImage, setPreviewImageUrl} from "../store/reducers/previewImageSlice";
 import {Dialog} from "@mui/material";
 import {styled} from "@mui/material/styles";
 

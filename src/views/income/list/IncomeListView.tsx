@@ -40,7 +40,7 @@ import {
     IncomeTypeEnum, IncomeTypeMap,
     PATH_OVERHEADS_IMAGE
 } from "../../../constants";
-import PreviewImageModal from "./PreviewImageModal";
+import PreviewImageModal from "../../../components/PreviewImageModal";
 import {selectPreviewImage} from "../../../store/reducers/previewImageSlice";
 import {MdDone} from 'react-icons/md'
 import {IIncomeOption} from "../../../models/IIncome";
@@ -114,7 +114,6 @@ const IncomeListView = () => {
             const providersData = await incomeService.getOptionProviders(type) as IIncomeOption[]
 
             setProviders(providersData)
-            // formik.setFieldValue('fromWhoId', 0)
         } catch (error: any) {
             enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
         } finally {
