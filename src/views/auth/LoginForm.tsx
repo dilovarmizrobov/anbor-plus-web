@@ -47,7 +47,7 @@ const LoginForm: React.FC<{onSubmitFailure: (message: string) => void}> = ({onSu
                         error={Boolean(props.touched.login && props.errors.login)}
                         fullWidth
                         helperText={props.touched.login && props.errors.login}
-                        label="Имя Пользователя"
+                        label="Логин(Телефон)"
                         margin="normal"
                         name="login"
                         autoComplete="on"

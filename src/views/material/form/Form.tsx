@@ -253,7 +253,7 @@ const   Form: React.FC<{ material?: IMaterialResponse, categories: ICategoryOpti
                                         <TableRow hover key={mark.sku}>
                                             <TableCell>{mark.name}</TableCell>
                                             <TableCell>{mark.sku}</TableCell>
-                                            <TableCell sx={{width: 120}}>
+                                            <TableCell sx={{width: 120, justifyContent:'flex-end'}}  >
                                                 <IconButton
                                                     size="large"
                                                     onClick={() => handleEditMark(mark, index)}

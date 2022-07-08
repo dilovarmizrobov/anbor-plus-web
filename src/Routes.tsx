@@ -23,14 +23,18 @@ import EnterpriseEditView from "./views/enterprise/form/EnterpriseEditView";
 import ProviderListView from "./views/provider/list/ProviderListView";
 import ProviderCreateView from "./views/provider/form/ProviderCreateView";
 import ProviderEditView from "./views/provider/form/ProviderEditView";
-import MaterialCreateView from "./views/material/form/MaterialCreateView";
 import MaterialListView from "./views/material/list/MaterialListView";
+import MaterialCreateView from "./views/material/form/MaterialCreateView";
 import MaterialEditView from "./views/material/form/MaterialEditView";
 import IncomeCreateView from "./views/income/form/IncomeCreateView";
 import IncomeListView from "./views/income/list/IncomeListView";
 import IncomeEditView from "./views/income/form/IncomeEditView";
 import IncomeMaterialListView from "./views/income/list/material/IncomeMaterialListView";
 import WarehouseBalanceListView from "./views/warehouse-balance/WarehouseBalanceListView";
+import OutcomeCreateView from "./views/outcome/form/OutcomeCreateView";
+import OutcomeListView from "./views/outcome/list/OutcomeListView";
+import OutcomeEditView from "./views/outcome/form/OutcomeEditView";
+import DetailTableListView from "./views/outcome/list/material/DetailTableListView";
 
 interface CustomRouteObject extends RouteObject {
     perm?: UserRolesEnum[],
@@ -112,6 +116,23 @@ const routes: CustomRouteObject[] = [
                         path: '/objects/:objectId/edit',
                         element: <ObjectEditView/>,
                     },
+                    {
+                        path: '/outcomes',
+                        element: <OutcomeListView/>,
+                    },
+                    {
+                        path: '/outcomes/create',
+                        element: <OutcomeCreateView/>,
+                    },
+                    {
+                        path: '/outcomes/:outcomeId/edit',
+                        element: <OutcomeEditView/>,
+                    },
+                    {
+                        path: '/outcomes/:outcomeId/materials',
+                        element: <DetailTableListView/>,
+                    },
+
                     {
                         path: '/warehouses',
                         element: <WarehouseListView/>,

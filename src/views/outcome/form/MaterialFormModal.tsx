@@ -1,46 +1,45 @@
 import React, {useEffect, useState} from 'react';
 import {
-    IIncomeMaterial,
-    IIncomeMaterialMarkOption,
-    IIncomeMaterialOption,
-} from "../../../models/IIncome";
+    IOutcomeMaterial,
+    IOutcomeMaterialMarkOption,
+    IOutcomeMaterialOption,
+} from "../../../models/IOutcome";
+import {useSnackbar} from "notistack";
+import useDebounce from "../../../hooks/useDebounce";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {
     Autocomplete,
-    Button, CircularProgress,
-    Dialog,
-    DialogActions,
+    Button,
+    CircularProgress,
+    Dialog, DialogActions,
     DialogContent,
     DialogTitle,
-    Grid,
-    InputAdornment, MenuItem,
-    TextField, Typography
+    Grid, InputAdornment,
+    MenuItem, TextField, Typography
 } from "@mui/material";
-import errorMessageHandler from "../../../utils/errorMessageHandler";
-import {useSnackbar} from "notistack";
-import incomeService from "../../../services/IncomeService";
-import useDebounce from "../../../hooks/useDebounce";
 import {MaterialUnitMap} from "../../../constants";
+import errorMessageHandler from "../../../utils/errorMessageHandler";
+import outcomeService from "../../../services/outcomeService";
 
-interface MaterialFormModalProps {
+interface MaterialFormModalProps{
     open: boolean;
-    material?: IIncomeMaterial;
+    material?: IOutcomeMaterial;
     onClose: VoidFunction;
-    onAddAccept: (values: IIncomeMaterial) => void;
-    onEditAccept: (values: IIncomeMaterial) => void;
+    onAddAccept: (values: IOutcomeMaterial) => void;
+    onEditAccept: (values: IOutcomeMaterial) => void;
 }
 
 const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, onClose, onAddAccept, onEditAccept}) => {
     const {enqueueSnackbar} = useSnackbar()
-    const [materials, setMaterials] = useState<IIncomeMaterialOption[]>([])
+    const [materials, setMaterials] = useState<IOutcomeMaterialOption[]>([])
     const [materialLoading, setMaterialLoading] = useState(false)
-    const [marks, setMarks] = useState<IIncomeMaterialMarkOption[]>([])
+    const [marks, setMarks] = useState<IOutcomeMaterialMarkOption[]>([])
     const [markLoading, setMarkLoading] = useState(false)
     const [query, setQuery] = useState('')
     const debouncedQuery = useDebounce(query, 500)
 
-    const formik = useFormik<IIncomeMaterial>({
+    const formik = useFormik<IOutcomeMaterial>({
         initialValues: {
             qty: material?.qty || 0,
             markId: material?.markId || 0,
@@ -70,8 +69,8 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
                     setMaterialLoading(true)
                     setMarkLoading(true)
 
-                    const materialsData = await incomeService.getOptionMaterials(material.material!.name) as IIncomeMaterialOption[]
-                    const marksData = await incomeService.getOptionMarks(material.materialId!) as IIncomeMaterialMarkOption[]
+                    const materialsData = await outcomeService.getOptionMaterials(material.material!.name) as IOutcomeMaterialOption[]
+                    const marksData = await outcomeService.getOptionMarks(material.materialId!) as IOutcomeMaterialMarkOption[]
 
                     setMaterials(materialsData)
                     setMarks(marksData)
@@ -90,7 +89,7 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
             (async () => {
                 try {
                     setMaterialLoading(true)
-                    const materialsData = await incomeService.getOptionMaterials(debouncedQuery) as IIncomeMaterialOption[]
+                    const materialsData = await outcomeService.getOptionMaterials(debouncedQuery) as IOutcomeMaterialOption[]
 
                     setMaterials(materialsData)
                 } catch (error: any) {
@@ -105,7 +104,7 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
     const getOptionMarks = async (materialId: number) => {
         try {
             setMarkLoading(true)
-            const marksData = await incomeService.getOptionMarks(materialId) as IIncomeMaterialMarkOption[]
+            const marksData = await outcomeService.getOptionMarks(materialId) as IOutcomeMaterialMarkOption[]
 
             if (marksData.length === 0) enqueueSnackbar('Добавьте с начала марки', {variant: 'info'})
 

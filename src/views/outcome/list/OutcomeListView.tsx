@@ -1,49 +1,52 @@
 import React, {useEffect, useState} from 'react';
 import {styled} from "@mui/material/styles";
-import Page from "../../../components/Page";
-import Header from "./Header";
 import {
     Box,
     Card, Chip, CircularProgress,
     Container, Grid, InputAdornment, MenuItem,
-    Table, TableBody,
+    Table,
+    TableBody,
     TableCell,
     TableContainer,
-    TableHead,
-    TablePagination,
-    TableRow, TextField,
+    TableHead, TablePagination,
+    TableRow, TextField
 } from "@mui/material";
+import Page from "../../../components/Page";
+import Header from "./Header";
+import PerfectScrollbar from "react-perfect-scrollbar";
 import {useAppDispatch, useAppSelector} from "../../../store/hooks";
-import {useSnackbar} from "notistack";
-import {setPreviewImageUrl} from "../../../store/reducers/previewImageSlice";
 import {
+    getListPending,
     reset,
-    changeStartDate,
+    selectOutcomeList,
+    getListError,
+    getListSuccess,
     changeEndDate,
+    changeStartDate,
     changePage,
     changeRowsPerPage,
-    getListError,
-    getListPending,
-    getListSuccess,
-    selectIncomeList, setFilterPriceType, setFilterIncomeType, setFilterIncomeFromWho,
-} from "../../../store/reducers/incomeSlice";
+    setFilterPriceType,
+    setFilterOutcomeType,
+    setFilterOutcomeFromWho
+} from "../../../store/reducers/outcomeSlice";
+import {useSnackbar} from "notistack";
+import outcomeService from "../../../services/outcomeService";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
-import incomeService from "../../../services/IncomeService";
-import PerfectScrollbar from "react-perfect-scrollbar";
+import CustomDatePicker from "../../../components/CustomeDatePicker";
 import LoadingTableBody from "../../../components/LoadingTableBody";
-import EditButtonTable from "../../../components/EditButtonTable";
-import CustomDatePicker from "../../../components/CustomDatePicker";
-import DetailButtonTable from "../../../components/DetailButtonTable";
 import {
     FilterPriceTypeEnum,
     FilterPriceTypeMap,
-    IncomeTypeEnum, IncomeTypeMap,
+    OutcomeTypeEnum, OutcomeTypeMap,
     PATH_OVERHEADS_IMAGE
 } from "../../../constants";
+import EditButtonTable from "../../../components/EditButtonTable";
+import DetailButtonTable from "../../../components/DetailButtonTable";
+import {selectPreviewImage, setPreviewImageUrl} from "../../../store/reducers/previewImageSlice";
 import PreviewImageModal from "../../../components/PreviewImageModal";
-import {selectPreviewImage} from "../../../store/reducers/previewImageSlice";
-import {MdDone} from 'react-icons/md'
-import {IIncomeOption} from "../../../models/IIncome";
+import {MdDone} from "react-icons/md";
+import {IOutcomeOption} from "../../../models/IOutcome";
+
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -62,7 +65,7 @@ const StyledImage = styled('div')(() => ({
     cursor: 'pointer'
 }))
 
-const IncomeListView = () => {
+const OutcomeListView = () => {
     const {
         page,
         rowsPerPage,
@@ -74,14 +77,14 @@ const IncomeListView = () => {
         startDate,
         endDate,
         filterPriceType,
-        filterIncomeType,
-        filterIncomeFromWho
-    } = useAppSelector(selectIncomeList)
+        filterOutcomeFromWho,
+        filterOutcomeType
+    } = useAppSelector(selectOutcomeList)
     const {previewImageUrl} = useAppSelector(selectPreviewImage)
+    const [providers, setProviders] = useState<IOutcomeOption[]>( [])
+    const [providerLoading, setProviderLoading] = useState(false)
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
-    const [providers, setProviders] = useState<IIncomeOption[]>( [])
-    const [providerLoading, setProviderLoading] = useState(false)
 
     useEffect(() => () => {
         dispatch(reset())
@@ -93,7 +96,7 @@ const IncomeListView = () => {
         (async () => {
             try {
                 dispatch(getListPending())
-                const data: any = await incomeService.getListIncome(page + 1, rowsPerPage, startDate, endDate, filterPriceType, filterIncomeFromWho)
+                const data: any = await outcomeService.getOutcomeList(page + 1, rowsPerPage, startDate, endDate,filterPriceType, filterOutcomeFromWho)
 
                 if (!cancel) dispatch(getListSuccess({rows: data.content, rowsCount: data.totalElements}))
 
@@ -106,27 +109,27 @@ const IncomeListView = () => {
         return () => {
             cancel = true
         }
-    }, [enqueueSnackbar, dispatch, page, rowsPerPage, startDate, endDate, filterPriceType, filterIncomeFromWho])
+    }, [enqueueSnackbar, dispatch, page, rowsPerPage, startDate, endDate, filterPriceType, filterOutcomeFromWho])
 
-    const getOptionProviders = async (type: IncomeTypeEnum) => {
+    const getOptionOutcomeType = async(type: OutcomeTypeEnum) => {
         try {
             setProviderLoading(true)
-            const providersData = await incomeService.getOptionProviders(type) as IIncomeOption[]
+            const data: any = await outcomeService.getOptionOutcomeType(type) as IOutcomeOption[]
 
-            setProviders(providersData)
-        } catch (error: any) {
+            setProviders(data)
+        }catch (error : any) {
             enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
-        } finally {
+        }finally {
             setProviderLoading(false)
         }
     }
 
     return (
         <>
-            <Page title="Приходы"/>
+            <Page title="Расходы"/>
             <Root>
                 <Container maxWidth="xl">
-                    <Header/>
+                    <Header />
                     <Card sx={{mt: 3}}>
                         <PerfectScrollbar>
                             <Box minWidth={750} sx={{mb: 2}}>
@@ -174,19 +177,19 @@ const IncomeListView = () => {
                                                 fullWidth
                                                 label="Выберите тип"
                                                 size="small"
-                                                onChange={(e) => {
-                                                    let value = e.target.value === '' ? undefined : e.target.value as IncomeTypeEnum
-                                                    dispatch(setFilterIncomeType(value))
+                                                onChange={e => {
+                                                    let value = e.target.value === '' ? undefined : e.target.value as OutcomeTypeEnum
+                                                    dispatch(setFilterOutcomeType(value))
 
-                                                    if (value) getOptionProviders(value)
+                                                    if(value) getOptionOutcomeType(value)
                                                     else {
-                                                        dispatch(setFilterIncomeFromWho(undefined))
+                                                        dispatch(setFilterOutcomeFromWho(undefined))
                                                         setProviders([])
                                                     }
                                                 }}
-                                                sx={{width: 259}}
                                                 variant="outlined"
-                                                value={filterIncomeType || ''}
+                                                sx={{width: 259}}
+                                                value={filterOutcomeType || ''}
                                                 SelectProps={{
                                                     MenuProps: {
                                                         variant: "selectedMenu",
@@ -202,20 +205,22 @@ const IncomeListView = () => {
                                                 }}
                                             >
                                                 <MenuItem value="">Все</MenuItem>
-                                                {Object.keys(IncomeTypeEnum).map(item => (
-                                                    <MenuItem key={item} value={item}>
-                                                        {IncomeTypeMap.get(item as IncomeTypeEnum)}
-                                                    </MenuItem>
-                                                ))}
+                                                {
+                                                    Object.keys(OutcomeTypeEnum).map(item => (
+                                                        <MenuItem key={item} value={item}>
+                                                            {OutcomeTypeMap.get(item as OutcomeTypeEnum)}
+                                                        </MenuItem>
+                                                    ))
+                                                }
                                             </TextField>
                                         </Grid>
                                         <Grid item>
                                             <TextField
                                                 select
                                                 fullWidth
-                                                label="Выберите Снабженца/Предприятие/Объект"
-                                                onChange={(e) => dispatch(setFilterIncomeFromWho(e.target.value))}
-                                                value={filterIncomeFromWho || ''}
+                                                label="Выберите Предприятие/Объект"
+                                                onChange={(e) => dispatch(setFilterOutcomeFromWho(e.target.value))}
+                                                value={filterOutcomeFromWho || ''}
                                                 variant="outlined"
                                                 size="small"
                                                 disabled={providers.length === 0 || providerLoading}
@@ -262,10 +267,10 @@ const IncomeListView = () => {
                                                 <TableCell>№</TableCell>
                                                 <TableCell>Дата</TableCell>
                                                 <TableCell>Категория</TableCell>
-                                                <TableCell>Сумма прихода</TableCell>
+                                                <TableCell>Сумма Расхода</TableCell>
                                                 <TableCell>От кого</TableCell>
                                                 <TableCell>Комментарий</TableCell>
-                                                <TableCell/>
+                                                <TableCell />
                                                 <TableCell/>
                                             </TableRow>
                                         </TableHead>
@@ -277,7 +282,7 @@ const IncomeListView = () => {
                                                             <TableRow hover key={row.id}>
                                                                 <TableCell>{row.id}</TableCell>
                                                                 <TableCell>{row.createdDate}</TableCell>
-                                                                <TableCell>{row.categories.join(", ")}</TableCell>
+                                                                <TableCell>{row.categories.join(', ')}</TableCell>
                                                                 <TableCell>{row.total}</TableCell>
                                                                 <TableCell>{row.fromWho}</TableCell>
                                                                 <TableCell>{row.comment}</TableCell>
@@ -285,18 +290,14 @@ const IncomeListView = () => {
                                                                     <StyledImage key={url} sx={{backgroundImage: `url(${PATH_OVERHEADS_IMAGE + url})`}} onClick={() => dispatch(setPreviewImageUrl(PATH_OVERHEADS_IMAGE + url))}/>
                                                                 ))}</TableCell>
                                                                 <TableCell style={{ width: 165 }}>
-                                                                    <EditButtonTable
-                                                                        to={`/incomes/${row.id}/edit`}
-                                                                    />
-                                                                    <DetailButtonTable
-                                                                        to={`/incomes/${row.id}/materials`}
-                                                                    />
+                                                                    <EditButtonTable to={`/outcomes/${row.id}/edit`} />
+                                                                    <DetailButtonTable to={`/outcomes/${row.id}/materials`}/>
                                                                 </TableCell>
                                                             </TableRow>
                                                         ))
                                                     }
                                                 </TableBody>
-                                            ) : <LoadingTableBody loading={rowsLoading} error={rowsError} />
+                                            ) : <LoadingTableBody loading={rowsLoading} error={rowsError}/>
                                         }
                                     </Table>
                                 </TableContainer>
@@ -318,7 +319,7 @@ const IncomeListView = () => {
                 {previewImageUrl && <PreviewImageModal/>}
             </Root>
         </>
-    )
+    );
 };
 
-export default IncomeListView;
+export default OutcomeListView;

@@ -1,21 +1,22 @@
+import {IOutcomeListResponse} from "../../models/IOutcome";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "../index";
-import {IIncomeListResponse} from "../../models/IIncome";
-import {FilterPriceTypeEnum, IncomeTypeEnum} from "../../constants";
+import {FilterPriceTypeEnum, OutcomeTypeEnum} from "../../constants";
 
 interface initialStateListInterface {
     startDate?: string,
     endDate?: string,
     page: number;
     rowsPerPage: number;
+    query: string;
     rowsCount: number;
-    rows: IIncomeListResponse[];
+    rows: IOutcomeListResponse[];
     rowsLoading: boolean;
     rowsError: boolean;
     rowsPerPageOptions: number[],
     filterPriceType?: FilterPriceTypeEnum;
-    filterIncomeType?: IncomeTypeEnum;
-    filterIncomeFromWho?: string;
+    filterOutcomeType?: OutcomeTypeEnum;
+    filterOutcomeFromWho?: string;
 }
 
 const initialStateList: initialStateListInterface = {
@@ -23,18 +24,19 @@ const initialStateList: initialStateListInterface = {
     endDate: undefined,
     page: 0,
     rowsPerPage: 20,
+    query: '',
     rowsCount: 0,
     rows: [],
     rowsLoading: false,
     rowsError: false,
     rowsPerPageOptions: [20, 30, 50],
     filterPriceType: undefined,
-    filterIncomeType: undefined,
-    filterIncomeFromWho: undefined,
+    filterOutcomeType: undefined,
+    filterOutcomeFromWho: undefined,
 }
 
-export const incomeListSlice = createSlice({
-    name: 'incomeList',
+export const outcomeListSlice = createSlice({
+    name: 'outcomeList',
     initialState: initialStateList,
     reducers: {
         reset: (state) => {
@@ -62,18 +64,18 @@ export const incomeListSlice = createSlice({
             state.filterPriceType = state.filterPriceType === action.payload ? undefined : action.payload
             state.page = 0;
         },
-        setFilterIncomeType: (state, action: PayloadAction<IncomeTypeEnum | undefined>) => {
-            state.filterIncomeType = action.payload
+        setFilterOutcomeType: (state, action: PayloadAction<OutcomeTypeEnum | undefined>) => {
+            state.filterOutcomeType = action.payload
         },
-        setFilterIncomeFromWho: (state, action: PayloadAction<string | undefined>) => {
-            state.filterIncomeFromWho = action.payload
+        setFilterOutcomeFromWho: (state, action: PayloadAction<string | undefined>) => {
+            state.filterOutcomeFromWho = action.payload
         },
         getListPending: (state) => {
             state.rows = [];
             state.rowsLoading = true;
             state.rowsError = false;
         },
-        getListSuccess: (state, action: PayloadAction<{ rows: IIncomeListResponse[], rowsCount: number }>) => {
+        getListSuccess: (state, action: PayloadAction<{ rows: IOutcomeListResponse[], rowsCount: number }>) => {
             state.rows = action.payload.rows;
             state.rowsCount = action.payload.rowsCount;
             state.rowsLoading = false;
@@ -95,13 +97,13 @@ export const {
     changeEndDate,
     changePage,
     changeRowsPerPage,
+    setFilterPriceType,
+    setFilterOutcomeFromWho,
+    setFilterOutcomeType,
     getListPending,
     getListSuccess,
     getListError,
-    deleteRow,
-    setFilterPriceType,
-    setFilterIncomeType,
-    setFilterIncomeFromWho
-} = incomeListSlice.actions
+    deleteRow
+} = outcomeListSlice.actions
 
-export const selectIncomeList = (state: RootState) => state.incomeList
+export const selectOutcomeList = (state: RootState) => state.outcomeList
