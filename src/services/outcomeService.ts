@@ -1,4 +1,4 @@
-import {OverheadTypeEnum, OutcomeUnitEnum, OutcomeFilterPriceTypeEnum} from "../constants";
+import {OverheadTypeEnum, OutcomeTypeEnum, FilterPriceTypeEnum} from "../constants";
 import apiHelper from "./ApiHelper";
 import {IOutcomeRequest, PriceEditRequest} from "../models/IOutcome";
 import api from "../utils/api";
@@ -6,7 +6,7 @@ import api from "../utils/api";
 class OutcomeService {
     getOutcome = (outcomeId: string) => apiHelper.get(`/overheads/${outcomeId}`)
 
-    getOutcomeList = ( page: number, size: number, startDate?: string, endDate?: string, filterPriceType?: OutcomeFilterPriceTypeEnum, filterOutcomeFromWho?: string) =>{
+    getOutcomeList = ( page: number, size: number, startDate?: string, endDate?: string, filterPriceType?: FilterPriceTypeEnum, filterOutcomeFromWho?: string) =>{
         let extraParams: any = {}
 
         filterPriceType && (extraParams.priceType = filterPriceType)
@@ -26,7 +26,7 @@ class OutcomeService {
 
     getOptionMarks = (materialId: number) => apiHelper.get(`/materials/marks/${materialId}`)
 
-    getOptionOutcomeType = (type: OutcomeUnitEnum) => apiHelper.get(`/overheads/${type}/option`)
+    getOptionOutcomeType = (type: OutcomeTypeEnum) => apiHelper.get(`/overheads/${type}/option`)
 
     postNewOutcome = (outcome: IOutcomeRequest, images: File[]) => new Promise((resolve,reject) => {
         let formData = new FormData()

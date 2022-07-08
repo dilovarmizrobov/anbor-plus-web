@@ -1,4 +1,4 @@
-import {MaterialUnitEnum, OutcomeUnitEnum} from "../constants";
+import {MaterialUnitEnum, OutcomeTypeEnum} from "../constants";
 
 export interface IOutcomeOption {
     id: number;
@@ -18,7 +18,7 @@ export interface IOutcomeRequest {
     id?: number;
     autoDetail: string;
     throwWhom: string;
-    typeFrom: OutcomeUnitEnum;
+    typeFrom: OutcomeTypeEnum;
     fromWhoId: number;
     comment: string;
     images: File[];
@@ -30,7 +30,7 @@ export interface IOutcomeResponse {
     id: number;
     autoDetail: string;
     throwWhom: string;
-    typeFrom: OutcomeUnitEnum;
+    typeFrom: OutcomeTypeEnum;
     fromWhoId: number;
     comment: string;
     images: string[];
@@ -42,6 +42,7 @@ export interface IOutcomeMaterialMarkOption {
     id: number;
     name: string;
     sku: string;
+    balance: number;
 }
 
 export interface IOutcomeMaterialOption {
@@ -70,7 +71,7 @@ export interface IOutcomeMaterialListResponse {
     unit: MaterialUnitEnum;
     price?: number;
     total?: number;
-    priceHistory?: PriceHistory[];
+    priceHistory: PriceHistory[];
 }
 
 export interface PriceHistory {

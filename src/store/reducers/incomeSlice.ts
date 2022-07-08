@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "../index";
 import {IIncomeListResponse} from "../../models/IIncome";
-import {IncomeFilterPriceTypeEnum, IncomeTypeEnum} from "../../constants";
+import {FilterPriceTypeEnum, IncomeTypeEnum} from "../../constants";
 
 interface initialStateListInterface {
     startDate?: string,
@@ -13,12 +13,14 @@ interface initialStateListInterface {
     rowsLoading: boolean;
     rowsError: boolean;
     rowsPerPageOptions: number[],
-    filterPriceType?: IncomeFilterPriceTypeEnum;
+    filterPriceType?: FilterPriceTypeEnum;
     filterIncomeType?: IncomeTypeEnum;
     filterIncomeFromWho?: string;
 }
 
 const initialStateList: initialStateListInterface = {
+    startDate: undefined,
+    endDate: undefined,
     page: 0,
     rowsPerPage: 20,
     rowsCount: 0,
@@ -26,6 +28,9 @@ const initialStateList: initialStateListInterface = {
     rowsLoading: false,
     rowsError: false,
     rowsPerPageOptions: [20, 30, 50],
+    filterPriceType: undefined,
+    filterIncomeType: undefined,
+    filterIncomeFromWho: undefined,
 }
 
 export const incomeListSlice = createSlice({
@@ -53,7 +58,7 @@ export const incomeListSlice = createSlice({
             state.rowsPerPage = action.payload;
             state.page = 0;
         },
-        setFilterPriceType: (state, action: PayloadAction<IncomeFilterPriceTypeEnum>) => {
+        setFilterPriceType: (state, action: PayloadAction<FilterPriceTypeEnum>) => {
             state.filterPriceType = state.filterPriceType === action.payload ? undefined : action.payload
             state.page = 0;
         },

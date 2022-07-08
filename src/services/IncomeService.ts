@@ -1,12 +1,12 @@
 import apiHelper from "./ApiHelper";
-import {IncomeFilterPriceTypeEnum, IncomeTypeEnum, OverheadTypeEnum} from "../constants";
+import {FilterPriceTypeEnum, IncomeTypeEnum, OverheadTypeEnum} from "../constants";
 import {IIncomeRequest, PriceEditRequest} from "../models/IIncome";
 import api from "../utils/api";
 
 class IncomeService {
     getIncome = (incomeId: string) => apiHelper.get(`/overheads/${incomeId}`)
 
-    getListIncome = (page: number, size: number, startDate?: string, endDate?: string, filterPriceType?: IncomeFilterPriceTypeEnum, filterIncomeFromWho?: string) => {
+    getListIncome = (page: number, size: number, startDate?: string, endDate?: string, filterPriceType?: FilterPriceTypeEnum, filterIncomeFromWho?: string) => {
         let extraParams: any = {};
 
         filterPriceType && (extraParams.priceType = filterPriceType)

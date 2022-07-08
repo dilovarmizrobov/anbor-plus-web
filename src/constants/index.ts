@@ -43,15 +43,15 @@ export const IncomeTypeMap = new Map(
     ]
 )
 
-export enum IncomeFilterPriceTypeEnum {
+export enum FilterPriceTypeEnum {
     CHANGED_PRICE = 'CHANGED_PRICE',
     WITHOUT_PRICE = 'WITHOUT_PRICE'
 }
 
-export const IncomeFilterPriceTypeMap = new Map(
+export const FilterPriceTypeMap = new Map(
     [
-        [IncomeFilterPriceTypeEnum.WITHOUT_PRICE, 'Без цены'],
-        [IncomeFilterPriceTypeEnum.CHANGED_PRICE, 'Измененная цена'],
+        [FilterPriceTypeEnum.WITHOUT_PRICE, 'Без цены'],
+        [FilterPriceTypeEnum.CHANGED_PRICE, 'Измененная цена'],
     ]
 )
 
@@ -60,26 +60,14 @@ export enum OverheadTypeEnum {
     INCOME = "INCOME"
 }
 
-export enum OutcomeUnitEnum {
+export enum OutcomeTypeEnum {
     FACILITY = "FACILITY",
     ENTERPRISE = "ENTERPRISE"
 }
 
-export const OutcomeUnitMap = new Map(
+export const OutcomeTypeMap = new Map(
     [
-        [OutcomeUnitEnum.FACILITY, 'Обьект'],
-        [OutcomeUnitEnum.ENTERPRISE, 'Предприятия']
-    ]
-)
-
-export enum OutcomeFilterPriceTypeEnum {
-    CHANGED_PRICE = 'CHANGED_PRICE',
-    WITHOUT_PRICE = 'WITHOUT_PRICE'
-}
-
-export const OutcomeFilterPriceTypeMap = new Map(
-    [
-        [OutcomeFilterPriceTypeEnum.WITHOUT_PRICE, 'Без цены'],
-        [OutcomeFilterPriceTypeEnum.CHANGED_PRICE, 'Измененная цена'],
+        [OutcomeTypeEnum.FACILITY, 'Объект'],
+        [OutcomeTypeEnum.ENTERPRISE, 'Предприятия']
     ]
 )

@@ -35,9 +35,9 @@ import errorMessageHandler from "../../../utils/errorMessageHandler";
 import CustomDatePicker from "../../../components/CustomeDatePicker";
 import LoadingTableBody from "../../../components/LoadingTableBody";
 import {
-    OutcomeFilterPriceTypeEnum,
-    OutcomeFilterPriceTypeMap,
-    OutcomeUnitEnum, OutcomeUnitMap,
+    FilterPriceTypeEnum,
+    FilterPriceTypeMap,
+    OutcomeTypeEnum, OutcomeTypeMap,
     PATH_OVERHEADS_IMAGE
 } from "../../../constants";
 import EditButtonTable from "../../../components/EditButtonTable";
@@ -111,14 +111,12 @@ const OutcomeListView = () => {
         }
     }, [enqueueSnackbar, dispatch, page, rowsPerPage, startDate, endDate, filterPriceType, filterOutcomeFromWho])
 
-    const getOptionOutcomeType = async(type: OutcomeUnitEnum) => {
+    const getOptionOutcomeType = async(type: OutcomeTypeEnum) => {
         try {
             setProviderLoading(true)
             const data: any = await outcomeService.getOptionOutcomeType(type) as IOutcomeOption[]
 
             setProviders(data)
-            //formik.setFieldValue('fromWhoId', 0)
-            //console.log(data)
         }catch (error : any) {
             enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
         }finally {
@@ -149,22 +147,22 @@ const OutcomeListView = () => {
                                         </Grid>
                                         <Grid item>
                                             <Grid container spacing={2}>
-                                                {Object.keys(OutcomeFilterPriceTypeEnum).map(priceType => (
+                                                {Object.keys(FilterPriceTypeEnum).map(priceType => (
                                                     <Grid item key={priceType}>
                                                         {filterPriceType === priceType ? (
                                                             <Chip
-                                                                label={OutcomeFilterPriceTypeMap.get(priceType as OutcomeFilterPriceTypeEnum)}
+                                                                label={FilterPriceTypeMap.get(priceType as FilterPriceTypeEnum)}
                                                                 clickable
                                                                 color="primary"
-                                                                onClick={() => dispatch(setFilterPriceType(priceType as OutcomeFilterPriceTypeEnum))}
-                                                                onDelete={() => dispatch(setFilterPriceType(priceType as OutcomeFilterPriceTypeEnum))}
+                                                                onClick={() => dispatch(setFilterPriceType(priceType as FilterPriceTypeEnum))}
+                                                                onDelete={() => dispatch(setFilterPriceType(priceType as FilterPriceTypeEnum))}
                                                                 deleteIcon={<MdDone />}
                                                             />
                                                         ) : (
                                                             <Chip
-                                                                label={OutcomeFilterPriceTypeMap.get(priceType as OutcomeFilterPriceTypeEnum)}
+                                                                label={FilterPriceTypeMap.get(priceType as FilterPriceTypeEnum)}
                                                                 clickable
-                                                                onClick={() => dispatch(setFilterPriceType(priceType as OutcomeFilterPriceTypeEnum))}
+                                                                onClick={() => dispatch(setFilterPriceType(priceType as FilterPriceTypeEnum))}
                                                             />
                                                         )}
                                                     </Grid>
@@ -180,7 +178,7 @@ const OutcomeListView = () => {
                                                 label="Выберите тип"
                                                 size="small"
                                                 onChange={e => {
-                                                    let value = e.target.value === '' ? undefined : e.target.value as OutcomeUnitEnum
+                                                    let value = e.target.value === '' ? undefined : e.target.value as OutcomeTypeEnum
                                                     dispatch(setFilterOutcomeType(value))
 
                                                     if(value) getOptionOutcomeType(value)
@@ -208,9 +206,9 @@ const OutcomeListView = () => {
                                             >
                                                 <MenuItem value="">Все</MenuItem>
                                                 {
-                                                    Object.keys(OutcomeUnitEnum).map(item => (
+                                                    Object.keys(OutcomeTypeEnum).map(item => (
                                                         <MenuItem key={item} value={item}>
-                                                            {OutcomeUnitMap.get(item as OutcomeUnitEnum)}
+                                                            {OutcomeTypeMap.get(item as OutcomeTypeEnum)}
                                                         </MenuItem>
                                                     ))
                                                 }
@@ -220,12 +218,11 @@ const OutcomeListView = () => {
                                             <TextField
                                                 select
                                                 fullWidth
-                                                label="Выберите Предприятие/Обьект"
-                                                size="small"
+                                                label="Выберите Предприятие/Объект"
                                                 onChange={(e) => dispatch(setFilterOutcomeFromWho(e.target.value))}
-                                                required
-                                                value={filterOutcomeType || ''}
+                                                value={filterOutcomeFromWho || ''}
                                                 variant="outlined"
+                                                size="small"
                                                 disabled={providers.length === 0 || providerLoading}
                                                 InputProps={providerLoading ? {
                                                     endAdornment: (
@@ -259,7 +256,6 @@ const OutcomeListView = () => {
                                                         {item.name}
                                                     </MenuItem>
                                                 ))}
-
                                             </TextField>
                                         </Grid>
                                     </Grid>

@@ -261,7 +261,7 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
                             {formik.values.mark && (
                                 <Grid item>
                                     <Typography>
-                                        ост. {Number(formik.values.mark.balance) + Number(formik.values.qty)}
+                                        ост. {marks.find(m => m.id === formik.values.mark?.id)?.balance}
                                     </Typography>
                                 </Grid>
                             )}

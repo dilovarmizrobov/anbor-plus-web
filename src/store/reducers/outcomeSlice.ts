@@ -1,8 +1,7 @@
 import {IOutcomeListResponse} from "../../models/IOutcome";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "../index";
-import {OutcomeFilterPriceTypeEnum, OutcomeUnitEnum} from "../../constants";
-
+import {FilterPriceTypeEnum, OutcomeTypeEnum} from "../../constants";
 
 interface initialStateListInterface {
     startDate?: string,
@@ -15,12 +14,14 @@ interface initialStateListInterface {
     rowsLoading: boolean;
     rowsError: boolean;
     rowsPerPageOptions: number[],
-    filterPriceType?: OutcomeFilterPriceTypeEnum;
-    filterOutcomeType?: OutcomeUnitEnum;
+    filterPriceType?: FilterPriceTypeEnum;
+    filterOutcomeType?: OutcomeTypeEnum;
     filterOutcomeFromWho?: string;
 }
 
 const initialStateList: initialStateListInterface = {
+    startDate: undefined,
+    endDate: undefined,
     page: 0,
     rowsPerPage: 20,
     query: '',
@@ -29,6 +30,9 @@ const initialStateList: initialStateListInterface = {
     rowsLoading: false,
     rowsError: false,
     rowsPerPageOptions: [20, 30, 50],
+    filterPriceType: undefined,
+    filterOutcomeType: undefined,
+    filterOutcomeFromWho: undefined,
 }
 
 export const outcomeListSlice = createSlice({
@@ -56,11 +60,11 @@ export const outcomeListSlice = createSlice({
             state.rowsPerPage = action.payload;
             state.page = 0;
         },
-        setFilterPriceType: (state, action: PayloadAction<OutcomeFilterPriceTypeEnum>) => {
+        setFilterPriceType: (state, action: PayloadAction<FilterPriceTypeEnum>) => {
             state.filterPriceType = state.filterPriceType === action.payload ? undefined : action.payload
             state.page = 0;
         },
-        setFilterOutcomeType: (state, action: PayloadAction<OutcomeUnitEnum | undefined>) => {
+        setFilterOutcomeType: (state, action: PayloadAction<OutcomeTypeEnum | undefined>) => {
             state.filterOutcomeType = action.payload
         },
         setFilterOutcomeFromWho: (state, action: PayloadAction<string | undefined>) => {

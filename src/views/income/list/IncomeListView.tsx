@@ -35,8 +35,8 @@ import EditButtonTable from "../../../components/EditButtonTable";
 import CustomDatePicker from "../../../components/CustomDatePicker";
 import DetailButtonTable from "../../../components/DetailButtonTable";
 import {
-    IncomeFilterPriceTypeEnum,
-    IncomeFilterPriceTypeMap,
+    FilterPriceTypeEnum,
+    FilterPriceTypeMap,
     IncomeTypeEnum, IncomeTypeMap,
     PATH_OVERHEADS_IMAGE
 } from "../../../constants";
@@ -144,22 +144,22 @@ const IncomeListView = () => {
                                         </Grid>
                                         <Grid item>
                                             <Grid container spacing={2}>
-                                                {Object.keys(IncomeFilterPriceTypeEnum).map(priceType => (
+                                                {Object.keys(FilterPriceTypeEnum).map(priceType => (
                                                     <Grid item key={priceType}>
                                                         {filterPriceType === priceType ? (
                                                             <Chip
-                                                                label={IncomeFilterPriceTypeMap.get(priceType as IncomeFilterPriceTypeEnum)}
+                                                                label={FilterPriceTypeMap.get(priceType as FilterPriceTypeEnum)}
                                                                 clickable
                                                                 color="primary"
-                                                                onClick={() => dispatch(setFilterPriceType(priceType as IncomeFilterPriceTypeEnum))}
-                                                                onDelete={() => dispatch(setFilterPriceType(priceType as IncomeFilterPriceTypeEnum))}
+                                                                onClick={() => dispatch(setFilterPriceType(priceType as FilterPriceTypeEnum))}
+                                                                onDelete={() => dispatch(setFilterPriceType(priceType as FilterPriceTypeEnum))}
                                                                 deleteIcon={<MdDone />}
                                                             />
                                                         ) : (
                                                             <Chip
-                                                                label={IncomeFilterPriceTypeMap.get(priceType as IncomeFilterPriceTypeEnum)}
+                                                                label={FilterPriceTypeMap.get(priceType as FilterPriceTypeEnum)}
                                                                 clickable
-                                                                onClick={() => dispatch(setFilterPriceType(priceType as IncomeFilterPriceTypeEnum))}
+                                                                onClick={() => dispatch(setFilterPriceType(priceType as FilterPriceTypeEnum))}
                                                             />
                                                         )}
                                                     </Grid>
@@ -247,7 +247,7 @@ const IncomeListView = () => {
                                                 }}
                                             >
                                                 {providers.map(item => (
-                                                    <MenuItem key={item.id} value={item.name}>
+                                                    <MenuItem key={item.id} value={item.id}>
                                                         {item.name}
                                                     </MenuItem>
                                                 ))}

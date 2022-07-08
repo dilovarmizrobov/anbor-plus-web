@@ -16,7 +16,7 @@ import {
     DialogContent,
     DialogTitle,
     Grid, InputAdornment,
-    MenuItem, TextField
+    MenuItem, TextField, Typography
 } from "@mui/material";
 import {MaterialUnitMap} from "../../../constants";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
@@ -30,7 +30,7 @@ interface MaterialFormModalProps{
     onEditAccept: (values: IOutcomeMaterial) => void;
 }
 
-const MaterialFormModal:React.FC<MaterialFormModalProps> = ({open,material,onClose,onAddAccept,onEditAccept}) => {
+const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, onClose, onAddAccept, onEditAccept}) => {
     const {enqueueSnackbar} = useSnackbar()
     const [materials, setMaterials] = useState<IOutcomeMaterialOption[]>([])
     const [materialLoading, setMaterialLoading] = useState(false)
@@ -53,7 +53,11 @@ const MaterialFormModal:React.FC<MaterialFormModalProps> = ({open,material,onClo
             markId: Yup.number().not([0], 'Выберите значение').required(),
         }),
         onSubmit: (values) => {
-            material ? onEditAccept(values) : onAddAccept(values)
+            if (material) {
+                values.id = material.id
+                onEditAccept(values)
+            } else onAddAccept(values)
+
             onClose()
         }
     })
@@ -78,7 +82,7 @@ const MaterialFormModal:React.FC<MaterialFormModalProps> = ({open,material,onClo
                 }
             })()
         }
-    }, [enqueueSnackbar, material])
+    }, [])
 
     useEffect(() => {
         if (query !== formik.values.material?.name) {
@@ -140,7 +144,7 @@ const MaterialFormModal:React.FC<MaterialFormModalProps> = ({open,material,onClo
                                 formik.setFieldValue('mark', undefined)
                             }}
                             fullWidth
-                            isOptionEqualToValue={(option, value) => option.name === value.name}
+                            isOptionEqualToValue={(option, value) => option.id === value.id}
                             getOptionLabel={(option) => option.name}
                             options={materials}
                             loading={materialLoading}
@@ -233,23 +237,34 @@ const MaterialFormModal:React.FC<MaterialFormModalProps> = ({open,material,onClo
                         />
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <TextField
-                            error={formik.touched.qty && Boolean(formik.errors.qty)}
-                            fullWidth
-                            helperText={formik.touched.qty && formik.errors.qty}
-                            label="Количество"
-                            placeholder="Введите количество"
-                            name="qty"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            required
-                            value={formik.values.qty || ''}
-                            variant="outlined"
-                            InputLabelProps={{shrink: true}}
-                            InputProps={{
-                                endAdornment: <InputAdornment position="end">{formik.values.material && MaterialUnitMap.get(formik.values.material.unit)}</InputAdornment>
-                            }}
-                        />
+                        <Grid container spacing={2} alignItems='center'>
+                            <Grid item xs>
+                                <TextField
+                                    error={formik.touched.qty && Boolean(formik.errors.qty)}
+                                    fullWidth
+                                    helperText={formik.touched.qty && formik.errors.qty}
+                                    label="Количество"
+                                    placeholder="Введите количество"
+                                    name="qty"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    required
+                                    value={formik.values.qty || ''}
+                                    variant="outlined"
+                                    InputLabelProps={{shrink: true}}
+                                    InputProps={{
+                                        endAdornment: <InputAdornment position="end">{formik.values.material && MaterialUnitMap.get(formik.values.material.unit)}</InputAdornment>
+                                    }}
+                                />
+                            </Grid>
+                            {formik.values.mark && (
+                                <Grid item>
+                                    <Typography>
+                                        ост. {marks.find(m => m.id === formik.values.mark?.id)?.balance}
+                                    </Typography>
+                                </Grid>
+                            )}
+                        </Grid>
                     </Grid>
                 </Grid>
             </DialogContent>

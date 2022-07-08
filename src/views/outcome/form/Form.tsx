@@ -17,8 +17,8 @@ import {
 import {styled} from "@mui/material/styles";
 import {
     MaterialUnitMap,
-    OutcomeUnitEnum,
-    OutcomeUnitMap,
+    OutcomeTypeEnum,
+    OutcomeTypeMap,
     PATH_OVERHEADS_IMAGE
 } from "../../../constants";
 import {FiEdit, FiPlusCircle, FiTrash} from "react-icons/fi";
@@ -89,7 +89,7 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IOutcomeOption
             throwWhom: outcome?.throwWhom || '',
             fromWhoId: outcome?.fromWhoId || 0,
             comment: outcome?.comment || '',
-            typeFrom: outcome?.typeFrom || '' as OutcomeUnitEnum,
+            typeFrom: outcome?.typeFrom || '' as OutcomeTypeEnum,
             images: [],
             overheadItems: [],
         },
@@ -97,7 +97,7 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IOutcomeOption
             autoDetail: Yup.string().max(255).required(),
             throwWhom: Yup.string().max(255).required(),
             fromWhoId: Yup.number().not([0], 'Выберите значение').required(),
-            typeFrom: Yup.mixed<OutcomeUnitEnum>().oneOf(Object.values(OutcomeUnitEnum)).required('Выберите значение'),
+            typeFrom: Yup.mixed<OutcomeTypeEnum>().oneOf(Object.values(OutcomeTypeEnum)).required('Выберите значение'),
         }),
 
         onSubmit: async (values, {setSubmitting, setStatus}) => {
@@ -126,7 +126,7 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IOutcomeOption
         }
     })
 
-    const getOptionOutcomeType = async(type: OutcomeUnitEnum) => {
+    const getOptionOutcomeType = async(type: OutcomeTypeEnum) => {
         try {
             setProviderLoading(true)
             const data: any = await outcomeService.getOptionOutcomeType(type) as IOutcomeOption[]
@@ -257,7 +257,7 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IOutcomeOption
                                     onBlur={formik.handleBlur}
                                     onChange={e => {
                                     formik.handleChange(e)
-                                        getOptionOutcomeType(e.target.value as OutcomeUnitEnum)
+                                        getOptionOutcomeType(e.target.value as OutcomeTypeEnum)
                                     }}
                                     required
                                     variant="outlined"
@@ -278,9 +278,9 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IOutcomeOption
                                     }}
                                 >
                                     {
-                                        Object.keys(OutcomeUnitEnum).map(item => (
+                                        Object.keys(OutcomeTypeEnum).map(item => (
                                             <MenuItem key={item} value={item}>
-                                                {OutcomeUnitMap.get(item as OutcomeUnitEnum)}
+                                                {OutcomeTypeMap.get(item as OutcomeTypeEnum)}
                                             </MenuItem>
                                         ))
                                     }
@@ -367,6 +367,7 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IOutcomeOption
                                                 <TableCell>{outcomematerial.mark!.name}</TableCell>
                                                 <TableCell>{outcomematerial.mark!.sku}</TableCell>
                                                 <TableCell>{outcomematerial.qty} {MaterialUnitMap.get(outcomematerial.material!.unit)}</TableCell>
+                                                <TableCell/>
                                                 <TableCell sx={{width: 120}}>
                                                     <IconButton
                                                         size="large"
@@ -381,7 +382,6 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IOutcomeOption
                                                         <FiTrash size={20} />
                                                     </IconButton>
                                                 </TableCell>
-                                                <TableCell/>
                                             </TableRow>
                                         ))
                                     }
@@ -400,7 +400,7 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IOutcomeOption
                                     fullWidth
                                     multiline
                                     name="comment"
-                                    rows={4}
+                                    rows={2}
                                     placeholder="Комментарий"
                                     value={formik.values.comment}
                                     onChange={formik.handleChange}
