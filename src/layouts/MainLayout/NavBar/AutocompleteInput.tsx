@@ -6,7 +6,7 @@ import errorMessageHandler from "../../../utils/errorMessageHandler";
 import {useSnackbar} from "notistack";
 import {useNavigate} from "react-router-dom";
 import {IWarehouseOption} from "../../../models/IWarehouse";
-import warehouseService from "../../../services/WarehouseService";
+import appService from "../../../services/AppService";
 
 const AutocompleteInput: React.FC = () => {
     const navigate = useNavigate()
@@ -27,7 +27,7 @@ const AutocompleteInput: React.FC = () => {
 
         (async () => {
             try {
-                let data: any = await warehouseService.getOptionWarehouses()
+                let data: any = await appService.getOptionWarehouses()
 
                 if (active) {
                     if (data.length === 0) {

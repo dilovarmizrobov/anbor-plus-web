@@ -11,7 +11,7 @@ import userService from "../../../services/userService";
 import LoadingLayout from "../../../components/LoadingLayout";
 import Form from "./Form";
 import {IWarehouseOption} from "../../../models/IWarehouse";
-import warehouseService from "../../../services/WarehouseService";
+import appService from "../../../services/AppService";
 
 const Root = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.default,
@@ -36,7 +36,7 @@ const UserEditView = () => {
                 setLoading(true)
 
                 const data: any = await userService.getUser(userId || '')
-                const dataWarehouses: any = await warehouseService.getOptionWarehouses()
+                const dataWarehouses: any = await appService.getOptionWarehouses()
 
                 if (!cancel) {
                     setUser(data)

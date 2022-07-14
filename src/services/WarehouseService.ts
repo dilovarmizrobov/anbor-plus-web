@@ -6,8 +6,6 @@ class WarehouseService {
 
     getListWarehouse = () => apiHelper.get(`/warehouses`)
 
-    getOptionWarehouses = () => apiHelper.get(`/warehouses/option`)
-
     postNewWarehouse = (warehouse: IWarehouseRequest) => apiHelper.post<IWarehouseRequest>(`/warehouses`, warehouse)
 
     putUpdateWarehouse = (warehouse: IWarehouseRequest) => apiHelper.put<IWarehouseRequest>(`/warehouses/${warehouse.id!}`, warehouse)

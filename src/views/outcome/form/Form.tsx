@@ -53,7 +53,6 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IDataOption[] 
             fromWhoId: Yup.number().not([0], 'Выберите значение').required(),
             typeFrom: Yup.mixed<OutcomeTypeEnum>().oneOf(Object.values(OutcomeTypeEnum)).required('Выберите значение'),
         }),
-
         onSubmit: async (values, {setSubmitting, setStatus}) => {
             values.overheadItems = materials;
 

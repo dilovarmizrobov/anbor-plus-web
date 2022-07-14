@@ -6,9 +6,9 @@ import Header from "./Header";
 import Form from "./Form";
 import {IWarehouseOption} from "../../../models/IWarehouse";
 import {useSnackbar} from "notistack";
-import warehouseService from "../../../services/WarehouseService";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
 import LoadingLayout from "../../../components/LoadingLayout";
+import appService from "../../../services/AppService";
 
 const Root = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.default,
@@ -30,7 +30,7 @@ const UserCreateView = () => {
             try {
                 setLoading(true)
 
-                const dataWarehouses: any = await warehouseService.getOptionWarehouses()
+                const dataWarehouses: any = await appService.getOptionWarehouses()
 
                 if (!cancel) {
                     setWarehouses(dataWarehouses)
