@@ -1,6 +1,8 @@
 import apiHelper from "./ApiHelper";
 
 class AppService {
+    getOptionWarehouses = () => apiHelper.get(`/warehouses/option`)
+
     getOptionCategories = () => apiHelper.get(`/categories/option`)
 
     getListWarehouseBalance = (page: number, size: number, search: string, categoryId?: number) =>

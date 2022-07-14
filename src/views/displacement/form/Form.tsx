@@ -1,75 +1,69 @@
 import React, {useEffect, useState} from 'react';
+import {IReqDisplacement, IResDisplacement} from "../../../models/Displacement";
+import {IWarehouseOption} from "../../../models/IWarehouse";
+import {useAppDispatch, useAppSelector} from "../../../store/hooks";
+import {reset, selectOverheadMaterial} from "../../../store/reducers/overheadMaterialSlice";
 import {useSnackbar} from "notistack";
 import {useNavigate} from "react-router-dom";
+import OverheadImage, {IOverheadImage, mapToImages} from "../../../components/OverheadImage";
 import {useFormik} from "formik";
-import {IIncomeRequest, IIncomeResponse} from "../../../models/IIncome";
 import * as Yup from "yup";
-import {IncomeTypeEnum, IncomeTypeMap} from "../../../constants";
+import errorMessageHandler from "../../../utils/errorMessageHandler";
+import displacementService from "../../../services/DisplacementService";
 import {
     Box,
     Button,
     Card,
-    CardContent, CircularProgress,
+    CardContent,
     Divider,
     Grid,
-    InputAdornment,
     MenuItem,
     TextField
 } from "@mui/material";
-import incomeService from "../../../services/IncomeService";
-import errorMessageHandler from "../../../utils/errorMessageHandler";
-import {useAppDispatch, useAppSelector} from "../../../store/hooks";
-import {reset, selectOverheadMaterial} from "../../../store/reducers/overheadMaterialSlice";
 import OverheadMaterialList from "../../../components/overhead-material/form";
-import {IDataOption} from "../../../models";
-import OverheadImage, {IOverheadImage, mapToImages} from "../../../components/OverheadImage";
 
-const Form: React.FC<{ income?: IIncomeResponse, prevProviders?: IDataOption[] }> = ({income, prevProviders}) => {
+const Form: React.FC<{displacement?: IResDisplacement, warehouses: IWarehouseOption[]}> = ({displacement, warehouses}) => {
     const {materials} = useAppSelector(selectOverheadMaterial)
     const {enqueueSnackbar} = useSnackbar();
     const dispatch = useAppDispatch()
     const navigate = useNavigate();
-    const [images, setImages] = useState<IOverheadImage[]>(income ? mapToImages(income.imageNames) : [])
+    const [images, setImages] = useState<IOverheadImage[]>(displacement ? mapToImages(displacement.imageNames) : [])
     const [imageFiles, setImageFiles] = useState<File[]>([])
-    const [providers, setProviders] = useState<IDataOption[]>(prevProviders || [])
-    const [providerLoading, setProviderLoading] = useState(false)
 
     useEffect(() => () => {dispatch(reset())}, [])
 
-    const formik = useFormik<IIncomeRequest>({
+    const formik = useFormik<IReqDisplacement>({
         initialValues: {
-            autoDetail: income?.autoDetail || '',
-            throwWhom: income?.throwWhom || '',
-            typeFrom: income?.typeFrom || '' as IncomeTypeEnum,
-            fromWhoId: income?.fromWhoId || 0,
-            comment: income?.comment || '',
+            autoDetail: displacement?.autoDetail || '',
+            throwWhom: displacement?.throwWhom || '',
+            warehouseDestinationId: displacement?.warehouseDestinationId || 0,
+            comment: displacement?.comment || '',
             images: [],
             overheadItems: []
         },
         validationSchema: Yup.object({
             autoDetail: Yup.string().max(255).required('Введите значение'),
             throwWhom: Yup.string().max(255).required('Введите значение'),
-            typeFrom: Yup.mixed<IncomeTypeEnum>().oneOf(Object.values(IncomeTypeEnum)).required('Выберите значение'),
-            fromWhoId: Yup.number().not([0], 'Выберите значение').required(),
+            warehouseDestinationId: Yup.number().not([0], 'Выберите значение').required(),
         }),
         onSubmit: async (values, {setSubmitting, setStatus}) => {
             values.overheadItems = materials
 
             try {
-                if (income) {
-                    values.id = income.id
+                if (displacement) {
+                    values.id = displacement.id
                     let imageNames = images.filter(item => item.name).map(item => item.name!)
 
-                    await incomeService.putUpdateIncome(values, imageFiles, imageNames)
+                    await displacementService.putUpdateDisplacement(values, imageFiles, imageNames)
 
                     enqueueSnackbar('Успешно обновлен', {variant: 'success'});
-                    navigate(-1)
                 } else {
-                    await incomeService.postNewIncome(values, imageFiles)
+                    await displacementService.postNewDisplacement(values, imageFiles)
 
                     enqueueSnackbar('Успешно создан', {variant: 'success'});
-                    navigate(-1)
                 }
+
+                navigate(-1)
             } catch (error: any) {
                 setStatus({success: false});
                 setSubmitting(false);
@@ -78,20 +72,6 @@ const Form: React.FC<{ income?: IIncomeResponse, prevProviders?: IDataOption[] }
             }
         }
     })
-
-    const getOptionProviders = async (type: IncomeTypeEnum) => {
-        try {
-            setProviderLoading(true)
-            const providersData = await incomeService.getOptionProviders(type) as IDataOption[]
-
-            setProviders(providersData)
-            formik.setFieldValue('fromWhoId', 0)
-        } catch (error: any) {
-            enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
-        } finally {
-            setProviderLoading(false)
-        }
-    }
 
     return (
         <Card>
@@ -134,68 +114,18 @@ const Form: React.FC<{ income?: IIncomeResponse, prevProviders?: IDataOption[] }
                             <Grid item xs={12} md={6}>
                                 <TextField
                                     select
-                                    error={Boolean(formik.touched.typeFrom && formik.errors.typeFrom)}
+                                    error={Boolean(formik.touched.warehouseDestinationId && formik.errors.warehouseDestinationId)}
                                     fullWidth
-                                    helperText={formik.touched.typeFrom && formik.errors.typeFrom}
-                                    label="Выберите тип"
-                                    name="typeFrom"
-                                    onBlur={formik.handleBlur}
-                                    onChange={(e) => {
-                                        formik.handleChange(e)
-                                        getOptionProviders(e.target.value as IncomeTypeEnum)
-                                    }}
-                                    required
-                                    value={formik.values.typeFrom}
-                                    variant="outlined"
-                                    InputLabelProps={{shrink: true}}
-                                    SelectProps={{
-                                        MenuProps: {
-                                            variant: "selectedMenu",
-                                            anchorOrigin: {
-                                                vertical: "bottom",
-                                                horizontal: "left"
-                                            },
-                                            transformOrigin: {
-                                                vertical: "top",
-                                                horizontal: "left"
-                                            },
-                                        }
-                                    }}
-                                >
-                                    {Object.keys(IncomeTypeEnum).map(item => (
-                                        <MenuItem key={item} value={item}>
-                                            {IncomeTypeMap.get(item as IncomeTypeEnum)}
-                                        </MenuItem>
-                                    ))}
-                                </TextField>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    select
-                                    error={Boolean(formik.touched.fromWhoId && formik.errors.fromWhoId)}
-                                    fullWidth
-                                    helperText={formik.touched.fromWhoId && formik.errors.fromWhoId}
-                                    label="Выберите Снабженца/Предприятие/Объект"
-                                    name="fromWhoId"
+                                    helperText={formik.touched.warehouseDestinationId && formik.errors.warehouseDestinationId}
+                                    label="Выберите склад назначения"
+                                    name="warehouseDestinationId"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     required
-                                    value={formik.values.fromWhoId || ''}
+                                    value={formik.values.warehouseDestinationId || ''}
                                     variant="outlined"
                                     InputLabelProps={{shrink: true}}
-                                    disabled={providers.length === 0 || providerLoading}
-                                    InputProps={providerLoading ? {
-                                        endAdornment: (
-                                            <InputAdornment position="start">
-                                                <CircularProgress size={20} />
-                                            </InputAdornment>
-                                        )
-                                    } : undefined}
-                                    sx={{
-                                        '& .MuiSelect-icon': {
-                                            visibility: providerLoading ? 'hidden' : 'visible'
-                                        }
-                                    }}
+                                    disabled={!!displacement}
                                     SelectProps={{
                                         MenuProps: {
                                             variant: "selectedMenu",
@@ -210,7 +140,7 @@ const Form: React.FC<{ income?: IIncomeResponse, prevProviders?: IDataOption[] }
                                         }
                                     }}
                                 >
-                                    {providers.map(item => (
+                                    {warehouses.map(item => (
                                         <MenuItem key={item.id} value={item.id}>
                                             {item.name}
                                         </MenuItem>
@@ -265,7 +195,7 @@ const Form: React.FC<{ income?: IIncomeResponse, prevProviders?: IDataOption[] }
                                 disabled={formik.isSubmitting}
                                 sx={{width: 170}}
                             >
-                                {income ? 'Сохранить' : 'Создать'}
+                                {displacement ? 'Сохранить' : 'Создать'}
                             </Button>
                         </Box>
                     </Grid>
