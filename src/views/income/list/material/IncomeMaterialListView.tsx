@@ -29,6 +29,8 @@ import MaterialRow from "./MaterialRow";
 import PriceHistoryModal from "./PriceHistoryModal";
 import EditPriceModal from "./EditPriceModal";
 import {IIncomeTotalInfo} from "../../../../models/IIncome";
+import hasPermission from "../../../../utils/hasPermisson";
+import PERMISSIONS from "../../../../constants/permissions";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -53,6 +55,7 @@ const IncomeMaterialListView = () => {
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
     const { incomeId } = useParams()
+    const isWarehouseman = hasPermission(PERMISSIONS.WAREHOUSEMAN)
 
     useEffect(() => () => {
         dispatch(reset())
@@ -149,8 +152,12 @@ const IncomeMaterialListView = () => {
                                                 <TableCell>Артикул</TableCell>
                                                 <TableCell>Коль-во</TableCell>
                                                 <TableCell>ЕИ</TableCell>
-                                                <TableCell>Цена (Прихода)</TableCell>
-                                                <TableCell>Сумма</TableCell>
+                                                {!isWarehouseman && (
+                                                    <>
+                                                        <TableCell>Цена (Прихода)</TableCell>
+                                                        <TableCell>Сумма</TableCell>
+                                                    </>
+                                                )}
                                             </TableRow>
                                         </TableHead>
                                         {
@@ -166,7 +173,7 @@ const IncomeMaterialListView = () => {
                         </PerfectScrollbar>
                         <Grid container justifyContent="space-between">
                             <Grid item sx={{m: 2}}>
-                                {incomeTotalInfo && (
+                                {!isWarehouseman && incomeTotalInfo && (
                                     <Typography variant="body1">
                                         Итого Сумма: <b>{incomeTotalInfo.total}</b>
                                     </Typography>

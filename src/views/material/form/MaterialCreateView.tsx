@@ -5,7 +5,7 @@ import {Box, Container} from "@mui/material";
 import Header from "./Header";
 import Form from "./Form";
 import {useSnackbar} from "notistack";
-import {ICategoryOption} from "../../../models";
+import {IDataOption} from "../../../models";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
 import LoadingLayout from "../../../components/LoadingLayout";
 import {useNavigate} from "react-router-dom";
@@ -23,7 +23,7 @@ const MaterialCreateView = () => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
-    const [categories, setCategories] = useState<ICategoryOption[]>([])
+    const [categories, setCategories] = useState<IDataOption[]>([])
 
     useEffect(() => {
         let cancel = false;

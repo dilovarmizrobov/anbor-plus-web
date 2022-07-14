@@ -6,21 +6,20 @@ import api from "../utils/api";
 class IncomeService {
     getIncome = (incomeId: string) => apiHelper.get(`/overheads/${incomeId}`)
 
-    getListIncome = (page: number, size: number, startDate?: string, endDate?: string, filterPriceType?: FilterPriceTypeEnum, filterIncomeFromWho?: string) => {
+    getListIncome = (page: number, size: number, startDate?: string, endDate?: string, filterPriceType?: FilterPriceTypeEnum, filterIncomeType?: string, filterIncomeFromWho?: string) => {
         let extraParams: any = {};
 
         filterPriceType && (extraParams.priceType = filterPriceType)
 
-        filterIncomeFromWho && (extraParams.fromWho = filterIncomeFromWho)
+        if (filterIncomeFromWho) {
+            extraParams.typeFrom = filterIncomeType
+            extraParams.fromWho = filterIncomeFromWho
+        }
 
         return apiHelper.get(`/overheads/all/${OverheadTypeEnum.INCOME}`, {size, page, startDate, endDate, extraParams})
     }
 
     getOptionProviders = (type: IncomeTypeEnum) => apiHelper.get(`/overheads/${type}/option`)
-
-    getOptionMaterials = (query: string) => apiHelper.get(`/materials/find`, {search: query})
-
-    getOptionMarks = (materialId: number) => apiHelper.get(`/materials/marks/${materialId}`)
 
     getListIncomeMaterial = (incomeId: string, page: number, size: number) =>
         apiHelper.get(`/overheads/${incomeId}/items`, {size, page})

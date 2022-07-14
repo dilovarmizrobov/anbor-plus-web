@@ -3,13 +3,16 @@ import {styled} from "@mui/material/styles";
 import Page from "../../../components/Page";
 import {useSnackbar} from "notistack";
 import {useParams} from "react-router-dom";
-import {IOutcomeOption, IOutcomeResponse} from "../../../models/IOutcome";
+import {IOutcomeResponse} from "../../../models/IOutcome";
 import outcomeService from "../../../services/outcomeService";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
 import LoadingLayout from "../../../components/LoadingLayout";
 import {Box, Container} from "@mui/material";
 import Header from "./Header";
 import Form from "./Form";
+import {IDataOption} from "../../../models";
+import {setOverheadMaterials} from "../../../store/reducers/overheadMaterialSlice";
+import {useAppDispatch} from "../../../store/hooks";
 
 const Root = styled('div')(({theme}) => ({
     backgroundColor: theme.palette.background.default,
@@ -19,35 +22,36 @@ const Root = styled('div')(({theme}) => ({
 }))
 
 const OutcomeEditView = () => {
+    const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
     const {outcomeId} = useParams()
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(true)
     const [outcome, setOutcome] = useState<IOutcomeResponse>()
-    const [providers, setProviders] = useState<IOutcomeOption[]>([])
+    const [providers, setProviders] = useState<IDataOption[]>([])
 
     useEffect(() => {
         let cancel = false;
-        (
-            async () => {
-                try {
-                    setLoading(true)
 
-                    const data:any = await outcomeService.getOutcome(outcomeId || '') as IOutcomeResponse
-                    const dataType:any = await outcomeService.getOptionOutcomeType(data.typeFrom) as IOutcomeOption[]
+        (async () => {
+            try {
+                setLoading(true)
 
-                    if (!cancel){
-                        setOutcome(data)
-                        setProviders(dataType)
-                    }
-                }catch (error: any) {
-                    !cancel && setError(true)
-                    enqueueSnackbar(errorMessageHandler(error), {variant: "error"})
-                }finally {
-                    !cancel && setLoading(true)
+                const data: any = await outcomeService.getOutcome(outcomeId || '') as IOutcomeResponse
+                const dataType: any = await outcomeService.getOptionOutcomeType(data.typeFrom) as IDataOption[]
+
+                if (!cancel){
+                    setOutcome(data)
+                    dispatch(setOverheadMaterials(data.overheadItems))
+                    setProviders(dataType)
                 }
+            } catch (error: any) {
+                !cancel && setError(true)
+                enqueueSnackbar(errorMessageHandler(error), {variant: "error"})
+            } finally {
+                !cancel && setLoading(true)
             }
-        )()
+        })()
     },[enqueueSnackbar, outcomeId])
 
     return (

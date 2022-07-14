@@ -1,18 +1,5 @@
 import {IncomeTypeEnum, MaterialUnitEnum} from "../constants";
-
-export interface IIncomeOption {
-    id: number;
-    name: string;
-}
-
-export interface IIncomeMaterial {
-    id?: number;
-    materialId?: number;
-    material?: IIncomeMaterialOption;
-    markId?: number;
-    mark?: IIncomeMaterialMarkOption
-    qty: number;
-}
+import {IOverheadMaterial} from "./Overhead";
 
 export interface IIncomeRequest {
     id?: number;
@@ -23,7 +10,7 @@ export interface IIncomeRequest {
     comment: string;
     images: File[];
     imageNames?: string[];
-    overheadItems: IIncomeMaterial[]
+    overheadItems: IOverheadMaterial[]
 }
 
 export interface IIncomeResponse {
@@ -35,7 +22,7 @@ export interface IIncomeResponse {
     comment: string;
     images: string[];
     imageNames: string[];
-    overheadItems: IIncomeMaterial[]
+    overheadItems: IOverheadMaterial[]
 }
 
 export interface IIncomeListResponse {
@@ -46,19 +33,6 @@ export interface IIncomeListResponse {
     fromWho: string;
     comment: string;
     imageNames: string[];
-}
-
-export interface IIncomeMaterialOption {
-    id: number;
-    name: string;
-    unit: MaterialUnitEnum;
-}
-
-export interface IIncomeMaterialMarkOption {
-    id: number;
-    name: string;
-    sku: string;
-    balance: number;
 }
 
 export interface PriceHistory {

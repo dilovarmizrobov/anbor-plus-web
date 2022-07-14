@@ -26,7 +26,7 @@ const CustomDatePicker: React.FC<{changeDate: Function, label: string}> = ({chan
                 mask={'__.__.____'}
                 value={datePicker}
                 onChange={handleDateChange}
-                renderInput={(params) => <TextField size="small" {...params} />}
+                renderInput={(params) => <TextField sx={{width: 250}} size="small" {...params} />}
             />
         </LocalizationProvider>
     )

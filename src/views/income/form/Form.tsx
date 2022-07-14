@@ -1,79 +1,40 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSnackbar} from "notistack";
 import {useNavigate} from "react-router-dom";
 import {useFormik} from "formik";
-import {IIncomeMaterial, IIncomeOption, IIncomeRequest, IIncomeResponse} from "../../../models/IIncome";
+import {IIncomeRequest, IIncomeResponse} from "../../../models/IIncome";
 import * as Yup from "yup";
-import {IncomeTypeEnum, IncomeTypeMap, MaterialUnitMap, PATH_OVERHEADS_IMAGE} from "../../../constants";
+import {IncomeTypeEnum, IncomeTypeMap} from "../../../constants";
 import {
-    Badge,
     Box,
     Button,
     Card,
     CardContent, CircularProgress,
     Divider,
     Grid,
-    IconButton, InputAdornment,
-    MenuItem, Table, TableBody, TableCell,
-    TableContainer, TableHead, TableRow,
+    InputAdornment,
+    MenuItem,
     TextField
 } from "@mui/material";
-import {TbCameraPlus} from "react-icons/tb";
-import {MdClose} from "react-icons/md";
-import {styled} from "@mui/material/styles";
-import {FiEdit, FiPlusCircle, FiTrash} from "react-icons/fi";
-import MaterialFormModal from "./MaterialFormModal";
 import incomeService from "../../../services/IncomeService";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
+import {useAppDispatch, useAppSelector} from "../../../store/hooks";
+import {reset, selectOverheadMaterial} from "../../../store/reducers/overheadMaterialSlice";
+import OverheadMaterialList from "../../../components/overhead-material/form";
+import {IDataOption} from "../../../models";
+import OverheadImage, {IOverheadImage, mapToImages} from "../../../components/OverheadImage";
 
-const StyledImage = styled('div')(() => ({
-    height: 70,
-    width: 70,
-    borderRadius: 10,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center'
-}))
-
-const StyledIconButton = styled(IconButton)(() => ({
-    borderWidth: 1,
-    borderStyle: 'solid',
-    backgroundColor: 'white',
-    padding: 1,
-    '&:hover': {
-        backgroundColor: 'white',
-    }
-}))
-
-const StyledCameraPlusBox = styled('div')(() => ({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 70,
-    width: 70,
-}))
-
-interface ImageUrlType {
-    url: string;
-    name?: string;
-}
-
-const toImageUrls = (imageNames: string[]) => imageNames.map(item => ({
-    url: PATH_OVERHEADS_IMAGE + item,
-    name: item
-} as ImageUrlType))
-
-const Form: React.FC<{ income?: IIncomeResponse, prevProviders?: IIncomeOption[] }> = ({income, prevProviders}) => {
-    const ImageCount = 3;
-    const [openModal, setOpenModal] = useState(false);
+const Form: React.FC<{ income?: IIncomeResponse, prevProviders?: IDataOption[] }> = ({income, prevProviders}) => {
+    const {materials} = useAppSelector(selectOverheadMaterial)
     const {enqueueSnackbar} = useSnackbar();
+    const dispatch = useAppDispatch()
     const navigate = useNavigate();
-    const [providers, setProviders] = useState<IIncomeOption[]>(prevProviders || [])
-    const [images, setImages] = useState<File[]>([])
-    const [imageUrls, setImageUrls] = useState<ImageUrlType[]>(income ? toImageUrls(income.imageNames) : [])
-    const [incomeMaterials, setIncomeMaterials] = useState<IIncomeMaterial[]>(income?.overheadItems || [])
-    const [incomeMaterial, setIncomeMaterial] = useState<IIncomeMaterial>()
-    const [incomeMaterialIndex, setIncomeMaterialIndex] = useState<number>()
+    const [images, setImages] = useState<IOverheadImage[]>(income ? mapToImages(income.imageNames) : [])
+    const [imageFiles, setImageFiles] = useState<File[]>([])
+    const [providers, setProviders] = useState<IDataOption[]>(prevProviders || [])
     const [providerLoading, setProviderLoading] = useState(false)
+
+    useEffect(() => () => {dispatch(reset())}, [])
 
     const formik = useFormik<IIncomeRequest>({
         initialValues: {
@@ -92,19 +53,19 @@ const Form: React.FC<{ income?: IIncomeResponse, prevProviders?: IIncomeOption[]
             fromWhoId: Yup.number().not([0], 'Выберите значение').required(),
         }),
         onSubmit: async (values, {setSubmitting, setStatus}) => {
-            values.overheadItems = incomeMaterials
+            values.overheadItems = materials
 
             try {
                 if (income) {
                     values.id = income.id!
-                    let imageNames = imageUrls.filter(item => item.name).map(item => item.name!)
+                    let imageNames = images.filter(item => item.name).map(item => item.name!)
 
-                    await incomeService.putUpdateIncome(values, images, imageNames)
+                    await incomeService.putUpdateIncome(values, imageFiles, imageNames)
 
                     enqueueSnackbar('Успешно обновлен', {variant: 'success'});
                     navigate(-1)
                 } else {
-                    await incomeService.postNewIncome(values, images)
+                    await incomeService.postNewIncome(values, imageFiles)
 
                     enqueueSnackbar('Успешно создан', {variant: 'success'});
                     navigate(-1)
@@ -118,20 +79,10 @@ const Form: React.FC<{ income?: IIncomeResponse, prevProviders?: IIncomeOption[]
         }
     })
 
-    const handleDeleteImage = (index: number) => {
-        let newImages = [...images]
-        newImages.splice(index, 1)
-        setImages(newImages)
-
-        let newImageUrls = [...imageUrls]
-        newImageUrls.splice(index, 1)
-        setImageUrls(newImageUrls)
-    }
-
     const getOptionProviders = async (type: IncomeTypeEnum) => {
         try {
             setProviderLoading(true)
-            const providersData = await incomeService.getOptionProviders(type) as IIncomeOption[]
+            const providersData = await incomeService.getOptionProviders(type) as IDataOption[]
 
             setProviders(providersData)
             formik.setFieldValue('fromWhoId', 0)
@@ -140,49 +91,6 @@ const Form: React.FC<{ income?: IIncomeResponse, prevProviders?: IIncomeOption[]
         } finally {
             setProviderLoading(false)
         }
-    }
-
-    const handleEditMaterial = (material: IIncomeMaterial, index: number) => {
-        setIncomeMaterial(material)
-        setIncomeMaterialIndex(index)
-        setOpenModal(true)
-    }
-
-    const handleDeleteMaterial = (sku: string) => {
-        let newIncomeMaterials = [...incomeMaterials]
-        let index = incomeMaterials.findIndex(item => item.mark!.sku === sku)
-        newIncomeMaterials.splice(index, 1)
-
-        setIncomeMaterials(newIncomeMaterials)
-    }
-
-    const handleCloseModal = () => {
-        setOpenModal(false)
-        setIncomeMaterial(undefined)
-        setIncomeMaterialIndex(undefined)
-    }
-
-    const existMaterial = (material: IIncomeMaterial) => {
-        return incomeMaterials.find(item => item.materialId === material.materialId && item.markId === material.markId)
-    }
-
-    const addMaterial = (material: IIncomeMaterial) => {
-        let newIncomeMaterials = [...incomeMaterials]
-
-        if (existMaterial(material)) {
-            enqueueSnackbar('Материал уже существует', {variant: 'info'})
-            return
-        }
-
-        newIncomeMaterials.push(material)
-
-        setIncomeMaterials(newIncomeMaterials)
-    }
-
-    const editMaterial = (material: IIncomeMaterial) => {
-        let newIncomeMaterials = [...incomeMaterials]
-        newIncomeMaterials[incomeMaterialIndex!] = material
-        setIncomeMaterials(newIncomeMaterials)
     }
 
     return (
@@ -313,53 +221,7 @@ const Form: React.FC<{ income?: IIncomeResponse, prevProviders?: IIncomeOption[]
                     </Grid>
                     <Grid item xs={12}>
                         <Divider/>
-                        <TableContainer>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Материал</TableCell>
-                                        <TableCell>Марка</TableCell>
-                                        <TableCell>Артикул</TableCell>
-                                        <TableCell>Кол-во</TableCell>
-                                        <TableCell/>
-                                        <TableCell align="right">
-                                            <Button
-                                                variant="contained"
-                                                color="secondary"
-                                                onClick={() => setOpenModal(true)}
-                                                >
-                                                <FiPlusCircle size={20} />
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {incomeMaterials.map((incomeMaterial, index) => (
-                                        <TableRow hover key={incomeMaterial.mark!.sku}>
-                                            <TableCell>{incomeMaterial.material!.name}</TableCell>
-                                            <TableCell>{incomeMaterial.mark!.name}</TableCell>
-                                            <TableCell>{incomeMaterial.mark!.sku}</TableCell>
-                                            <TableCell>{incomeMaterial.qty} {MaterialUnitMap.get(incomeMaterial.material!.unit)}</TableCell>
-                                            <TableCell/>
-                                            <TableCell sx={{width: 120}}>
-                                                <IconButton
-                                                    size="large"
-                                                    onClick={() => handleEditMaterial(incomeMaterial, index)}
-                                                >
-                                                    <FiEdit size={20}/>
-                                                </IconButton>
-                                                <IconButton
-                                                    size="large"
-                                                    onClick={() => handleDeleteMaterial(incomeMaterial.mark!.sku)}
-                                                >
-                                                    <FiTrash size={20} />
-                                                </IconButton>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        <OverheadMaterialList/>
                     </Grid>
                     <Grid item xs={12}>
                         <Grid container spacing={3}>
@@ -379,54 +241,8 @@ const Form: React.FC<{ income?: IIncomeResponse, prevProviders?: IIncomeOption[]
                                 />
                             </Grid>
                             <Grid item xs={12} md={5}>
-                                <Grid container spacing={3}>
-                                    {imageUrls.map((imageUrl, index) => (
-                                        <Grid item xs="auto" key={index}>
-                                            <Badge
-                                                badgeContent={
-                                                    <StyledIconButton size="small" onClick={() => handleDeleteImage(index)}>
-                                                        <MdClose size={14}/>
-                                                    </StyledIconButton>
-                                                }
-                                            >
-                                                <StyledImage sx={{backgroundImage: `url(${imageUrl.url})`}}/>
-                                            </Badge>
-                                        </Grid>
-                                    ))}
-                                    {imageUrls.length < ImageCount && (
-                                        <Grid item xs="auto">
-                                            <StyledCameraPlusBox>
-                                                <label>
-                                                    <input
-                                                        multiple
-                                                        accept="image/*"
-                                                        type="file"
-                                                        style={{display: "none"}}
-                                                        onChange={(e) => {
-                                                            let files = (e.target as HTMLInputElement).files!;
-                                                            let newImageUrls = [...imageUrls]
-                                                            let newImages = [...images]
-
-                                                            for (let i = 0; i < files.length; i++) {
-                                                                newImageUrls.push({url: URL.createObjectURL(files[i])} as ImageUrlType)
-                                                                newImages.push(files[i])
-                                                                if ((ImageCount - imageUrls.length) === i + 1) break;
-                                                            }
-
-                                                            setImageUrls(newImageUrls)
-                                                            setImages(newImages);
-
-                                                            (e.target as HTMLInputElement).value = ''
-                                                        }}
-                                                    />
-                                                    <IconButton size="large" component="span">
-                                                        <TbCameraPlus size={30}/>
-                                                    </IconButton>
-                                                </label>
-                                            </StyledCameraPlusBox>
-                                        </Grid>
-                                    )}
-                                </Grid>
+                                <OverheadImage images={images} setImages={setImages} imageFiles={imageFiles}
+                                               setImageFiles={setImageFiles}/>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -455,9 +271,6 @@ const Form: React.FC<{ income?: IIncomeResponse, prevProviders?: IIncomeOption[]
                     </Grid>
                 </Grid>
             </CardContent>
-            {openModal && (
-                <MaterialFormModal material={incomeMaterial} open={openModal} onClose={handleCloseModal} onAddAccept={addMaterial} onEditAccept={editMaterial}/>
-            )}
         </Card>
     );
 };

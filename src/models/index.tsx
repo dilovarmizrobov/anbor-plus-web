@@ -1,6 +1,6 @@
 import { MaterialUnitEnum } from "../constants";
 
-export interface ICategoryOption {
+export interface IDataOption {
     id: number;
     name: string;
 }

@@ -1,87 +1,41 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {
-    Badge,
     Box,
     Button,
     Card,
     CardContent, CircularProgress, Divider,
-    Grid, IconButton, InputAdornment,
+    Grid, InputAdornment,
     MenuItem,
-    Table, TableBody, TableCell,
-    TableContainer,
-    TableHead, TableRow,
     TextField
 } from "@mui/material";
-import {styled} from "@mui/material/styles";
 import {
-    MaterialUnitMap,
     OutcomeTypeEnum,
     OutcomeTypeMap,
-    PATH_OVERHEADS_IMAGE
 } from "../../../constants";
-import {FiEdit, FiPlusCircle, FiTrash} from "react-icons/fi";
-import {IOutcomeMaterial, IOutcomeOption, IOutcomeRequest, IOutcomeResponse} from "../../../models/IOutcome";
+import {IOutcomeRequest, IOutcomeResponse} from "../../../models/IOutcome";
 import outcomeService from "../../../services/outcomeService";
 import {useSnackbar} from "notistack";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
 import {useNavigate} from "react-router-dom";
-import {MdClose} from "react-icons/md";
-import {TbCameraPlus} from "react-icons/tb";
-import MaterialFormModal from "./MaterialFormModal";
+import {IDataOption} from "../../../models";
+import {useAppDispatch, useAppSelector} from "../../../store/hooks";
+import {reset, selectOverheadMaterial} from "../../../store/reducers/overheadMaterialSlice";
+import OverheadMaterialList from "../../../components/overhead-material/form";
+import OverheadImage, {IOverheadImage, mapToImages} from "../../../components/OverheadImage";
 
-
-const StyledImage = styled('div')(() => ({
-    height: 70,
-    width: 70,
-    borderRadius: 10,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center'
-}))
-
-const StyledIconButton = styled(IconButton)(() => ({
-    borderWidth: 1,
-    borderStyle: 'solid',
-    backgroundColor: 'white',
-    padding: 1,
-    '&:hover': {
-        backgroundColor: 'white',
-    }
-}))
-
-const StyledCameraPlusBox = styled('div')(() => ({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 70,
-    width: 70,
-}))
-
-type ImageUrlType = {
-    url: string;
-    name?: string;
-}
-
-const toImageUrls = (imageNames: string[]) => imageNames.map(item => ({
-    url: PATH_OVERHEADS_IMAGE + item,
-    name: item
-} as ImageUrlType))
-
-
-const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IOutcomeOption[] }> = ({outcome,prevProviders}) => {
-    const ImageCount = 3;
-    const [openModal, setOpenModal] = useState(false);
+const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IDataOption[] }> = ({outcome,prevProviders}) => {
+    const {materials} = useAppSelector(selectOverheadMaterial)
     const {enqueueSnackbar} = useSnackbar();
+    const dispatch = useAppDispatch()
     const navigate = useNavigate();
-    const [providers, setProviders] = useState<IOutcomeOption[]>(prevProviders || [])
-    const [images, setImages] = useState<File[]>([])
-    const [imageUrls, setImageUrls] = useState<ImageUrlType[]>(outcome ? toImageUrls(outcome.imageNames) : [])
-    const [outcomeMaterials, setOutcomeMaterials] = useState<IOutcomeMaterial[]>(outcome?.overheadItems || [])
-    const [outcomeMaterial, setOutcomeMaterial] = useState<IOutcomeMaterial>()
-    const [outcomeMaterialIndex, setOutcomeMaterialIndex] = useState<number>()
+    const [providers, setProviders] = useState<IDataOption[]>(prevProviders || [])
+    const [images, setImages] = useState<IOverheadImage[]>(outcome ? mapToImages(outcome.imageNames) : [])
+    const [imageFiles, setImageFiles] = useState<File[]>([])
     const [providerLoading, setProviderLoading] = useState(false)
 
+    useEffect(() => () => {dispatch(reset())}, [])
 
     const formik = useFormik<IOutcomeRequest>({
         initialValues: {
@@ -101,23 +55,24 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IOutcomeOption
         }),
 
         onSubmit: async (values, {setSubmitting, setStatus}) => {
-            values.overheadItems = outcomeMaterials;
+            values.overheadItems = materials;
 
             try {
-                if (outcome){
+                if (outcome) {
                     values.id = outcome.id!
-                    let imageNames = imageUrls.filter(item => item.name).map(item => item.name!)
-                    await outcomeService.putUpdateOutcome(values, images, imageNames)
+                    let imageNames = images.filter(item => item.name).map(item => item.name!)
+
+                    await outcomeService.putUpdateOutcome(values, imageFiles, imageNames)
 
                     enqueueSnackbar('Успешно обновлен', {variant: 'success'});
                     navigate(-1)
-                }else{
-                    await outcomeService.postNewOutcome(values, images)
+                } else {
+                    await outcomeService.postNewOutcome(values, imageFiles)
 
                     enqueueSnackbar('Успешно создан', {variant: 'success'});
                     navigate(-1)
                 }
-            }catch (error: any) {
+            } catch (error: any) {
                 setSubmitting(false)
                 setStatus({success: false})
 
@@ -129,83 +84,16 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IOutcomeOption
     const getOptionOutcomeType = async(type: OutcomeTypeEnum) => {
         try {
             setProviderLoading(true)
-            const data: any = await outcomeService.getOptionOutcomeType(type) as IOutcomeOption[]
+            const data: any = await outcomeService.getOptionOutcomeType(type) as IDataOption[]
 
             setProviders(data)
             formik.setFieldValue('fromWhoId', 0)
-            //console.log(data)
-        }catch (error : any) {
+        } catch (error : any) {
             enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
-        }finally {
+        } finally {
             setProviderLoading(false)
         }
     }
-
-    // const handleImageChange = (e:any) => {
-    //     if (e.target.files) {
-    //         const imageFile = Array.from(e.target.files).map((img: any) =>
-    //             URL.createObjectURL(img)
-    //         );
-    //
-    //         setImages((prevImages) => prevImages.concat(imageFile));
-    //         Array.from(e.target.files).map(
-    //             (img: any) => URL.revokeObjectURL(img) // avoid memory leak
-    //         );
-    //     }
-    // };
-
-    const handleDeleteImage = (index: number) => {
-        let newOutcomeImage = [...images]
-        newOutcomeImage.splice(index, 1)
-        setImages(newOutcomeImage)
-
-        let newImageUrls = [...imageUrls]
-        newImageUrls.splice(index, 1)
-        setImageUrls(newImageUrls)
-    }
-
-    const handleEditMaterial = (material: IOutcomeMaterial, index:number) => {
-        setOutcomeMaterial(material)
-        setOutcomeMaterialIndex(index)
-        setOpenModal(true)
-    }
-
-    const handleDeleteMaterial = (sku: string) => {
-        const newMaterials = [...outcomeMaterials]
-        const index = outcomeMaterials.findIndex(item => item.mark!.sku === sku)
-
-        newMaterials.splice(index, 1)
-        setOutcomeMaterials(newMaterials)
-    }
-
-    const handleCloseModal = () => {
-        setOpenModal(false)
-        setOutcomeMaterial(undefined)
-        setOutcomeMaterialIndex(undefined)
-    }
-
-    const existMaterial = (material: IOutcomeMaterial) =>{
-        return outcomeMaterials.find(item => item.materialId === material.materialId && item.markId === material.markId)
-    }
-
-
-    const addMaterial = (material: IOutcomeMaterial) => {
-        let newOutcomeMaterial = [...outcomeMaterials];
-        if(existMaterial(material)){
-            enqueueSnackbar('Материал уже существует', {variant: 'info'})
-            return
-        }
-
-        newOutcomeMaterial.push(material)
-        setOutcomeMaterials(newOutcomeMaterial)
-    }
-
-    const editMaterial = (material: IOutcomeMaterial) =>{
-        let newEditMaterial = [...outcomeMaterials]
-        newEditMaterial[outcomeMaterialIndex!] = material
-        setOutcomeMaterials(newEditMaterial)
-    }
-
 
     return (
         <Card>
@@ -339,55 +227,7 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IOutcomeOption
                     </Grid>
                     <Grid item xs={12}>
                         <Divider />
-                        <TableContainer>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Материал</TableCell>
-                                        <TableCell>Марка</TableCell>
-                                        <TableCell>Артикул</TableCell>
-                                        <TableCell>Кол-во</TableCell>
-                                        <TableCell/>
-                                        <TableCell align="right">
-                                            <Button
-                                                variant="contained"
-                                                color="secondary"
-                                                onClick={() => setOpenModal(true)}
-                                            >
-                                                <FiPlusCircle size={20} />
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {
-                                        outcomeMaterials.map((outcomematerial, index) => (
-                                            <TableRow key={outcomematerial.mark!.sku}>
-                                                <TableCell>{outcomematerial.material!.name}</TableCell>
-                                                <TableCell>{outcomematerial.mark!.name}</TableCell>
-                                                <TableCell>{outcomematerial.mark!.sku}</TableCell>
-                                                <TableCell>{outcomematerial.qty} {MaterialUnitMap.get(outcomematerial.material!.unit)}</TableCell>
-                                                <TableCell/>
-                                                <TableCell sx={{width: 120}}>
-                                                    <IconButton
-                                                        size="large"
-                                                        onClick={() => handleEditMaterial(outcomematerial, index)}
-                                                    >
-                                                        <FiEdit size={20} />
-                                                    </IconButton>
-                                                    <IconButton
-                                                        size="large"
-                                                        onClick={() => handleDeleteMaterial(outcomematerial.mark!.sku)}
-                                                    >
-                                                        <FiTrash size={20} />
-                                                    </IconButton>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))
-                                    }
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        <OverheadMaterialList/>
                     </Grid>
                     <Grid item xs={12} >
                         <Grid container spacing={3}>
@@ -408,57 +248,8 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IOutcomeOption
                                 />
                             </Grid>
                             <Grid item xs={12} md={5}>
-                                <Grid container spacing={3}>
-                                    {
-                                        imageUrls.map((imageUrl, index) => (
-                                            <Grid item xs="auto" key={index}>
-                                                <Badge
-                                                    badgeContent={
-                                                        <StyledIconButton size="small" onClick={() => handleDeleteImage(index)}>
-                                                            <MdClose size={14}/>
-                                                        </StyledIconButton>
-                                                    }
-                                                >
-                                                    <StyledImage sx={{backgroundImage: `url(${imageUrl.url})`}}/>
-                                                </Badge>
-                                            </Grid>
-                                        ))}
-                                    {
-                                        imageUrls.length < ImageCount && (
-                                            <Grid item xs="auto">
-                                                <StyledCameraPlusBox>
-                                                    <label>
-                                                        <input
-                                                            multiple
-                                                            accept="image/*"
-                                                            type="file"
-                                                            style={{display: "none"}}
-                                                            onChange={(e) => {
-                                                                let files = (e.target as HTMLInputElement).files!;
-                                                                let newImageUrls = [...imageUrls]
-                                                                let newImages = [...images]
-
-                                                                for (let i = 0; i < files.length; i++) {
-                                                                    newImageUrls.push({url: URL.createObjectURL(files[i])} as ImageUrlType)
-                                                                    newImages.push(files[i])
-                                                                    if ((ImageCount - imageUrls.length) === i + 1) break;
-                                                                }
-
-                                                                setImageUrls(newImageUrls)
-                                                                setImages(newImages);
-
-                                                                (e.target as HTMLInputElement).value = ''
-                                                            }}
-                                                        />
-                                                        <IconButton size="large" component="span">
-                                                            <TbCameraPlus size={30}/>
-                                                        </IconButton>
-                                                    </label>
-                                                </StyledCameraPlusBox>
-                                            </Grid>
-                                        )
-                                    }
-                                </Grid>
+                                <OverheadImage images={images} setImages={setImages} imageFiles={imageFiles}
+                                               setImageFiles={setImageFiles}/>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -488,10 +279,6 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IOutcomeOption
                     </Grid>
                 </Grid>
             </CardContent>
-            {
-                openModal &&
-                <MaterialFormModal open={openModal} material={outcomeMaterial} onClose={handleCloseModal} onAddAccept={addMaterial} onEditAccept={editMaterial} />
-            }
         </Card>
     );
 };

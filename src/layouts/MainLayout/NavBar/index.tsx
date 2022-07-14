@@ -11,7 +11,16 @@ import {INavConfig, INavItem} from "../../navConfig";
 import NavCollapseItem from "./NavCollapseItem";
 import AutocompleteInput from "./AutocompleteInput";
 
-const filterNavItem = (items: INavItem[]) => items.filter(item => item.perm ? hasPermission(item.perm) : true)
+const filterNavItem = (items: INavItem[]) => {
+    return items.filter(item => {
+        if (item.children) {
+            item.children = item.children.filter(child => child.perm ? hasPermission(child.perm) : true)
+            if (item.children.length === 0) return false
+        }
+
+        return item.perm ? hasPermission(item.perm) : true
+    })
+}
 
 const Index: React.FC<{openMobile: boolean, onMobileClose: VoidFunction, navConfig: INavConfig[]}> = (props) => {
     const {openMobile, onMobileClose, navConfig} = props
@@ -48,7 +57,7 @@ const Index: React.FC<{openMobile: boolean, onMobileClose: VoidFunction, navConf
                     </Box>
                 </Box>
                 {
-                    (user!.role === UserRolesEnum.ADMIN || user!.role === UserRolesEnum.ACCOUNTANT) && (
+                    (user!.role !== UserRolesEnum.WAREHOUSEMAN) && (
                         <Box px={2} my={3}>
                             <AutocompleteInput />
                         </Box>

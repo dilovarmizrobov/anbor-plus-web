@@ -1,9 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {
-    IIncomeMaterial,
-    IIncomeMaterialMarkOption,
-    IIncomeMaterialOption,
-} from "../../../models/IIncome";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {
@@ -19,28 +14,30 @@ import {
 } from "@mui/material";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
 import {useSnackbar} from "notistack";
-import incomeService from "../../../services/IncomeService";
+import appService from "../../../services/AppService";
 import useDebounce from "../../../hooks/useDebounce";
 import {MaterialUnitMap} from "../../../constants";
+import {useAppDispatch, useAppSelector} from "../../../store/hooks";
+import {
+    addMaterial,
+    editMaterial,
+    selectOverheadMaterial,
+    setOpenModal
+} from "../../../store/reducers/overheadMaterialSlice";
+import {IOverheadMaterial, IOverheadMaterialMarkOption, IOverheadMaterialOption} from "../../../models/Overhead";
 
-interface MaterialFormModalProps {
-    open: boolean;
-    material?: IIncomeMaterial;
-    onClose: VoidFunction;
-    onAddAccept: (values: IIncomeMaterial) => void;
-    onEditAccept: (values: IIncomeMaterial) => void;
-}
-
-const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, onClose, onAddAccept, onEditAccept}) => {
+const CreateEditFormModal = () => {
     const {enqueueSnackbar} = useSnackbar()
-    const [materials, setMaterials] = useState<IIncomeMaterialOption[]>([])
+    const {material} = useAppSelector(selectOverheadMaterial)
+    const dispatch = useAppDispatch()
+    const [materialOptions, setMaterialOptions] = useState<IOverheadMaterialOption[]>([])
     const [materialLoading, setMaterialLoading] = useState(false)
-    const [marks, setMarks] = useState<IIncomeMaterialMarkOption[]>([])
+    const [marks, setMarks] = useState<IOverheadMaterialMarkOption[]>([])
     const [markLoading, setMarkLoading] = useState(false)
     const [query, setQuery] = useState('')
     const debouncedQuery = useDebounce(query, 500)
 
-    const formik = useFormik<IIncomeMaterial>({
+    const formik = useFormik<IOverheadMaterial>({
         initialValues: {
             qty: material?.qty || 0,
             markId: material?.markId || 0,
@@ -56,10 +53,10 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
         onSubmit: (values) => {
             if (material) {
                 values.id = material.id
-                onEditAccept(values)
-            } else onAddAccept(values)
+                dispatch(editMaterial(values))
+            } else dispatch(addMaterial(values))
 
-            onClose()
+            dispatch(setOpenModal(false))
         }
     })
 
@@ -70,10 +67,10 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
                     setMaterialLoading(true)
                     setMarkLoading(true)
 
-                    const materialsData = await incomeService.getOptionMaterials(material.material!.name) as IIncomeMaterialOption[]
-                    const marksData = await incomeService.getOptionMarks(material.materialId!) as IIncomeMaterialMarkOption[]
+                    const materialOptionsData = await appService.getOptionMaterials(material.material!.name) as IOverheadMaterialOption[]
+                    const marksData = await appService.getOptionMarks(material.materialId!) as IOverheadMaterialMarkOption[]
 
-                    setMaterials(materialsData)
+                    setMaterialOptions(materialOptionsData)
                     setMarks(marksData)
                 } catch (error: any) {
                     enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
@@ -90,9 +87,9 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
             (async () => {
                 try {
                     setMaterialLoading(true)
-                    const materialsData = await incomeService.getOptionMaterials(debouncedQuery) as IIncomeMaterialOption[]
+                    const materialOptionsData = await appService.getOptionMaterials(debouncedQuery) as IOverheadMaterialOption[]
 
-                    setMaterials(materialsData)
+                    setMaterialOptions(materialOptionsData)
                 } catch (error: any) {
                     enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
                 } finally {
@@ -105,7 +102,7 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
     const getOptionMarks = async (materialId: number) => {
         try {
             setMarkLoading(true)
-            const marksData = await incomeService.getOptionMarks(materialId) as IIncomeMaterialMarkOption[]
+            const marksData = await appService.getOptionMarks(materialId) as IOverheadMaterialMarkOption[]
 
             if (marksData.length === 0) enqueueSnackbar('Добавьте с начала марки', {variant: 'info'})
 
@@ -120,8 +117,8 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
 
     return (
         <Dialog
-            open={open}
-            onClose={onClose}
+            open={true}
+            onClose={() => dispatch(setOpenModal(false))}
             fullWidth
         >
             <DialogTitle>{material ? 'Изменение' : 'Добавление'} материала</DialogTitle>
@@ -147,7 +144,7 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
                             fullWidth
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                             getOptionLabel={(option) => option.name}
-                            options={materials}
+                            options={materialOptions}
                             loading={materialLoading}
                             onInputChange={(event, newInputValue) => {
                                 setQuery(newInputValue)
@@ -270,7 +267,7 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose}>
+                <Button onClick={() => dispatch(setOpenModal(false))}>
                     Отмена
                 </Button>
                 <Button onClick={formik.submitForm}>
@@ -281,4 +278,4 @@ const MaterialFormModal: React.FC<MaterialFormModalProps> = ({open, material, on
     );
 };
 
-export default MaterialFormModal;
+export default CreateEditFormModal;

@@ -34,6 +34,8 @@ import {IOutcomeTotalInfo} from "../../../../models/IOutcome";
 import {FiPrinter} from "react-icons/fi";
 import PriceHistoryModal from "./PriceHistoryModal";
 import EditPriceModal from "./EditPriceModal";
+import hasPermission from "../../../../utils/hasPermisson";
+import PERMISSIONS from "../../../../constants/permissions";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -59,6 +61,7 @@ const DetailTableListView = () => {
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
     const { outcomeId } = useParams()
+    const isWarehouseman = hasPermission(PERMISSIONS.WAREHOUSEMAN)
 
     useEffect(() => () => {
         dispatch(reset())
@@ -155,8 +158,12 @@ const DetailTableListView = () => {
                                                 <TableCell>Артикул</TableCell>
                                                 <TableCell>Коль-во</TableCell>
                                                 <TableCell>ЕИ</TableCell>
-                                                <TableCell>Цена (Расхода)</TableCell>
-                                                <TableCell>Сумма</TableCell>
+                                                {!isWarehouseman && (
+                                                  <>
+                                                      <TableCell>Цена (Расхода)</TableCell>
+                                                      <TableCell>Сумма</TableCell>
+                                                  </>
+                                                )}
                                             </TableRow>
                                         </TableHead>
                                         {
@@ -174,7 +181,7 @@ const DetailTableListView = () => {
                         </PerfectScrollbar>
                         <Grid container justifyContent="space-between">
                             <Grid item sx={{m: 2}}>
-                                {outcomeTotalInfo && (
+                                {!isWarehouseman && outcomeTotalInfo && (
                                     <Typography variant="body1">
                                         Итого Сумма: <b>{outcomeTotalInfo.total}</b>
                                     </Typography>

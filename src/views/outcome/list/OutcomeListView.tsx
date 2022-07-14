@@ -32,7 +32,7 @@ import {
 import {useSnackbar} from "notistack";
 import outcomeService from "../../../services/outcomeService";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
-import CustomDatePicker from "../../../components/CustomeDatePicker";
+import CustomDatePicker from "../../../components/CustomDatePicker";
 import LoadingTableBody from "../../../components/LoadingTableBody";
 import {
     FilterPriceTypeEnum,
@@ -45,8 +45,9 @@ import DetailButtonTable from "../../../components/DetailButtonTable";
 import {selectPreviewImage, setPreviewImageUrl} from "../../../store/reducers/previewImageSlice";
 import PreviewImageModal from "../../../components/PreviewImageModal";
 import {MdDone} from "react-icons/md";
-import {IOutcomeOption} from "../../../models/IOutcome";
-
+import {IDataOption} from "../../../models";
+import hasPermission from "../../../utils/hasPermisson";
+import PERMISSIONS from "../../../constants/permissions";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -81,10 +82,11 @@ const OutcomeListView = () => {
         filterOutcomeType
     } = useAppSelector(selectOutcomeList)
     const {previewImageUrl} = useAppSelector(selectPreviewImage)
-    const [providers, setProviders] = useState<IOutcomeOption[]>( [])
+    const [providers, setProviders] = useState<IDataOption[]>( [])
     const [providerLoading, setProviderLoading] = useState(false)
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
+    const isWarehouseman = hasPermission(PERMISSIONS.WAREHOUSEMAN)
 
     useEffect(() => () => {
         dispatch(reset())
@@ -96,7 +98,7 @@ const OutcomeListView = () => {
         (async () => {
             try {
                 dispatch(getListPending())
-                const data: any = await outcomeService.getOutcomeList(page + 1, rowsPerPage, startDate, endDate,filterPriceType, filterOutcomeFromWho)
+                const data: any = await outcomeService.getOutcomeList(page + 1, rowsPerPage, startDate, endDate,filterPriceType, filterOutcomeType, filterOutcomeFromWho)
 
                 if (!cancel) dispatch(getListSuccess({rows: data.content, rowsCount: data.totalElements}))
 
@@ -114,12 +116,12 @@ const OutcomeListView = () => {
     const getOptionOutcomeType = async(type: OutcomeTypeEnum) => {
         try {
             setProviderLoading(true)
-            const data: any = await outcomeService.getOptionOutcomeType(type) as IOutcomeOption[]
+            const data: any = await outcomeService.getOptionOutcomeType(type) as IDataOption[]
 
             setProviders(data)
-        }catch (error : any) {
+        } catch (error : any) {
             enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
-        }finally {
+        } finally {
             setProviderLoading(false)
         }
     }
@@ -179,16 +181,15 @@ const OutcomeListView = () => {
                                                 size="small"
                                                 onChange={e => {
                                                     let value = e.target.value === '' ? undefined : e.target.value as OutcomeTypeEnum
-                                                    dispatch(setFilterOutcomeType(value))
 
                                                     if(value) getOptionOutcomeType(value)
-                                                    else {
-                                                        dispatch(setFilterOutcomeFromWho(undefined))
-                                                        setProviders([])
-                                                    }
+                                                    else setProviders([])
+
+                                                    dispatch(setFilterOutcomeType(value))
+                                                    dispatch(setFilterOutcomeFromWho(undefined))
                                                 }}
                                                 variant="outlined"
-                                                sx={{width: 259}}
+                                                sx={{width: 250}}
                                                 value={filterOutcomeType || ''}
                                                 SelectProps={{
                                                     MenuProps: {
@@ -232,7 +233,7 @@ const OutcomeListView = () => {
                                                     )
                                                 } : undefined}
                                                 sx={{
-                                                    width: 259,
+                                                    width: 250,
                                                     '& .MuiSelect-icon': {
                                                         visibility: providerLoading ? 'hidden' : 'visible'
                                                     }
@@ -267,7 +268,7 @@ const OutcomeListView = () => {
                                                 <TableCell>№</TableCell>
                                                 <TableCell>Дата</TableCell>
                                                 <TableCell>Категория</TableCell>
-                                                <TableCell>Сумма Расхода</TableCell>
+                                                {!isWarehouseman && <TableCell>Сумма Расхода</TableCell>}
                                                 <TableCell>От кого</TableCell>
                                                 <TableCell>Комментарий</TableCell>
                                                 <TableCell />
@@ -283,7 +284,7 @@ const OutcomeListView = () => {
                                                                 <TableCell>{row.id}</TableCell>
                                                                 <TableCell>{row.createdDate}</TableCell>
                                                                 <TableCell>{row.categories.join(', ')}</TableCell>
-                                                                <TableCell>{row.total}</TableCell>
+                                                                {!isWarehouseman && <TableCell>{row.total}</TableCell>}
                                                                 <TableCell>{row.fromWho}</TableCell>
                                                                 <TableCell>{row.comment}</TableCell>
                                                                 <TableCell style={{ maxWidth: 185 }}>{row.imageNames.map(url => (

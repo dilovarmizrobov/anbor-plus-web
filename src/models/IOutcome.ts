@@ -1,10 +1,5 @@
 import {MaterialUnitEnum, OutcomeTypeEnum} from "../constants";
 
-export interface IOutcomeOption {
-    id: number;
-    name : string;
-}
-
 export interface IOutcomeMaterial {
     id?: number;
     materialId?: number;

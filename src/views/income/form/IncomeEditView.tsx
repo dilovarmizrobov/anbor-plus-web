@@ -6,10 +6,13 @@ import {Box, Container} from "@mui/material";
 import Form from "./Form";
 import {useSnackbar} from "notistack";
 import {useParams} from "react-router-dom";
-import {IIncomeOption, IIncomeResponse} from "../../../models/IIncome";
+import {IIncomeResponse} from "../../../models/IIncome";
 import LoadingLayout from "../../../components/LoadingLayout";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
 import incomeService from "../../../services/IncomeService";
+import {setOverheadMaterials} from "../../../store/reducers/overheadMaterialSlice";
+import {useAppDispatch} from "../../../store/hooks";
+import {IDataOption} from "../../../models";
 
 const Root = styled('div')(({theme}) => ({
     backgroundColor: theme.palette.background.default,
@@ -19,12 +22,13 @@ const Root = styled('div')(({theme}) => ({
 }))
 
 const IncomeEditView = () => {
+    const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
     const { incomeId } = useParams()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
     const [income, setIncome] = useState<IIncomeResponse>()
-    const [providers, setProviders] = useState<IIncomeOption[]>([])
+    const [providers, setProviders] = useState<IDataOption[]>([])
 
     useEffect(() => {
         let cancel = false;
@@ -32,10 +36,11 @@ const IncomeEditView = () => {
         (async () => {
             try {
                 const data = await incomeService.getIncome(incomeId || '') as IIncomeResponse
-                const providersData = await incomeService.getOptionProviders(data.typeFrom) as IIncomeOption[]
+                const providersData = await incomeService.getOptionProviders(data.typeFrom) as IDataOption[]
 
                 if (!cancel) {
                     setIncome(data)
+                    dispatch(setOverheadMaterials(data.overheadItems))
                     setProviders(providersData)
                 }
             } catch (error: any) {

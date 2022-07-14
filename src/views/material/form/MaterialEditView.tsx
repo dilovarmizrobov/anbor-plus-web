@@ -6,7 +6,7 @@ import Header from "./Header";
 import Form from "./Form";
 import {useSnackbar} from "notistack";
 import {IMaterialResponse} from "../../../models/IMaterial";
-import {ICategoryOption} from "../../../models";
+import {IDataOption} from "../../../models";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
 import materialService from "../../../services/MaterialService";
 import LoadingLayout from "../../../components/LoadingLayout";
@@ -26,7 +26,7 @@ const MaterialEditView = () => {
     const { materialId } = useParams()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
-    const [categories, setCategories] = useState<ICategoryOption[]>([])
+    const [categories, setCategories] = useState<IDataOption[]>([])
     const [material, setMaterial] = useState<IMaterialResponse>()
 
     useEffect(() => {

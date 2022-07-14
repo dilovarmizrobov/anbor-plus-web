@@ -10,6 +10,8 @@ import outcomeService from "../../../../services/outcomeService";
 import {useFormik} from "formik";
 import errorMessageHandler from "../../../../utils/errorMessageHandler";
 import {MaterialUnitMap} from "../../../../constants";
+import hasPermission from "../../../../utils/hasPermisson";
+import PERMISSIONS from "../../../../constants/permissions";
 
 
 const PriceTextField = styled(TextField)({
@@ -45,6 +47,7 @@ const stopPropagation = (e: React.MouseEvent) => {
 const MaterialRow: React.FC<{row: IOutcomeMaterialListResponse}>= ({row}) => {
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
+    const isWarehouseman = hasPermission(PERMISSIONS.WAREHOUSEMAN)
 
     const handleClickPrice = (e: React.MouseEvent<HTMLAnchorElement> | React.MouseEvent<HTMLButtonElement>) => {
         stopPropagation(e)
@@ -75,65 +78,69 @@ const MaterialRow: React.FC<{row: IOutcomeMaterialListResponse}>= ({row}) => {
 
     return (
         <>
-            <TableRow hover onClick={() => row.price && dispatch(setPriceHistory(row.priceHistory!))}>
+            <TableRow hover onClick={() => !isWarehouseman && row.price && dispatch(setPriceHistory(row.priceHistory!))}>
                 <TableCell>{row.id}</TableCell>
                 <TableCell>{row.material}</TableCell>
                 <TableCell>{row.mark}</TableCell>
                 <TableCell>{row.sku}</TableCell>
                 <TableCell>{row.qty}</TableCell>
                 <TableCell>{MaterialUnitMap.get(row.unit)}</TableCell>
-                <TableCell style={{ width: 140 }}>
-                    {row.price ? (
-                        row.priceHistory!.length > 1 ? (
-                            <Button
-                                onClick={handleClickPrice}
-                                variant="contained"
-                                sx={{
-                                    width: 92,
-                                    backgroundColor: '#F0F409',
-                                    color: '#263238',
-                                    '&:hover': {
-                                        backgroundColor: '#e0e30d',
-                                        color: '#263238',
-                                    }
-                                }}
-                            >
-                                {row.price}
-                            </Button>
-                        ) : (
-                            <Button
-                                onClick={handleClickPrice}
-                                variant="contained"
-                                sx={{
-                                    width: 92,
-                                    backgroundColor: '#C5F2C7',
-                                    color: '#263238',
-                                    '&:hover': {
-                                        backgroundColor: '#b2e3b4',
-                                        color: '#263238',
-                                    }
-                                }}
-                            >
-                                {row.price}
-                            </Button>
-                        )
-                    ) : (
-                        <PriceTextField
-                            error={formik.touched.price && Boolean(formik.errors.price)}
-                            helperText={formik.touched.price && formik.errors.price}
-                            placeholder='-'
-                            hiddenLabel
-                            variant="outlined"
-                            size="small"
-                            name="price"
-                            value={formik.values.price || ''}
-                            onChange={formik.handleChange}
-                            onClick={stopPropagation}
-                            onKeyDown={(e) => (e.code === 'Enter') && formik.submitForm()}
-                        />
-                    )}
-                </TableCell>
-                <TableCell>{row.total || '-'}</TableCell>
+                {!isWarehouseman && (
+                    <>
+                        <TableCell style={{ width: 140 }}>
+                            {row.price ? (
+                                row.priceHistory!.length > 1 ? (
+                                    <Button
+                                        onClick={handleClickPrice}
+                                        variant="contained"
+                                        sx={{
+                                            width: 92,
+                                            backgroundColor: '#F0F409',
+                                            color: '#263238',
+                                            '&:hover': {
+                                                backgroundColor: '#e0e30d',
+                                                color: '#263238',
+                                            }
+                                        }}
+                                    >
+                                        {row.price}
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        onClick={handleClickPrice}
+                                        variant="contained"
+                                        sx={{
+                                            width: 92,
+                                            backgroundColor: '#C5F2C7',
+                                            color: '#263238',
+                                            '&:hover': {
+                                                backgroundColor: '#b2e3b4',
+                                                color: '#263238',
+                                            }
+                                        }}
+                                    >
+                                        {row.price}
+                                    </Button>
+                                )
+                            ) : (
+                                <PriceTextField
+                                    error={formik.touched.price && Boolean(formik.errors.price)}
+                                    helperText={formik.touched.price && formik.errors.price}
+                                    placeholder='-'
+                                    hiddenLabel
+                                    variant="outlined"
+                                    size="small"
+                                    name="price"
+                                    value={formik.values.price || ''}
+                                    onChange={formik.handleChange}
+                                    onClick={stopPropagation}
+                                    onKeyDown={(e) => (e.code === 'Enter') && formik.submitForm()}
+                                />
+                            )}
+                        </TableCell>
+                        <TableCell>{row.total || '-'}</TableCell>
+                    </>
+                )}
             </TableRow>
         </>
     );

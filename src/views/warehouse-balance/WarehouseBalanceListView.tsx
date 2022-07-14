@@ -29,7 +29,7 @@ import errorMessageHandler from '../../utils/errorMessageHandler';
 import {FiSearch} from 'react-icons/fi';
 import LoadingTableBody from "../../components/LoadingTableBody";
 import MaterialRow from "./MaterialRow";
-import {ICategoryOption} from "../../models";
+import {IDataOption} from "../../models";
 import {useNavigate} from "react-router-dom";
 import LoadingLayout from "../../components/LoadingLayout";
 
@@ -39,7 +39,7 @@ const Root = styled('div')(({theme}) => ({
     paddingBottom: theme.spacing(3)
 }))
 
-const List: React.FC<{categories: ICategoryOption[]}> = ({categories}) => {
+const List: React.FC<{categories: IDataOption[]}> = ({categories}) => {
     const {
         filterCategoryId,
         query,
@@ -190,7 +190,7 @@ const WarehouseBalanceListView = () => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
-    const [categories, setCategories] = useState<ICategoryOption[]>([])
+    const [categories, setCategories] = useState<IDataOption[]>([])
 
     useEffect(() => {
         let cancel = false;

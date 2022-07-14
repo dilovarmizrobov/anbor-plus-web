@@ -12,6 +12,7 @@ import { warehouseBalanceSlice } from './reducers/warehouseBalanceSlice';
 import {outcomeListSlice} from "./reducers/outcomeSlice";
 import {outcomeMaterialListSlice} from "./reducers/outcomeMaterialListSlice";
 import {previewImageSlice} from "./reducers/previewImageSlice";
+import {overheadMaterialSlice} from "./reducers/overheadMaterialSlice";
 
 export const store = configureStore({
     reducer: {
@@ -27,7 +28,8 @@ export const store = configureStore({
         incomeMaterialList: incomeMaterialListSlice.reducer,
         warehouseBalance: warehouseBalanceSlice.reducer,
         outcomeList: outcomeListSlice.reducer,
-        outcomeMaterialList: outcomeMaterialListSlice.reducer
+        outcomeMaterialList: outcomeMaterialListSlice.reducer,
+        overheadMaterial: overheadMaterialSlice.reducer,
     },
 })
 

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {IMaterialMark, IMaterialRequest, IMaterialResponse} from "../../../models/IMaterial";
-import {ICategoryOption} from "../../../models";
+import {IDataOption} from "../../../models";
 import {useSnackbar} from "notistack";
 import {useNavigate} from "react-router-dom";
 import {useFormik} from "formik";
@@ -25,7 +25,7 @@ import errorMessageHandler from "../../../utils/errorMessageHandler";
 import materialService from "../../../services/MaterialService";
 import EditMarkModal from "./EditMarkModal";
 
-const   Form: React.FC<{ material?: IMaterialResponse, categories: ICategoryOption[] }> = ({material, categories}) => {
+const Form: React.FC<{ material?: IMaterialResponse, categories: IDataOption[] }> = ({material, categories}) => {
     const {enqueueSnackbar} = useSnackbar();
     const navigate = useNavigate();
     const [editMark, setEditMark] = useState<IMaterialMark>()

@@ -43,7 +43,9 @@ import {
 import PreviewImageModal from "../../../components/PreviewImageModal";
 import {selectPreviewImage} from "../../../store/reducers/previewImageSlice";
 import {MdDone} from 'react-icons/md'
-import {IIncomeOption} from "../../../models/IIncome";
+import {IDataOption} from "../../../models";
+import hasPermission from "../../../utils/hasPermisson";
+import PERMISSIONS from "../../../constants/permissions";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -80,8 +82,9 @@ const IncomeListView = () => {
     const {previewImageUrl} = useAppSelector(selectPreviewImage)
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
-    const [providers, setProviders] = useState<IIncomeOption[]>( [])
+    const [providers, setProviders] = useState<IDataOption[]>( [])
     const [providerLoading, setProviderLoading] = useState(false)
+    const isWarehouseman = hasPermission(PERMISSIONS.WAREHOUSEMAN)
 
     useEffect(() => () => {
         dispatch(reset())
@@ -93,7 +96,7 @@ const IncomeListView = () => {
         (async () => {
             try {
                 dispatch(getListPending())
-                const data: any = await incomeService.getListIncome(page + 1, rowsPerPage, startDate, endDate, filterPriceType, filterIncomeFromWho)
+                const data: any = await incomeService.getListIncome(page + 1, rowsPerPage, startDate, endDate, filterPriceType, filterIncomeType, filterIncomeFromWho)
 
                 if (!cancel) dispatch(getListSuccess({rows: data.content, rowsCount: data.totalElements}))
 
@@ -111,7 +114,7 @@ const IncomeListView = () => {
     const getOptionProviders = async (type: IncomeTypeEnum) => {
         try {
             setProviderLoading(true)
-            const providersData = await incomeService.getOptionProviders(type) as IIncomeOption[]
+            const providersData = await incomeService.getOptionProviders(type) as IDataOption[]
 
             setProviders(providersData)
         } catch (error: any) {
@@ -176,15 +179,14 @@ const IncomeListView = () => {
                                                 size="small"
                                                 onChange={(e) => {
                                                     let value = e.target.value === '' ? undefined : e.target.value as IncomeTypeEnum
-                                                    dispatch(setFilterIncomeType(value))
 
                                                     if (value) getOptionProviders(value)
-                                                    else {
-                                                        dispatch(setFilterIncomeFromWho(undefined))
-                                                        setProviders([])
-                                                    }
+                                                    else setProviders([])
+
+                                                    dispatch(setFilterIncomeType(value))
+                                                    dispatch(setFilterIncomeFromWho(undefined))
                                                 }}
-                                                sx={{width: 259}}
+                                                sx={{width: 250}}
                                                 variant="outlined"
                                                 value={filterIncomeType || ''}
                                                 SelectProps={{
@@ -227,7 +229,7 @@ const IncomeListView = () => {
                                                     )
                                                 } : undefined}
                                                 sx={{
-                                                    width: 259,
+                                                    width: 250,
                                                     '& .MuiSelect-icon': {
                                                         visibility: providerLoading ? 'hidden' : 'visible'
                                                     }
@@ -262,7 +264,7 @@ const IncomeListView = () => {
                                                 <TableCell>№</TableCell>
                                                 <TableCell>Дата</TableCell>
                                                 <TableCell>Категория</TableCell>
-                                                <TableCell>Сумма прихода</TableCell>
+                                                {!isWarehouseman && <TableCell>Сумма прихода</TableCell>}
                                                 <TableCell>От кого</TableCell>
                                                 <TableCell>Комментарий</TableCell>
                                                 <TableCell/>
@@ -278,7 +280,7 @@ const IncomeListView = () => {
                                                                 <TableCell>{row.id}</TableCell>
                                                                 <TableCell>{row.createdDate}</TableCell>
                                                                 <TableCell>{row.categories.join(", ")}</TableCell>
-                                                                <TableCell>{row.total}</TableCell>
+                                                                {!isWarehouseman && <TableCell>{row.total}</TableCell>}
                                                                 <TableCell>{row.fromWho}</TableCell>
                                                                 <TableCell>{row.comment}</TableCell>
                                                                 <TableCell style={{ maxWidth: 185 }}>{row.imageNames.map(url => (
