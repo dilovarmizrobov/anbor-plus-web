@@ -36,6 +36,8 @@ import OutcomeListView from "./views/outcome/list/OutcomeListView";
 import OutcomeEditView from "./views/outcome/form/OutcomeEditView";
 import DetailTableListView from "./views/outcome/list/material/DetailTableListView";
 import DisplacementFormView from "./views/displacement/form/DisplacementFormView";
+import DisplacementListView from "./views/displacement/list/DisplacementListView";
+import DisplacementMaterialListView from "./views/displacement/list/material/DisplacementMaterialListView";
 
 interface CustomRouteObject extends RouteObject {
     perm?: UserRolesEnum[],
@@ -134,12 +136,20 @@ const routes: CustomRouteObject[] = [
                         element: <DetailTableListView/>,
                     },
                     {
-                        path: '/displacement/create',
+                        path: '/displacements',
+                        element: <DisplacementListView/>,
+                    },
+                    {
+                        path: '/displacements/create',
                         element: <DisplacementFormView/>,
                     },
                     {
-                        path: '/displacement/:displacementId/edit',
+                        path: '/displacements/:displacementId/edit',
                         element: <DisplacementFormView/>,
+                    },
+                    {
+                        path: '/displacements/:displacementId/materials',
+                        element: <DisplacementMaterialListView/>,
                     },
                     {
                         path: '/warehouses',

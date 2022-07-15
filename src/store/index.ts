@@ -13,6 +13,8 @@ import {outcomeListSlice} from "./reducers/outcomeSlice";
 import {outcomeMaterialListSlice} from "./reducers/outcomeMaterialListSlice";
 import {previewImageSlice} from "./reducers/previewImageSlice";
 import {overheadMaterialSlice} from "./reducers/overheadMaterialSlice";
+import {displacementListSlice} from "./reducers/displacementSlice";
+import {displacementMaterialListSlice} from "./reducers/displacementMaterialSlice";
 
 export const store = configureStore({
     reducer: {
@@ -30,6 +32,8 @@ export const store = configureStore({
         outcomeList: outcomeListSlice.reducer,
         outcomeMaterialList: outcomeMaterialListSlice.reducer,
         overheadMaterial: overheadMaterialSlice.reducer,
+        displacementList: displacementListSlice.reducer,
+        displacementMaterialList: displacementMaterialListSlice.reducer,
     },
 })
 
