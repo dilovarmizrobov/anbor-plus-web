@@ -4,6 +4,8 @@ import apiHelper from "./ApiHelper";
 import {DisplaceTypeEnum} from "../constants";
 
 class DisplacementService {
+    getDisplacementStatus = (displacementId: string) => apiHelper.get(`/overheads/${displacementId}/displacement/images`)
+
     getDisplacement = (displacementId: string) => apiHelper.get(`/overheads/${displacementId}/displacement`)
 
     getListDisplacement = (page: number, size: number, search: string, startDate?: string, endDate?: string,) =>
@@ -26,6 +28,20 @@ class DisplacementService {
             .catch(error => reject(error))
     })
 
+    putMaterialPriceEdit = (priceEdit: PriceEditRequest) => apiHelper.put<PriceEditRequest>('/overheads/change-item-price', priceEdit)
+
+    putUploadImageDisplacement = (displacementId: number, images: File[]) => new Promise((resolve, reject) => {
+        let formData = new FormData();
+
+        for (let i = 0; i < images.length; i++) formData.append('images', images[i])
+
+        api.put(`overheads/${displacementId}/displacement/upload-image`, formData)
+            .then(response => resolve(response.data))
+            .catch(error => reject(error))
+    })
+
+    putApproveDisplacement = (displacementId: number) => apiHelper.put(`/overheads/${displacementId}/displacement/approve`)
+
     putUpdateDisplacement = (displacement: IReqDisplacement, images: File[], imageNames: string[]) => new Promise((resolve, reject) => {
         let formData = new FormData();
 
@@ -42,7 +58,8 @@ class DisplacementService {
             .catch(error => reject(error))
     })
 
-    putMaterialPriceEdit = (priceEdit: PriceEditRequest) => apiHelper.put<PriceEditRequest>('/overheads/change-item-price', priceEdit)
+    deleteImageDisplacement = (displacementId: number, imageName: string) =>
+        apiHelper.delete(`/overheads/${displacementId}/displacement/delete-image?imageName=${imageName}`)
 }
 
 const displacementService = new DisplacementService()

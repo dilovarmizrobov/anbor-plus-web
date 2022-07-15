@@ -71,7 +71,7 @@ const IncomeMaterialListView = () => {
 
                 if (!cancel) dispatch(getListSuccess({rows: data.content, rowsCount: data.totalElements}))
 
-            } catch (error:any) {
+            } catch (error: any) {
                 dispatch(getListError())
                 enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
             }
@@ -87,7 +87,7 @@ const IncomeMaterialListView = () => {
 
         (async () => {
            try {
-               let data =  await incomeService.getIncomeTotalInfo(incomeId || '') as IIncomeTotalInfo
+               let data = await incomeService.getIncomeTotalInfo(incomeId || '') as IIncomeTotalInfo
 
                if (!cancel) dispatch(setIncomeTotalInfo(data))
            } catch (error: any) {

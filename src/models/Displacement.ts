@@ -22,6 +22,12 @@ export interface IReqDisplacement {
     overheadItems: IOverheadMaterial[]
 }
 
+export interface IResDisplacementStatus {
+    id: number;
+    approved: boolean;
+    imageNames: string[];
+}
+
 export interface IListDisplacement {
     id: number;
     categories: string[];
