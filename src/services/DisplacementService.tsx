@@ -1,9 +1,18 @@
 import api from "../utils/api";
-import {IReqDisplacement} from "../models/Displacement";
+import {IReqDisplacement, PriceEditRequest} from "../models/Displacement";
 import apiHelper from "./ApiHelper";
+import {DisplaceTypeEnum} from "../constants";
 
 class DisplacementService {
     getDisplacement = (displacementId: string) => apiHelper.get(`/overheads/${displacementId}/displacement`)
+
+    getListDisplacement = (page: number, size: number, search: string, startDate?: string, endDate?: string,) =>
+        apiHelper.get(`/overheads/all/${DisplaceTypeEnum.DISPLACEMENT}`, {size, page,search, startDate, endDate})
+
+    getListDisplacementMaterial = (displacementId: string, page: number, size: number, ) =>
+        apiHelper.get(`/overheads/${displacementId}/items`, {size, page, })
+
+    getDisplacementTotalInfo = (displacementId: string) => apiHelper.get(`/overheads/${displacementId}/total-info`)
 
     postNewDisplacement = (displacement: IReqDisplacement, images: File[]) => new Promise((resolve, reject) => {
         let formData = new FormData();
@@ -32,6 +41,8 @@ class DisplacementService {
             .then(response => resolve(response.data))
             .catch(error => reject(error))
     })
+
+    putMaterialPriceEdit = (priceEdit: PriceEditRequest) => apiHelper.put<PriceEditRequest>('/overheads/change-item-price', priceEdit)
 }
 
 const displacementService = new DisplacementService()

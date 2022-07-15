@@ -42,6 +42,11 @@ export const navConfigMain: INavConfig[] = [
                 href: '/warehouse-balance',
             },
             {
+                title: 'Перемещение',
+                icon: FaUserFriends,
+                href: '/displacements',
+            },
+            {
                 title: 'Настройки',
                 icon: MdSettings,
                 children: [

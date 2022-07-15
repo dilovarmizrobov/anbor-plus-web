@@ -71,3 +71,7 @@ export const OutcomeTypeMap = new Map(
         [OutcomeTypeEnum.ENTERPRISE, 'Предприятия']
     ]
 )
+
+export enum DisplaceTypeEnum {
+    DISPLACEMENT = "DISPLACEMENT"
+}
