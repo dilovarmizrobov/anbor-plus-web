@@ -150,9 +150,9 @@ const DisplacementListView = () => {
                                                                 <TableCell>
                                                                     {
                                                                         row.approved ? (
-                                                                            <span style={{color: "#60D982"}}>Активный</span>
-                                                                        ) : (
                                                                             <span style={{color: "#686868"}}>Завершенный</span>
+                                                                        ) : (
+                                                                            <span style={{color: "#60D982"}}>Активный</span>
                                                                         )
                                                                     }
                                                                 </TableCell>

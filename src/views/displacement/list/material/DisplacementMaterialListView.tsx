@@ -33,6 +33,7 @@ import LoadingTableBody from "../../../../components/LoadingTableBody";
 import MaterialRow from "./MaterialRow";
 import EditPriceModal from "./EditPriceModal";
 import PriceHistoryModal from "./PriceHistoryModal";
+import ApproveDisplacement from "../ApproveDisplacement";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -143,11 +144,12 @@ const DisplacementMaterialListView = () => {
                                         </Grid>
                                     </Grid>
                                 </Box>
+                                <ApproveDisplacement/>
                                 <TableContainer>
                                     <Table>
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell/>
+                                                <TableCell>№</TableCell>
                                                 <TableCell>Материал</TableCell>
                                                 <TableCell>Марка</TableCell>
                                                 <TableCell>Артикуль</TableCell>
