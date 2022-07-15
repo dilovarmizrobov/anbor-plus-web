@@ -148,13 +148,16 @@ const DisplacementListView = () => {
                                                                 <TableCell>{row.currentWarehouse}</TableCell>
                                                                 <TableCell>{row.destinationWarehouse}</TableCell>
                                                                 <TableCell>
-                                                                    {
-                                                                        row.approved ? (
-                                                                            <span style={{color: "#686868"}}>Завершенный</span>
-                                                                        ) : (
-                                                                            <span style={{color: "#60D982"}}>Активный</span>
-                                                                        )
-                                                                    }
+                                                                    <Box
+                                                                        sx={{
+                                                                            display: 'inline-block',
+                                                                            backgroundColor: row.approved ? '#C5F2C7' : '#FF8075',
+                                                                            borderRadius: 2,
+                                                                            padding: '13px 11px',
+                                                                        }}
+                                                                    >
+                                                                        {row.approved ? 'ЗАВЕРШЕН' : 'АКТИВНЫЙ'}
+                                                                    </Box>
                                                                 </TableCell>
                                                                 <TableCell style={{ width: 120 }} align="right">
                                                                     <EditButtonTable to={`/displacements/${row.id}/edit`} />
