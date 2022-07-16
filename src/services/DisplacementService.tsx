@@ -48,7 +48,7 @@ class DisplacementService {
 
         for (let i = 0; i < images.length; i++) formData.append('images', images[i])
 
-        api.put(`/overheads/${displacement.id!}`, formData)
+        api.put(`/overheads/${displacement.id!}/displacement`, formData)
             .then(response => resolve(response.data))
             .catch(error => reject(error))
     })

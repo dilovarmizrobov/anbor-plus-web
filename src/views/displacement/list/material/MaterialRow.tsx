@@ -2,7 +2,7 @@ import React from 'react';
 import {Button, TableCell, TableRow, TextField} from "@mui/material";
 import {MaterialUnitMap} from "../../../../constants";
 import {styled} from "@mui/material/styles";
-import {useAppDispatch} from "../../../../store/hooks";
+import {useAppDispatch, useAppSelector} from "../../../../store/hooks";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import errorMessageHandler from "../../../../utils/errorMessageHandler";
@@ -16,6 +16,7 @@ import {
 } from "../../../../store/reducers/displacementMaterialSlice";
 import {IReqPriceEdit, IResListMaterial} from "../../../../models/Overhead";
 import appService from "../../../../services/AppService";
+import {selectAuth} from "../../../../store/reducers/authSlice";
 
 const PriceTextField = styled(TextField)({
     width: 92,
@@ -46,9 +47,10 @@ const stopPropagation = (e: React.MouseEvent) => {
     e.nativeEvent.stopImmediatePropagation();
 }
 
-const MaterialRow: React.FC<{row: IResListMaterial}> = ({row}) => {
+const MaterialRow: React.FC<{row: IResListMaterial, warehouseDestinationId?: number, warehouseId?: number}> = ({row, warehouseDestinationId, warehouseId}) => {
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
+    const {user} = useAppSelector(selectAuth)
     const isWarehouseman = hasPermission(PERMISSIONS.WAREHOUSEMAN)
 
     const handleClickPrice = (e: React.MouseEvent<HTMLAnchorElement> | React.MouseEvent<HTMLButtonElement>) => {
@@ -87,7 +89,13 @@ const MaterialRow: React.FC<{row: IResListMaterial}> = ({row}) => {
                 <TableCell>{row.sku}</TableCell>
                 <TableCell>{row.qty}</TableCell>
                 <TableCell>{MaterialUnitMap.get(row.unit)}</TableCell>
-                {!isWarehouseman && (
+                {!isWarehouseman && (warehouseDestinationId === user!.warehouse.id) && (
+                    <>
+                        <TableCell>{row.price || '-'}</TableCell>
+                        <TableCell>{row.total || '-'}</TableCell>
+                    </>
+                )}
+                {!isWarehouseman && (warehouseId === user!.warehouse.id) && (
                     <>
                         <TableCell style={{ width: 140 }}>
                             {row.price ? (

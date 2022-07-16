@@ -1,4 +1,5 @@
 import {IOverheadMaterial} from "./Overhead";
+import {IDataOption} from "./index";
 
 export interface IResDisplacement {
     id: number;
@@ -30,8 +31,9 @@ export interface IResDisplacementStatus {
 export interface IListDisplacement {
     id: number;
     categories: string[];
+    total: number;
     createdDate: string;
-    currentWarehouse: string;
+    currentWarehouse: IDataOption;
     destinationWarehouse: string;
     approved: boolean;
 }
@@ -40,5 +42,7 @@ export interface IDisplacementTotalInfo {
     total: number;
     fromWho?: string;
     warehouse: string;
+    warehouseId: number;
     destination: string;
+    warehouseDestinationId: number;
 }

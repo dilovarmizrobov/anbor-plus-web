@@ -148,7 +148,9 @@ const DisplacementMaterialListView = () => {
                                         </Grid>
                                     </Grid>
                                 </Box>
-                                <ApproveDisplacement/>
+                                {displacementTotalInfo && (
+                                    <ApproveDisplacement warehouseDestinationId={displacementTotalInfo.warehouseDestinationId}/>
+                                )}
                                 <TableContainer>
                                     <Table>
                                         <TableHead>
@@ -172,7 +174,12 @@ const DisplacementMaterialListView = () => {
                                                 <TableBody>
                                                     {
                                                         rows.map(row =>(
-                                                            <MaterialRow key={row.id} row={row}/>
+                                                            <MaterialRow
+                                                                key={row.id}
+                                                                row={row}
+                                                                warehouseDestinationId={displacementTotalInfo?.warehouseDestinationId}
+                                                                warehouseId={displacementTotalInfo?.warehouseId}
+                                                            />
                                                         ))
                                                     }
                                                 </TableBody>

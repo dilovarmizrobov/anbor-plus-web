@@ -12,6 +12,9 @@ import {PATH_OVERHEADS_IMAGE} from "../../../constants";
 import PreviewImageModal from "../../../components/PreviewImageModal";
 import {useAppDispatch, useAppSelector} from "../../../store/hooks";
 import {selectPreviewImage, setPreviewImageUrl} from "../../../store/reducers/previewImageSlice";
+import hasPermission from "../../../utils/hasPermisson";
+import PERMISSIONS from "../../../constants/permissions";
+import {selectAuth} from "../../../store/reducers/authSlice";
 
 const StyledImage = styled('div')(() => ({
     height: 70,
@@ -32,15 +35,17 @@ const StyledIconButton = styled(IconButton)(() => ({
     }
 }))
 
-const ApproveDisplacement = () => {
+const ApproveDisplacement: React.FC<{warehouseDestinationId: number}> = ({warehouseDestinationId}) => {
     const NumberOfImage = 6
     const dispatch = useAppDispatch()
     const {previewImageUrl} = useAppSelector(selectPreviewImage)
+    const {user} = useAppSelector(selectAuth)
     const {enqueueSnackbar} = useSnackbar()
     const { displacementId } = useParams()
     const [uploadLoading, setUploadLoading] = useState(false)
     const [approveLoading, setApproveLoading] = useState(false)
     const [displacementStatus, setDisplacementStatus] = useState<IResDisplacementStatus>()
+    const whoCouldApprove = hasPermission(PERMISSIONS.APPROVE_DISPLACEMENT)
 
     useEffect(() => {
         let cancel = false;
@@ -102,7 +107,7 @@ const ApproveDisplacement = () => {
                         </Badge>
                     </Grid>
                 ))}
-                {displacementStatus.imageNames.length < NumberOfImage && (
+                {whoCouldApprove && (displacementStatus.imageNames.length < NumberOfImage) && (
                     <Grid item xs="auto">
                         <label>
                             <input
@@ -142,7 +147,7 @@ const ApproveDisplacement = () => {
                         </label>
                     </Grid>
                 )}
-                {!displacementStatus.approved && (
+                {!displacementStatus.approved && whoCouldApprove && (user!.warehouse.id === warehouseDestinationId) && (
                     <Grid item xs="auto">
                         <Button
                             variant='contained'
