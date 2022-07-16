@@ -32,6 +32,10 @@ const PERMISSIONS = {
         UserRolesEnum.ADMIN,
         UserRolesEnum.ACCOUNTANT,
     ],
+    APPROVE_DISPLACEMENT: [
+        UserRolesEnum.ADMIN,
+        UserRolesEnum.WAREHOUSEMAN,
+    ]
 }
 
 export default PERMISSIONS

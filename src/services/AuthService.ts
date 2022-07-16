@@ -39,11 +39,7 @@ class AuthService {
         api.post('authenticate', params)
             .then((response) => {
                 let data = response.data
-                const user: IUser = {fullName: data.fullName, role: data.role}
-
-                if (data.role === UserRolesEnum.ADMIN || data.role === UserRolesEnum.ACCOUNTANT) {
-                    user.warehouse = data.warehouse || undefined
-                }
+                const user: IUser = {fullName: data.fullName, role: data.role, warehouse: data.warehouse}
 
                 this.setUserAndJwtInSession(data.jwt, user)
 

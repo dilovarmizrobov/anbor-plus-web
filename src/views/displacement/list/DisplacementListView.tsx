@@ -33,6 +33,9 @@ import LoadingTableBody from "../../../components/LoadingTableBody";
 import DetailButtonTable from "../../../components/DetailButtonTable";
 import useDebounce from "../../../hooks/useDebounce";
 import EditButtonTable from "../../../components/EditButtonTable";
+import hasPermission from "../../../utils/hasPermisson";
+import PERMISSIONS from "../../../constants/permissions";
+import {selectAuth} from "../../../store/reducers/authSlice";
 
 
 const Root = styled('div')(({theme}) => ({
@@ -54,9 +57,11 @@ const DisplacementListView = () => {
         startDate,
         endDate,
     } = useAppSelector(selectDisplacementList)
+    const {user} = useAppSelector(selectAuth)
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
     const debouncedQuery = useDebounce(query, 500)
+    const isWarehouseman = hasPermission(PERMISSIONS.WAREHOUSEMAN)
 
     useEffect(() => () => {
         dispatch(reset())
@@ -130,6 +135,7 @@ const DisplacementListView = () => {
                                                 <TableCell>№</TableCell>
                                                 <TableCell>Дата</TableCell>
                                                 <TableCell>Категория</TableCell>
+                                                {!isWarehouseman && <TableCell>Сумма прихода</TableCell>}
                                                 <TableCell>Склад </TableCell>
                                                 <TableCell>Склад назначения</TableCell>
                                                 <TableCell>Статус</TableCell>
@@ -145,7 +151,8 @@ const DisplacementListView = () => {
                                                                 <TableCell>{row.id}</TableCell>
                                                                 <TableCell>{row.createdDate}</TableCell>
                                                                 <TableCell>{row.categories.join(', ')}</TableCell>
-                                                                <TableCell>{row.currentWarehouse}</TableCell>
+                                                                {!isWarehouseman && <TableCell>{row.total}</TableCell>}
+                                                                <TableCell>{row.currentWarehouse.name}</TableCell>
                                                                 <TableCell>{row.destinationWarehouse}</TableCell>
                                                                 <TableCell>
                                                                     <Box
@@ -160,7 +167,7 @@ const DisplacementListView = () => {
                                                                     </Box>
                                                                 </TableCell>
                                                                 <TableCell style={{ width: 120 }} align="right">
-                                                                    {!row.approved && <EditButtonTable to={`/displacements/${row.id}/edit`} />}
+                                                                    {!row.approved && (row.currentWarehouse.id === user!.warehouse.id) && <EditButtonTable to={`/displacements/${row.id}/edit`} />}
                                                                     <DetailButtonTable to={`/displacements/${row.id}/materials`}/>
                                                                 </TableCell>
                                                             </TableRow>

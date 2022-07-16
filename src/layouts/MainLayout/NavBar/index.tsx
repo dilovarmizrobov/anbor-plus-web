@@ -10,6 +10,7 @@ import hasPermission from "../../../utils/hasPermisson";
 import {INavConfig, INavItem} from "../../navConfig";
 import NavCollapseItem from "./NavCollapseItem";
 import AutocompleteInput from "./AutocompleteInput";
+import PERMISSIONS from "../../../constants/permissions";
 
 const filterNavItem = (items: INavItem[]) => {
     return items.filter(item => {
@@ -26,6 +27,7 @@ const Index: React.FC<{openMobile: boolean, onMobileClose: VoidFunction, navConf
     const {openMobile, onMobileClose, navConfig} = props
     const location = useLocation();
     const {user} = useAppSelector(selectAuth)
+    const isWarehouseman = hasPermission(PERMISSIONS.WAREHOUSEMAN)
 
     useEffect(() => {
         if (openMobile && onMobileClose) {
@@ -51,6 +53,11 @@ const Index: React.FC<{openMobile: boolean, onMobileClose: VoidFunction, navConf
                         <Typography variant="h6">
                             {user!.fullName}
                         </Typography>
+                        {isWarehouseman && (
+                            <Typography variant="body1">
+                                {user!.warehouse.name}
+                            </Typography>
+                        )}
                         <Typography variant="body2" color="textSecondary">
                             {UserRolesMap.get(user!.role)}
                         </Typography>

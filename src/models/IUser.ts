@@ -4,7 +4,7 @@ import {IWarehouseOption, IWarehouseResponse} from "./IWarehouse";
 export interface IUser {
     fullName: string;
     role: UserRolesEnum;
-    warehouse?: IWarehouseOption;
+    warehouse: IWarehouseOption;
 }
 
 export interface IUserResponse {
