@@ -34,6 +34,8 @@ import MaterialRow from "./MaterialRow";
 import EditPriceModal from "./EditPriceModal";
 import PriceHistoryModal from "./PriceHistoryModal";
 import ApproveDisplacement from "../ApproveDisplacement";
+import hasPermission from "../../../../utils/hasPermisson";
+import PERMISSIONS from "../../../../constants/permissions";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -58,6 +60,7 @@ const DisplacementMaterialListView = () => {
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
     const { displacementId } = useParams()
+    const isWarehouseman = hasPermission(PERMISSIONS.WAREHOUSEMAN)
 
     useEffect(() => () => {
         dispatch(reset())
@@ -155,8 +158,12 @@ const DisplacementMaterialListView = () => {
                                                 <TableCell>Артикуль</TableCell>
                                                 <TableCell>Коль-во</TableCell>
                                                 <TableCell>ЕИ</TableCell>
-                                                <TableCell>Цена</TableCell>
-                                                <TableCell>Сумма</TableCell>
+                                                {!isWarehouseman && (
+                                                    <>
+                                                        <TableCell>Цена</TableCell>
+                                                        <TableCell>Сумма</TableCell>
+                                                    </>
+                                                )}
                                             </TableRow>
                                         </TableHead>
                                         {

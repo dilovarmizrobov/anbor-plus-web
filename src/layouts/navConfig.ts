@@ -49,6 +49,7 @@ export const navConfigMain: INavConfig[] = [
             {
                 title: 'Настройки',
                 icon: MdSettings,
+                perm: PERMISSIONS.LIST.USER,
                 children: [
                     {
                         title: 'Пользователи',

@@ -160,7 +160,7 @@ const DisplacementListView = () => {
                                                                     </Box>
                                                                 </TableCell>
                                                                 <TableCell style={{ width: 120 }} align="right">
-                                                                    <EditButtonTable to={`/displacements/${row.id}/edit`} />
+                                                                    {!row.approved && <EditButtonTable to={`/displacements/${row.id}/edit`} />}
                                                                     <DetailButtonTable to={`/displacements/${row.id}/materials`}/>
                                                                 </TableCell>
                                                             </TableRow>

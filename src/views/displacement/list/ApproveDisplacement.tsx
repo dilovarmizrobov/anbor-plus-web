@@ -142,25 +142,27 @@ const ApproveDisplacement = () => {
                         </label>
                     </Grid>
                 )}
-                <Grid item xs="auto">
-                    <Button
-                        variant='contained'
-                        sx={{
-                            backgroundColor: '#C5F2C7',
-                            color: '#263238',
-                            '&:hover': {
-                                backgroundColor: '#b2e3b4',
+                {!displacementStatus.approved && (
+                    <Grid item xs="auto">
+                        <Button
+                            variant='contained'
+                            sx={{
+                                backgroundColor: '#C5F2C7',
                                 color: '#263238',
-                            },
-                        }}
-                        size='small'
-                        disabled={approveLoading || displacementStatus.approved}
-                        endIcon={approveLoading ? <CircularProgress size={16}/> : (displacementStatus.approved ? <MdOutlineDone/> : undefined)}
-                        onClick={handleApprove}
-                    >
-                        Подтвердить
-                    </Button>
-                </Grid>
+                                '&:hover': {
+                                    backgroundColor: '#b2e3b4',
+                                    color: '#263238',
+                                },
+                            }}
+                            size='small'
+                            disabled={approveLoading || displacementStatus.approved}
+                            endIcon={approveLoading ? <CircularProgress size={16}/> : (displacementStatus.approved ? <MdOutlineDone/> : undefined)}
+                            onClick={handleApprove}
+                        >
+                            Подтвердить
+                        </Button>
+                    </Grid>
+                )}
             </Grid>
             {previewImageUrl && <PreviewImageModal/>}
         </Box>

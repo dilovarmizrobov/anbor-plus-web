@@ -28,6 +28,10 @@ const PERMISSIONS = {
             UserRolesEnum.ACCOUNTANT,
         ],
     },
+    SETTINGS: [
+        UserRolesEnum.ADMIN,
+        UserRolesEnum.ACCOUNTANT,
+    ],
 }
 
 export default PERMISSIONS
