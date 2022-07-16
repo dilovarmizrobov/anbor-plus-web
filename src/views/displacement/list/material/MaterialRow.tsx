@@ -9,13 +9,13 @@ import errorMessageHandler from "../../../../utils/errorMessageHandler";
 import {useSnackbar} from "notistack";
 import hasPermission from "../../../../utils/hasPermisson";
 import PERMISSIONS from "../../../../constants/permissions";
-import {IDisplacementMaterialListResponse, PriceEditRequest} from "../../../../models/Displacement";
-import incomeService from "../../../../services/IncomeService";
 import {
     editMaterial,
     setMaterialEditPrice,
     setPriceHistory
 } from "../../../../store/reducers/displacementMaterialSlice";
+import {IReqPriceEdit, IResListMaterial} from "../../../../models/Overhead";
+import appService from "../../../../services/AppService";
 
 const PriceTextField = styled(TextField)({
     width: 92,
@@ -46,7 +46,7 @@ const stopPropagation = (e: React.MouseEvent) => {
     e.nativeEvent.stopImmediatePropagation();
 }
 
-const MaterialRow: React.FC<{row: IDisplacementMaterialListResponse}> = ({row}) => {
+const MaterialRow: React.FC<{row: IResListMaterial}> = ({row}) => {
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
     const isWarehouseman = hasPermission(PERMISSIONS.WAREHOUSEMAN)
@@ -56,7 +56,7 @@ const MaterialRow: React.FC<{row: IDisplacementMaterialListResponse}> = ({row}) 
         dispatch(setMaterialEditPrice({price: row.price!, materialId: row.id}))
     }
 
-    const formik = useFormik<PriceEditRequest>({
+    const formik = useFormik<IReqPriceEdit>({
         initialValues: {
             itemId: row.id,
             price: 0,
@@ -67,7 +67,7 @@ const MaterialRow: React.FC<{row: IDisplacementMaterialListResponse}> = ({row}) 
         }),
         onSubmit: async (values, {setSubmitting}) => {
             try {
-                let displacementMaterial = await incomeService.putMaterialPriceEdit(values) as IDisplacementMaterialListResponse
+                let displacementMaterial = await appService.putMaterialPriceEdit(values) as IResListMaterial
                 dispatch(editMaterial(displacementMaterial))
                 enqueueSnackbar('Успешно обновлен', {variant: 'success'})
             } catch (error: any) {

@@ -57,7 +57,8 @@ export const FilterPriceTypeMap = new Map(
 
 export enum OverheadTypeEnum {
     OUTCOME = "OUTCOME",
-    INCOME = "INCOME"
+    INCOME = "INCOME",
+    DISPLACEMENT = "DISPLACEMENT",
 }
 
 export enum OutcomeTypeEnum {
@@ -71,7 +72,3 @@ export const OutcomeTypeMap = new Map(
         [OutcomeTypeEnum.ENTERPRISE, 'Предприятия']
     ]
 )
-
-export enum DisplaceTypeEnum {
-    DISPLACEMENT = "DISPLACEMENT"
-}

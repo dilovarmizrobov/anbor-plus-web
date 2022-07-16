@@ -1,6 +1,6 @@
 import {OverheadTypeEnum, OutcomeTypeEnum, FilterPriceTypeEnum} from "../constants";
 import apiHelper from "./ApiHelper";
-import {IOutcomeRequest, PriceEditRequest} from "../models/IOutcome";
+import {IOutcomeRequest} from "../models/IOutcome";
 import api from "../utils/api";
 
 class OutcomeService {
@@ -19,14 +19,7 @@ class OutcomeService {
        return apiHelper.get(`/overheads/all/${OverheadTypeEnum.OUTCOME}`, {size, page, startDate, endDate, extraParams})
     }
 
-    getListOutcomeMaterial = (outcomeId: string, page: number, size:number) =>
-        apiHelper.get(`/overheads/${outcomeId}/items`, {size, page})
-
     getOutcomeTotalInfo = (outcomeId: string) => apiHelper.get(`/overheads/${outcomeId}/total-info`)
-
-    getOptionMaterials = (query: string) => apiHelper.get(`/materials/find`, {search: query})
-
-    getOptionMarks = (materialId: number) => apiHelper.get(`/materials/marks/${materialId}`)
 
     getOptionOutcomeType = (type: OutcomeTypeEnum) => apiHelper.get(`/overheads/${type}/option`)
 
@@ -59,8 +52,6 @@ class OutcomeService {
             .then(response => resolve(response.data))
             .catch(error => reject(error))
     })
-
-    putMaterialPriceEdit = (priceEdit: PriceEditRequest) => apiHelper.put<PriceEditRequest>('/overheads/change-item-price', priceEdit)
 }
 
 const outcomeService = new OutcomeService()

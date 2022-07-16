@@ -13,18 +13,18 @@ import {
     selectIncomeMaterialList
 } from "../../../../store/reducers/incomeMaterialSlice";
 import {useFormik} from "formik";
-import {IIncomeMaterialListResponse, PriceEditRequest} from "../../../../models/IIncome";
 import * as Yup from "yup";
 import errorMessageHandler from "../../../../utils/errorMessageHandler";
 import {useSnackbar} from "notistack";
-import incomeService from "../../../../services/IncomeService";
+import {IResListMaterial, IReqPriceEdit} from "../../../../models/Overhead";
+import appService from "../../../../services/AppService";
 
 const EditPriceModal = () => {
     const dispatch = useAppDispatch()
     const {materialEditPriceId, materialEditPrice} = useAppSelector(selectIncomeMaterialList)
     const {enqueueSnackbar} = useSnackbar()
 
-    const formik = useFormik<PriceEditRequest>({
+    const formik = useFormik<IReqPriceEdit>({
         initialValues: {
             itemId: materialEditPriceId,
             price: materialEditPrice,
@@ -36,7 +36,7 @@ const EditPriceModal = () => {
         }),
         onSubmit: async (values, {setSubmitting}) => {
             try {
-                let incomeMaterial = await incomeService.putMaterialPriceEdit(values) as IIncomeMaterialListResponse
+                let incomeMaterial = await appService.putMaterialPriceEdit(values) as IResListMaterial
                 dispatch(editMaterial(incomeMaterial))
                 enqueueSnackbar('Успешно обновлен', {variant: 'success'})
             } catch (error: any) {

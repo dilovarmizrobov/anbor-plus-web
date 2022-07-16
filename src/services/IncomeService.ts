@@ -1,6 +1,6 @@
 import apiHelper from "./ApiHelper";
 import {FilterPriceTypeEnum, IncomeTypeEnum, OverheadTypeEnum} from "../constants";
-import {IIncomeRequest, PriceEditRequest} from "../models/IIncome";
+import {IIncomeRequest} from "../models/IIncome";
 import api from "../utils/api";
 
 class IncomeService {
@@ -20,9 +20,6 @@ class IncomeService {
     }
 
     getOptionProviders = (type: IncomeTypeEnum) => apiHelper.get(`/overheads/${type}/option`)
-
-    getListIncomeMaterial = (incomeId: string, page: number, size: number) =>
-        apiHelper.get(`/overheads/${incomeId}/items`, {size, page})
 
     getIncomeTotalInfo = (incomeId: string) => apiHelper.get(`/overheads/${incomeId}/total-info`)
 
@@ -53,8 +50,6 @@ class IncomeService {
             .then(response => resolve(response.data))
             .catch(error => reject(error))
     })
-
-    putMaterialPriceEdit = (priceEdit: PriceEditRequest) => apiHelper.put<PriceEditRequest>('/overheads/change-item-price', priceEdit)
 }
 
 const incomeService = new IncomeService()

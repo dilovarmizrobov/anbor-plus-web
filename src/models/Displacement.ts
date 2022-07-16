@@ -1,5 +1,4 @@
 import {IOverheadMaterial} from "./Overhead";
-import {MaterialUnitEnum} from "../constants";
 
 export interface IResDisplacement {
     id: number;
@@ -35,32 +34,6 @@ export interface IListDisplacement {
     currentWarehouse: string;
     destinationWarehouse: string;
     approved: boolean;
-}
-
-export interface IDisplacementMaterialListResponse {
-    id: number;
-    material: string;
-    mark: string;
-    sku: string;
-    qty: number;
-    unit: MaterialUnitEnum;
-    price: number;
-    total: number;
-    priceHistory: PriceHistory[];
-}
-
-export interface PriceHistory {
-    id: number;
-    createdBy: string;
-    createdDate: string;
-    price: number;
-    comment?: string;
-}
-
-export interface PriceEditRequest {
-    itemId: number;
-    price: number;
-    comment: string;
 }
 
 export interface IDisplacementTotalInfo {

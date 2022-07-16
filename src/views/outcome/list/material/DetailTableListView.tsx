@@ -36,6 +36,7 @@ import PriceHistoryModal from "./PriceHistoryModal";
 import EditPriceModal from "./EditPriceModal";
 import hasPermission from "../../../../utils/hasPermisson";
 import PERMISSIONS from "../../../../constants/permissions";
+import appService from "../../../../services/AppService";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -75,7 +76,7 @@ const DetailTableListView = () => {
                 try {
                     dispatch(getListPending())
 
-                    const data:any = await outcomeService.getListOutcomeMaterial(outcomeId || '', page + 1, rowsPerPage)
+                    const data:any = await appService.getListOverheadMaterial(outcomeId || '', page + 1, rowsPerPage)
                     if(!cancel) dispatch(getListSuccess({rows: data.content, rowsCount: data.totalElements}))
                 }catch (error:any) {
                     dispatch(getListError())

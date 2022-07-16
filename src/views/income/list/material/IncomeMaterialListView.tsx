@@ -31,6 +31,7 @@ import EditPriceModal from "./EditPriceModal";
 import {IIncomeTotalInfo} from "../../../../models/IIncome";
 import hasPermission from "../../../../utils/hasPermisson";
 import PERMISSIONS from "../../../../constants/permissions";
+import appService from "../../../../services/AppService";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -67,7 +68,7 @@ const IncomeMaterialListView = () => {
         (async () => {
             try {
                 dispatch(getListPending())
-                const data: any = await incomeService.getListIncomeMaterial(incomeId || '', page + 1, rowsPerPage)
+                const data: any = await appService.getListOverheadMaterial(incomeId || '', page + 1, rowsPerPage)
 
                 if (!cancel) dispatch(getListSuccess({rows: data.content, rowsCount: data.totalElements}))
 

@@ -16,15 +16,15 @@ import {
     editMaterial,
     selectDisplacementMaterialList
 } from "../../../../store/reducers/displacementMaterialSlice";
-import {IDisplacementMaterialListResponse, PriceEditRequest} from "../../../../models/Displacement";
-import DisplacementService from "../../../../services/DisplacementService";
+import {IReqPriceEdit, IResListMaterial} from "../../../../models/Overhead";
+import appService from "../../../../services/AppService";
 
 const EditPriceModal = () => {
     const dispatch = useAppDispatch()
     const {materialEditPriceId, materialEditPrice} = useAppSelector(selectDisplacementMaterialList)
     const {enqueueSnackbar} = useSnackbar()
 
-    const formik = useFormik<PriceEditRequest>({
+    const formik = useFormik<IReqPriceEdit>({
         initialValues: {
             itemId: materialEditPriceId,
             price: materialEditPrice,
@@ -36,7 +36,7 @@ const EditPriceModal = () => {
         }),
         onSubmit: async (values, {setSubmitting}) => {
             try {
-                let displacementMaterial = await DisplacementService.putMaterialPriceEdit(values) as IDisplacementMaterialListResponse
+                let displacementMaterial = await appService.putMaterialPriceEdit(values) as IResListMaterial
                 dispatch(editMaterial(displacementMaterial))
                 enqueueSnackbar('Успешно обновлен', {variant: 'success'})
             } catch (error: any) {

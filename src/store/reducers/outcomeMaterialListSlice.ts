@@ -1,17 +1,18 @@
-import {IOutcomeMaterialListResponse, IOutcomeTotalInfo, PriceHistory} from "../../models/IOutcome";
+import {IOutcomeTotalInfo} from "../../models/IOutcome";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {RootState} from "../index";
+import {IPriceHistory, IResListMaterial} from "../../models/Overhead";
 
 interface initialStateListInterface {
     page: number;
     rowsPerPage: number;
     rowsCount: number;
-    rows: IOutcomeMaterialListResponse[];
+    rows: IResListMaterial[];
     rowsLoading: boolean;
     rowsError: boolean;
     rowsPerPageOptions: number[],
     isOpenHistoryModal: boolean,
-    priceHistory?: PriceHistory[],
+    priceHistory?: IPriceHistory[],
     isOpenEditPriceModal: boolean;
     materialEditPriceId: number;
     materialEditPrice: number;
@@ -52,7 +53,7 @@ export const outcomeMaterialListSlice = createSlice({
             state.rowsPerPage = action.payload;
             state.page = 0;
         },
-        setPriceHistory: (state, action: PayloadAction<PriceHistory[]>) => {
+        setPriceHistory: (state, action: PayloadAction<IPriceHistory[]>) => {
             state.priceHistory = action.payload
             state.isOpenHistoryModal = true
         },
@@ -67,7 +68,7 @@ export const outcomeMaterialListSlice = createSlice({
         closeEditPriceModal: (state) => {
             state.isOpenEditPriceModal = false
         },
-        editMaterial: (state, action: PayloadAction<IOutcomeMaterialListResponse>) => {
+        editMaterial: (state, action: PayloadAction<IResListMaterial>) => {
             let index = state.rows.findIndex(row => row.id === action.payload.id)
 
             state.rows[index] = action.payload
@@ -82,7 +83,7 @@ export const outcomeMaterialListSlice = createSlice({
             state.rowsLoading = true;
             state.rowsError = false;
         },
-        getListSuccess: (state, action: PayloadAction<{ rows: IOutcomeMaterialListResponse[], rowsCount: number }>) => {
+        getListSuccess: (state, action: PayloadAction<{ rows: IResListMaterial[], rowsCount: number }>) => {
             state.rows = action.payload.rows;
             state.rowsCount = action.payload.rowsCount;
             state.rowsLoading = false;

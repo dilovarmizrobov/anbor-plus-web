@@ -1,4 +1,5 @@
 import apiHelper from "./ApiHelper";
+import {IReqPriceEdit} from "../models/Overhead";
 
 class AppService {
     getOptionWarehouses = () => apiHelper.get(`/warehouses/option`)
@@ -11,6 +12,11 @@ class AppService {
     getOptionMaterials = (query: string) => apiHelper.get(`/materials/find`, {search: query})
 
     getOptionMarks = (materialId: number) => apiHelper.get(`/materials/marks/${materialId}`)
+
+    getListOverheadMaterial = (overheadId: string, page: number, size: number, ) =>
+        apiHelper.get(`/overheads/${overheadId}/items`, {size, page, })
+
+    putMaterialPriceEdit = (priceEdit: IReqPriceEdit) => apiHelper.put<IReqPriceEdit>('/overheads/change-item-price', priceEdit)
 }
 
 const appService = new AppService()

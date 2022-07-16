@@ -2,17 +2,16 @@ import React from 'react';
 import {Button, TableCell, TableRow, TextField} from "@mui/material";
 import {styled} from "@mui/material/styles";
 import * as Yup from "yup";
-import {IOutcomeMaterialListResponse, PriceEditRequest} from "../../../../models/IOutcome";
 import {useSnackbar} from "notistack";
 import {useAppDispatch} from "../../../../store/hooks";
 import {editMaterial, setMaterialEditPrice, setPriceHistory} from "../../../../store/reducers/outcomeMaterialListSlice";
-import outcomeService from "../../../../services/outcomeService";
 import {useFormik} from "formik";
 import errorMessageHandler from "../../../../utils/errorMessageHandler";
 import {MaterialUnitMap} from "../../../../constants";
 import hasPermission from "../../../../utils/hasPermisson";
 import PERMISSIONS from "../../../../constants/permissions";
-
+import {IReqPriceEdit, IResListMaterial} from "../../../../models/Overhead";
+import appService from "../../../../services/AppService";
 
 const PriceTextField = styled(TextField)({
     width: 92,
@@ -44,7 +43,7 @@ const stopPropagation = (e: React.MouseEvent) => {
 }
 
 
-const MaterialRow: React.FC<{row: IOutcomeMaterialListResponse}>= ({row}) => {
+const MaterialRow: React.FC<{row: IResListMaterial}>= ({row}) => {
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
     const isWarehouseman = hasPermission(PERMISSIONS.WAREHOUSEMAN)
@@ -54,7 +53,7 @@ const MaterialRow: React.FC<{row: IOutcomeMaterialListResponse}>= ({row}) => {
         dispatch(setMaterialEditPrice({price: row.price!, materialId: row.id}))
     }
 
-    const formik = useFormik<PriceEditRequest>({
+    const formik = useFormik<IReqPriceEdit>({
         initialValues: {
             itemId: row.id,
             price: 0,
@@ -65,7 +64,7 @@ const MaterialRow: React.FC<{row: IOutcomeMaterialListResponse}>= ({row}) => {
         }),
         onSubmit: async (values, {setSubmitting}) => {
             try {
-                let incomeMaterial = await outcomeService.putMaterialPriceEdit(values) as IOutcomeMaterialListResponse
+                let incomeMaterial = await appService.putMaterialPriceEdit(values) as IResListMaterial
                 dispatch(editMaterial(incomeMaterial))
                 enqueueSnackbar('Успешно обновлен', {variant: 'success'})
             } catch (error: any) {

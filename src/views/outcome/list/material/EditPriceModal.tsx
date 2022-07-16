@@ -10,22 +10,21 @@ import * as Yup from "yup";
 import {useAppDispatch, useAppSelector} from "../../../../store/hooks";
 import {useSnackbar} from "notistack";
 import {useFormik} from "formik";
-import {IOutcomeMaterialListResponse, PriceEditRequest} from "../../../../models/IOutcome";
 import {
     closeEditPriceModal,
     editMaterial,
     selectOutcomeMaterialList
 } from "../../../../store/reducers/outcomeMaterialListSlice";
 import errorMessageHandler from "../../../../utils/errorMessageHandler";
-import outcomeService from "../../../../services/outcomeService";
-
+import {IReqPriceEdit, IResListMaterial} from "../../../../models/Overhead";
+import appService from "../../../../services/AppService";
 
 const EditPriceModal = () => {
     const dispatch = useAppDispatch()
     const {materialEditPriceId, materialEditPrice} = useAppSelector(selectOutcomeMaterialList)
     const {enqueueSnackbar} = useSnackbar()
 
-    const formik = useFormik<PriceEditRequest>({
+    const formik = useFormik<IReqPriceEdit>({
         initialValues: {
             itemId: materialEditPriceId,
             price: materialEditPrice,
@@ -37,7 +36,7 @@ const EditPriceModal = () => {
         }),
         onSubmit: async (values, {setSubmitting}) => {
             try {
-                let outcomeMaterial = await outcomeService.putMaterialPriceEdit(values) as IOutcomeMaterialListResponse
+                let outcomeMaterial = await appService.putMaterialPriceEdit(values) as IResListMaterial
                 dispatch(editMaterial(outcomeMaterial))
                 enqueueSnackbar('Успешно обновлен', {variant: 'success'})
             } catch (error: any) {

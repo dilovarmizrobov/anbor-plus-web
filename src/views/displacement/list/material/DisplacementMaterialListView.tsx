@@ -36,6 +36,7 @@ import PriceHistoryModal from "./PriceHistoryModal";
 import ApproveDisplacement from "../ApproveDisplacement";
 import hasPermission from "../../../../utils/hasPermisson";
 import PERMISSIONS from "../../../../constants/permissions";
+import appService from "../../../../services/AppService";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -72,7 +73,7 @@ const DisplacementMaterialListView = () => {
         (async () => {
             try {
                 dispatch(getListPending())
-                const data: any = await DisplacementService.getListDisplacementMaterial(displacementId || '', page + 1, rowsPerPage)
+                const data: any = await appService.getListOverheadMaterial(displacementId || '', page + 1, rowsPerPage)
 
                 if (!cancel) dispatch(getListSuccess({rows: data.content, rowsCount: data.totalElements}))
 

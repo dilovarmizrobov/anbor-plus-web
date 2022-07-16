@@ -21,3 +21,29 @@ export interface IOverheadMaterialMarkOption {
     sku: string;
     balance: number;
 }
+
+export interface IResListMaterial {
+    id: number;
+    material: string;
+    mark: string;
+    sku: string;
+    qty: number;
+    unit: MaterialUnitEnum;
+    price?: number;
+    total?: number;
+    priceHistory: IPriceHistory[];
+}
+
+export interface IPriceHistory {
+    id: number;
+    createdBy: string;
+    createdDate: string;
+    price: number;
+    comment?: string;
+}
+
+export interface IReqPriceEdit {
+    itemId: number;
+    price: number;
+    comment: string;
+}

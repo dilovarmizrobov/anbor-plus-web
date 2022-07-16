@@ -1,13 +1,5 @@
-import {MaterialUnitEnum, OutcomeTypeEnum} from "../constants";
-
-export interface IOutcomeMaterial {
-    id?: number;
-    materialId?: number;
-    material?: IOutcomeMaterialOption;
-    markId?: number;
-    mark?: IOutcomeMaterialMarkOption
-    qty: number;
-}
+import {OutcomeTypeEnum} from "../constants";
+import {IOverheadMaterial} from "./Overhead";
 
 export interface IOutcomeRequest {
     id?: number;
@@ -18,7 +10,7 @@ export interface IOutcomeRequest {
     comment: string;
     images: File[];
     imageNames?: string[];
-    overheadItems: IOutcomeMaterial[];
+    overheadItems: IOverheadMaterial[];
 }
 
 export interface IOutcomeResponse {
@@ -30,22 +22,8 @@ export interface IOutcomeResponse {
     comment: string;
     images: string[];
     imageNames: string[];
-    overheadItems: IOutcomeMaterial[]
+    overheadItems: IOverheadMaterial[]
 }
-
-export interface IOutcomeMaterialMarkOption {
-    id: number;
-    name: string;
-    sku: string;
-    balance: number;
-}
-
-export interface IOutcomeMaterialOption {
-    id: number;
-    name: string;
-    unit: MaterialUnitEnum;
-}
-
 
 export interface IOutcomeListResponse {
     id: number;
@@ -55,32 +33,6 @@ export interface IOutcomeListResponse {
     fromWho: string;
     comment: string;
     imageNames: string[];
-}
-
-export interface IOutcomeMaterialListResponse {
-    id: number;
-    material: string;
-    mark: string;
-    sku: string;
-    qty: number;
-    unit: MaterialUnitEnum;
-    price?: number;
-    total?: number;
-    priceHistory: PriceHistory[];
-}
-
-export interface PriceHistory {
-    id: number;
-    createdBy: string;
-    createdDate: string;
-    price: number;
-    comment?: string;
-}
-
-export interface PriceEditRequest {
-    itemId: number;
-    price: number;
-    comment: string;
 }
 
 export interface IOutcomeTotalInfo {

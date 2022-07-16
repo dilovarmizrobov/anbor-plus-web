@@ -1,4 +1,4 @@
-import {IncomeTypeEnum, MaterialUnitEnum} from "../constants";
+import {IncomeTypeEnum} from "../constants";
 import {IOverheadMaterial} from "./Overhead";
 
 export interface IIncomeRequest {
@@ -33,32 +33,6 @@ export interface IIncomeListResponse {
     fromWho: string;
     comment: string;
     imageNames: string[];
-}
-
-export interface PriceHistory {
-    id: number;
-    createdBy: string;
-    createdDate: string;
-    price: number;
-    comment?: string;
-}
-
-export interface PriceEditRequest {
-    itemId: number;
-    price: number;
-    comment: string;
-}
-
-export interface IIncomeMaterialListResponse {
-    id: number;
-    material: string;
-    mark: string;
-    sku: string;
-    qty: number;
-    unit: MaterialUnitEnum;
-    price?: number;
-    total?: number;
-    priceHistory: PriceHistory[];
 }
 
 export interface IIncomeTotalInfo {

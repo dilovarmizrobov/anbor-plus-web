@@ -1,7 +1,7 @@
 import api from "../utils/api";
-import {IReqDisplacement, PriceEditRequest} from "../models/Displacement";
+import {IReqDisplacement} from "../models/Displacement";
 import apiHelper from "./ApiHelper";
-import {DisplaceTypeEnum} from "../constants";
+import {OverheadTypeEnum} from "../constants";
 
 class DisplacementService {
     getDisplacementStatus = (displacementId: string) => apiHelper.get(`/overheads/${displacementId}/displacement/images`)
@@ -9,10 +9,7 @@ class DisplacementService {
     getDisplacement = (displacementId: string) => apiHelper.get(`/overheads/${displacementId}/displacement`)
 
     getListDisplacement = (page: number, size: number, search: string, startDate?: string, endDate?: string,) =>
-        apiHelper.get(`/overheads/all/${DisplaceTypeEnum.DISPLACEMENT}`, {size, page,search, startDate, endDate})
-
-    getListDisplacementMaterial = (displacementId: string, page: number, size: number, ) =>
-        apiHelper.get(`/overheads/${displacementId}/items`, {size, page, })
+        apiHelper.get(`/overheads/all/${OverheadTypeEnum.DISPLACEMENT}`, {size, page,search, startDate, endDate})
 
     getDisplacementTotalInfo = (displacementId: string) => apiHelper.get(`/overheads/${displacementId}/total-info`)
 
@@ -27,8 +24,6 @@ class DisplacementService {
             .then(response => resolve(response.data))
             .catch(error => reject(error))
     })
-
-    putMaterialPriceEdit = (priceEdit: PriceEditRequest) => apiHelper.put<PriceEditRequest>('/overheads/change-item-price', priceEdit)
 
     putUploadImageDisplacement = (displacementId: number, images: File[]) => new Promise((resolve, reject) => {
         let formData = new FormData();
