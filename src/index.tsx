@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import 'nprogress/nprogress.css';
+import './mock';
 import {Provider} from "react-redux";
 import App from './App';
 import reportWebVitals from './reportWebVitals';
