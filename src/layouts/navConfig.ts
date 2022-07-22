@@ -47,6 +47,11 @@ export const navConfigMain: INavConfig[] = [
                 href: '/displacements',
             },
             {
+                title: 'Операции',
+                icon: FaUserFriends,
+                href: '/operations',
+            },
+            {
                 title: 'Настройки',
                 icon: MdSettings,
                 perm: PERMISSIONS.LIST.USER,

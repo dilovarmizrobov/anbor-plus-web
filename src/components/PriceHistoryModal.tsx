@@ -10,16 +10,17 @@ import {
     TableCell, TableHead,
     TableRow
 } from "@mui/material";
-import {useAppSelector} from "../../../../store/hooks";
-import {selectOutcomeMaterialList} from "../../../../store/reducers/outcomeMaterialListSlice";
+import {useAppDispatch, useAppSelector} from "../store/hooks";
+import {selectMaterialPriceHistory, closePriceHistory} from "../store/reducers/materialPriceHistorySlice";
 
-const PriceHistoryModal: React.FC<{open: boolean, onClose: VoidFunction}> = ({open, onClose}) => {
-    const {priceHistory} = useAppSelector(selectOutcomeMaterialList)
+const PriceHistoryModal = () => {
+    const dispatch = useAppDispatch()
+    const {isOpen, priceHistory} = useAppSelector(selectMaterialPriceHistory)
 
     return (
         <Dialog
-            open={open}
-            onClose={onClose}
+            open={isOpen}
+            onClose={() => dispatch(closePriceHistory())}
             fullWidth
         >
             <DialogTitle>История изменения цены</DialogTitle>
@@ -28,7 +29,7 @@ const PriceHistoryModal: React.FC<{open: boolean, onClose: VoidFunction}> = ({op
                     <TableHead>
                         <TableRow>
                             <TableCell>Дата</TableCell>
-                            <TableCell>Цена (Расхода)</TableCell>
+                            <TableCell>Цена (Прихода)</TableCell>
                             <TableCell>Изменил</TableCell>
                             <TableCell>Комментарий</TableCell>
                         </TableRow>
@@ -46,7 +47,7 @@ const PriceHistoryModal: React.FC<{open: boolean, onClose: VoidFunction}> = ({op
                 </Table>
             </DialogContent>
             <DialogActions>
-                <Button onClick={onClose}>
+                <Button onClick={() => dispatch(closePriceHistory())}>
                     ОК
                 </Button>
             </DialogActions>
@@ -55,4 +56,3 @@ const PriceHistoryModal: React.FC<{open: boolean, onClose: VoidFunction}> = ({op
 };
 
 export default React.memo(PriceHistoryModal);
-
