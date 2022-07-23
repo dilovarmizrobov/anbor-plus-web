@@ -72,3 +72,15 @@ export const OutcomeTypeMap = new Map(
         [OutcomeTypeEnum.ENTERPRISE, 'Предприятия']
     ]
 )
+
+export enum OperationTypeEnum {
+    INVENTORY = 'INVENTORY',
+    WRITEOFF = 'WRITEOFF'
+}
+
+export const OperationTypeMap = new Map(
+    [
+        [OperationTypeEnum.INVENTORY, 'Инвентаризация'],
+        [OperationTypeEnum.WRITEOFF, 'Списание']
+    ]
+)

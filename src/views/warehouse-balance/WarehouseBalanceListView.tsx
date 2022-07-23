@@ -5,7 +5,7 @@ import {
     Box,
     Card,
     Container, Grid,
-    InputAdornment, MenuItem,
+    MenuItem,
     Table,
     TableBody,
     TableCell,
@@ -17,21 +17,20 @@ import {
     Typography
 } from "@mui/material";
 import {useAppDispatch, useAppSelector} from '../../store/hooks';
-import {changeQuery, selectWarehouseBalance, setFilterCategoryId} from '../../store/reducers/warehouseBalanceSlice';
+import {selectWarehouseBalance, setFilterCategoryId} from '../../store/reducers/warehouseBalanceSlice';
 import {useSnackbar} from 'notistack';
-import useDebounce from '../../hooks/useDebounce';
 import PerfectScrollbar from "react-perfect-scrollbar";
-import {
-    reset, getListPending, getListSuccess, getListError, changePage, changeRowsPerPage
-} from '../../store/reducers/warehouseBalanceSlice';
+import {reset, getListPending, getListSuccess, getListError, changePage,
+    changeRowsPerPage} from '../../store/reducers/warehouseBalanceSlice';
 import appService from '../../services/AppService';
 import errorMessageHandler from '../../utils/errorMessageHandler';
-import {FiSearch} from 'react-icons/fi';
 import LoadingTableBody from "../../components/LoadingTableBody";
 import MaterialRow from "./MaterialRow";
 import {IDataOption} from "../../models";
 import {useNavigate} from "react-router-dom";
 import LoadingLayout from "../../components/LoadingLayout";
+import TableSearch from "../../components/TableSearch";
+import {selectTableSearch} from "../../store/reducers/tableSearchSlice";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -39,10 +38,47 @@ const Root = styled('div')(({theme}) => ({
     paddingBottom: theme.spacing(3)
 }))
 
+const WarehouseBalanceListView = () => {
+    const {enqueueSnackbar} = useSnackbar()
+    const navigate = useNavigate()
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(false)
+    const [categories, setCategories] = useState<IDataOption[]>([])
+
+    useEffect(() => {
+        let cancel = false;
+
+        (async () => {
+            try {
+                const dataCategories: any = await appService.getOptionCategories()
+
+                if (dataCategories.length === 0) {
+                    navigate(-1)
+                    enqueueSnackbar('Добавьте с начала категорию', {variant: 'info'})
+                } else if (!cancel) setCategories(dataCategories)
+            } catch (error: any) {
+                !cancel && setError(true)
+                enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
+            } finally {
+                !cancel && setLoading(false)
+            }
+        })()
+
+        return () => {cancel = true}
+    }, [enqueueSnackbar, navigate])
+
+    return (
+        <>
+            <Page title="Остаток"/>
+            {!loading && !error && categories.length > 0 ? <List categories={categories}/>
+                : <LoadingLayout loading={loading} error={error} />}
+        </>
+    )
+};
+
 const List: React.FC<{categories: IDataOption[]}> = ({categories}) => {
     const {
         filterCategoryId,
-        query,
         page,
         rowsPerPage,
         rowsCount,
@@ -51,9 +87,13 @@ const List: React.FC<{categories: IDataOption[]}> = ({categories}) => {
         rowsLoading,
         rowsError
     } = useAppSelector(selectWarehouseBalance)
+    const {query} = useAppSelector(selectTableSearch)
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
-    const debouncedQuery = useDebounce(query, 500)
+
+    useEffect(() => {
+        dispatch(changePage(0))
+    }, [query])
 
     useEffect(() => () => {
         dispatch(reset())
@@ -65,7 +105,7 @@ const List: React.FC<{categories: IDataOption[]}> = ({categories}) => {
         (async () => {
             try {
                 dispatch(getListPending())
-                const data: any = await appService.getListWarehouseBalance(page + 1, rowsPerPage, debouncedQuery, filterCategoryId)
+                const data: any = await appService.getListWarehouseBalance(page + 1, rowsPerPage, query, filterCategoryId)
 
                 if (!cancel) dispatch(getListSuccess({rows: data.content, rowsCount: data.totalElements}))
 
@@ -78,7 +118,7 @@ const List: React.FC<{categories: IDataOption[]}> = ({categories}) => {
         return () => {
             cancel = true
         }
-    }, [enqueueSnackbar, dispatch, page, rowsPerPage, debouncedQuery, filterCategoryId])
+    }, [enqueueSnackbar, dispatch, page, rowsPerPage, query, filterCategoryId])
 
     return (
         <>
@@ -93,21 +133,7 @@ const List: React.FC<{categories: IDataOption[]}> = ({categories}) => {
                                 <Box mx={2} my={3}>
                                     <Grid container spacing={3} justifyContent="space-between">
                                         <Grid item>
-                                            <TextField
-                                                sx={{width: 300}}
-                                                size="small"
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <InputAdornment position="start">
-                                                            <FiSearch/>
-                                                        </InputAdornment>
-                                                    )
-                                                }}
-                                                onChange={(event) => dispatch(changeQuery(event.target.value))}
-                                                placeholder="Поиск"
-                                                value={query}
-                                                variant="outlined"
-                                            />
+                                            <TableSearch/>
                                         </Grid>
                                         <Grid item>
                                             <TextField
@@ -184,43 +210,5 @@ const List: React.FC<{categories: IDataOption[]}> = ({categories}) => {
         </>
     );
 }
-
-const WarehouseBalanceListView = () => {
-    const {enqueueSnackbar} = useSnackbar()
-    const navigate = useNavigate()
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(false)
-    const [categories, setCategories] = useState<IDataOption[]>([])
-
-    useEffect(() => {
-        let cancel = false;
-
-        (async () => {
-            try {
-                const dataCategories: any = await appService.getOptionCategories()
-
-                if (dataCategories.length === 0) {
-                    navigate(-1)
-                    enqueueSnackbar('Добавьте с начала категорию', {variant: 'info'})
-                } else if (!cancel) setCategories(dataCategories)
-            } catch (error: any) {
-                !cancel && setError(true)
-                enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
-            } finally {
-                !cancel && setLoading(false)
-            }
-        })()
-
-        return () => {cancel = true}
-    }, [enqueueSnackbar, navigate])
-
-    return (
-        <>
-            <Page title="Остаток"/>
-            {!loading && !error && categories.length > 0 ? <List categories={categories}/>
-            : <LoadingLayout loading={loading} error={error} />}
-        </>
-    )
-};
 
 export default WarehouseBalanceListView;

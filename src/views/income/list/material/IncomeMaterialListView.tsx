@@ -2,8 +2,8 @@ import React, {useEffect} from 'react';
 import {useAppDispatch, useAppSelector} from "../../../../store/hooks";
 import {useSnackbar} from "notistack";
 import {
-    getListError, getListPending, getListSuccess, reset, selectIncomeMaterialList, changePage, closeHistoryModal,
-    changeRowsPerPage, setIncomeTotalInfo,
+    getListError, getListPending, getListSuccess, reset, selectIncomeMaterialList, changePage,
+    changeRowsPerPage, setIncomeTotalInfo, editMaterial,
 } from "../../../../store/reducers/incomeMaterialSlice";
 import incomeService from "../../../../services/IncomeService";
 import errorMessageHandler from "../../../../utils/errorMessageHandler";
@@ -25,13 +25,17 @@ import Header from "./Header";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import LoadingTableBody from "../../../../components/LoadingTableBody";
 import {FiPrinter} from "react-icons/fi";
-import MaterialRow from "./MaterialRow";
-import PriceHistoryModal from "./PriceHistoryModal";
-import EditPriceModal from "./EditPriceModal";
 import {IIncomeTotalInfo} from "../../../../models/IIncome";
 import hasPermission from "../../../../utils/hasPermisson";
 import PERMISSIONS from "../../../../constants/permissions";
 import appService from "../../../../services/AppService";
+import {MaterialUnitMap} from "../../../../constants";
+import {IResListMaterial} from "../../../../models/Overhead";
+import MaterialPriceEdit from "../../../../components/price-edit/MaterialPriceEdit";
+import MaterialPriceEditModal from "../../../../components/price-edit/MaterialPriceEditModal";
+import {selectMaterialPriceEdit} from "../../../../store/reducers/materialPriceEditSlice";
+import PriceHistoryModal from "../../../../components/PriceHistoryModal";
+import {openPriceHistory} from "../../../../store/reducers/materialPriceHistorySlice";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -48,11 +52,10 @@ const IncomeMaterialListView = () => {
         rows,
         rowsCount,
         rowsPerPageOptions,
-        isOpenHistoryModal,
-        isOpenEditPriceModal,
         incomeTotalInfo,
         updateIncomeTotalInfo
     } = useAppSelector(selectIncomeMaterialList)
+    const {isOpenMaterialPriceEditModal} = useAppSelector(selectMaterialPriceEdit)
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
     const { incomeId } = useParams()
@@ -164,7 +167,30 @@ const IncomeMaterialListView = () => {
                                         {
                                             rows.length > 0 ? (
                                                 <TableBody>
-                                                    {rows.map(row => <MaterialRow key={row.id} row={row}/>)}
+                                                    {rows.map(row => (
+                                                        <TableRow key={row.id} hover onClick={() => !isWarehouseman && row.price && dispatch(openPriceHistory(row.priceHistory))}>
+                                                            <TableCell>{row.id}</TableCell>
+                                                            <TableCell>{row.material}</TableCell>
+                                                            <TableCell>{row.mark}</TableCell>
+                                                            <TableCell>{row.sku}</TableCell>
+                                                            <TableCell>{row.qty}</TableCell>
+                                                            <TableCell>{MaterialUnitMap.get(row.unit)}</TableCell>
+                                                            {!isWarehouseman && (
+                                                                <>
+                                                                    <TableCell style={{ width: 140 }}>
+                                                                        <MaterialPriceEdit
+                                                                            materialId={row.id}
+                                                                            price={row.price}
+                                                                            priceHistoryLength={row.priceHistory.length}
+                                                                            onEditPrice={appService.putMaterialPriceEdit}
+                                                                            handleEditPrice={(material: any) => dispatch(editMaterial(material as IResListMaterial))}
+                                                                        />
+                                                                    </TableCell>
+                                                                    <TableCell>{row.total || '-'}</TableCell>
+                                                                </>
+                                                            )}
+                                                        </TableRow>
+                                                    ))}
                                                 </TableBody>
                                             ) : <LoadingTableBody loading={rowsLoading} error={rowsError} />
                                         }
@@ -197,8 +223,13 @@ const IncomeMaterialListView = () => {
                     </Card>
                 </Container>
             </Root>
-            <PriceHistoryModal open={isOpenHistoryModal} onClose={() => dispatch(closeHistoryModal())} />
-            {isOpenEditPriceModal && <EditPriceModal/>}
+            <PriceHistoryModal/>
+            {isOpenMaterialPriceEditModal &&
+                <MaterialPriceEditModal
+                    onEditPrice={appService.putMaterialPriceEdit}
+                    handleEditPrice={(material: any) => dispatch(editMaterial(material as IResListMaterial))}
+                />
+            }
         </>
     );
 };

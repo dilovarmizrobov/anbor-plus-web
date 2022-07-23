@@ -81,7 +81,7 @@ const MaterialListView = () => {
 
     return (
         <>
-            <Page title="Предприятия"/>
+            <Page title="Материалы"/>
             <Root>
                 <Container maxWidth="xl">
                     <Header/>

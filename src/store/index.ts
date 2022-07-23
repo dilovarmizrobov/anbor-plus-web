@@ -16,6 +16,10 @@ import {overheadMaterialSlice} from "./reducers/overheadMaterialSlice";
 import {displacementListSlice} from "./reducers/displacementSlice";
 import {displacementMaterialListSlice} from "./reducers/displacementMaterialSlice";
 import {techniqueListSlice} from "./reducers/techniqueSlice";
+import {operationListSlice, operationMaterialListSlice} from "./reducers/operationSlice";
+import {materialPriceHistorySlice} from "./reducers/materialPriceHistorySlice";
+import {materialPriceEditSlice} from "./reducers/materialPriceEditSlice";
+import {tableSearchSlice} from "./reducers/tableSearchSlice";
 
 export const store = configureStore({
     reducer: {
@@ -36,6 +40,11 @@ export const store = configureStore({
         displacementList: displacementListSlice.reducer,
         displacementMaterialList: displacementMaterialListSlice.reducer,
         techniqueList: techniqueListSlice.reducer
+        operationList: operationListSlice.reducer,
+        operationMaterialList: operationMaterialListSlice.reducer,
+        materialPriceHistory: materialPriceHistorySlice.reducer,
+        materialPriceEdit: materialPriceEditSlice.reducer,
+        tableSearch: tableSearchSlice.reducer,
     },
 })
 

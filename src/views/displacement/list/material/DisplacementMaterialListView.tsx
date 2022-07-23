@@ -19,10 +19,10 @@ import {
 import Header from "./Header";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {
-    changePage, changeRowsPerPage, closeHistoryModal,
+    changePage, changeRowsPerPage,
     getListError,
     getListPending, getListSuccess,
-    reset,
+    reset,editMaterial,
     selectDisplacementMaterialList, setDisplacementTotalInfo
 } from "../../../../store/reducers/displacementMaterialSlice";
 import errorMessageHandler from "../../../../utils/errorMessageHandler";
@@ -30,13 +30,18 @@ import DisplacementService from "../../../../services/DisplacementService";
 import {IDisplacementTotalInfo} from "../../../../models/Displacement";
 import {FiPrinter} from "react-icons/fi";
 import LoadingTableBody from "../../../../components/LoadingTableBody";
-import MaterialRow from "./MaterialRow";
-import EditPriceModal from "./EditPriceModal";
-import PriceHistoryModal from "./PriceHistoryModal";
 import ApproveDisplacement from "../ApproveDisplacement";
 import hasPermission from "../../../../utils/hasPermisson";
 import PERMISSIONS from "../../../../constants/permissions";
 import appService from "../../../../services/AppService";
+import {openPriceHistory} from "../../../../store/reducers/materialPriceHistorySlice";
+import {MaterialUnitMap} from "../../../../constants";
+import {selectAuth} from "../../../../store/reducers/authSlice";
+import {IResListMaterial} from "../../../../models/Overhead";
+import MaterialPriceEdit from "../../../../components/price-edit/MaterialPriceEdit";
+import MaterialPriceEditModal from "../../../../components/price-edit/MaterialPriceEditModal";
+import {selectMaterialPriceEdit} from "../../../../store/reducers/materialPriceEditSlice";
+import PriceHistoryModal from "../../../../components/PriceHistoryModal";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -53,11 +58,11 @@ const DisplacementMaterialListView = () => {
         rows,
         rowsCount,
         rowsPerPageOptions,
-        isOpenHistoryModal,
-        isOpenEditPriceModal,
         displacementTotalInfo,
         updateDisplacementTotalInfo
     } = useAppSelector(selectDisplacementMaterialList)
+    const {user} = useAppSelector(selectAuth)
+    const {isOpenMaterialPriceEditModal} = useAppSelector(selectMaterialPriceEdit)
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
     const { displacementId } = useParams()
@@ -173,13 +178,35 @@ const DisplacementMaterialListView = () => {
                                             rows.length > 0 ? (
                                                 <TableBody>
                                                     {
-                                                        rows.map(row =>(
-                                                            <MaterialRow
-                                                                key={row.id}
-                                                                row={row}
-                                                                warehouseDestinationId={displacementTotalInfo?.warehouseDestinationId}
-                                                                warehouseId={displacementTotalInfo?.warehouseId}
-                                                            />
+                                                        rows.map(row => (
+                                                            <TableRow key={row.id} hover onClick={() => !isWarehouseman && row.price && dispatch(openPriceHistory(row.priceHistory))}>
+                                                                <TableCell>{row.id}</TableCell>
+                                                                <TableCell>{row.material}</TableCell>
+                                                                <TableCell>{row.mark}</TableCell>
+                                                                <TableCell>{row.sku}</TableCell>
+                                                                <TableCell>{row.qty}</TableCell>
+                                                                <TableCell>{MaterialUnitMap.get(row.unit)}</TableCell>
+                                                                {!isWarehouseman && (displacementTotalInfo?.warehouseDestinationId === user!.warehouse.id) && (
+                                                                    <>
+                                                                        <TableCell>{row.price || '-'}</TableCell>
+                                                                        <TableCell>{row.total || '-'}</TableCell>
+                                                                    </>
+                                                                )}
+                                                                {!isWarehouseman && (displacementTotalInfo?.warehouseId === user!.warehouse.id) && (
+                                                                    <>
+                                                                        <TableCell style={{ width: 140 }}>
+                                                                            <MaterialPriceEdit
+                                                                                materialId={row.id}
+                                                                                price={row.price}
+                                                                                priceHistoryLength={row.priceHistory.length}
+                                                                                onEditPrice={appService.putMaterialPriceEdit}
+                                                                                handleEditPrice={(material: any) => dispatch(editMaterial(material as IResListMaterial))}
+                                                                            />
+                                                                        </TableCell>
+                                                                        <TableCell>{row.total || '-'}</TableCell>
+                                                                    </>
+                                                                )}
+                                                            </TableRow>
                                                         ))
                                                     }
                                                 </TableBody>
@@ -214,8 +241,13 @@ const DisplacementMaterialListView = () => {
                     </Card>
                 </Container>
             </Root>
-            <PriceHistoryModal open={isOpenHistoryModal} onClose={() => dispatch(closeHistoryModal())}/>
-            {isOpenEditPriceModal && <EditPriceModal/>}
+            <PriceHistoryModal/>
+            {isOpenMaterialPriceEditModal &&
+                <MaterialPriceEditModal
+                    onEditPrice={appService.putMaterialPriceEdit}
+                    handleEditPrice={(material: any) => dispatch(editMaterial(material as IResListMaterial))}
+                />
+            }
         </>
     );
 };

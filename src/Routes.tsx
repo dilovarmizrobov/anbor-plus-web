@@ -34,13 +34,16 @@ import WarehouseBalanceListView from "./views/warehouse-balance/WarehouseBalance
 import OutcomeCreateView from "./views/outcome/form/OutcomeCreateView";
 import OutcomeListView from "./views/outcome/list/OutcomeListView";
 import OutcomeEditView from "./views/outcome/form/OutcomeEditView";
-import DetailTableListView from "./views/outcome/list/material/DetailTableListView";
+import OutcomeMaterialListView from "./views/outcome/list/material/OutcomeMaterialListView";
 import DisplacementFormView from "./views/displacement/form/DisplacementFormView";
 import DisplacementListView from "./views/displacement/list/DisplacementListView";
 import DisplacementMaterialListView from "./views/displacement/list/material/DisplacementMaterialListView";
 import TechniqueListView from "./views/technique/list/TechniqueListView";
 import TechniqueCreateView from "./views/technique/form/TechniqueCreateView";
 import TechniqueEditView from "./views/technique/form/TechniqueEditView";
+import OperationListView from "./views/operation/list/OperationListView";
+import OperationMaterialListView from "./views/operation/list/material/OperationMaterialListView";
+import OperationFormView from "./views/operation/form/OperationFormView";
 
 interface CustomRouteObject extends RouteObject {
     perm?: UserRolesEnum[],
@@ -148,7 +151,7 @@ const routes: CustomRouteObject[] = [
                     },
                     {
                         path: '/outcomes/:outcomeId/materials',
-                        element: <DetailTableListView/>,
+                        element: <OutcomeMaterialListView/>,
                     },
                     {
                         path: '/displacements',
@@ -165,6 +168,22 @@ const routes: CustomRouteObject[] = [
                     {
                         path: '/displacements/:displacementId/materials',
                         element: <DisplacementMaterialListView/>,
+                    },
+                    {
+                        path: '/operations',
+                        element: <OperationListView/>,
+                    },
+                    {
+                        path: '/operations/:operationId/materials',
+                        element: <OperationMaterialListView/>,
+                    },
+                    {
+                        path: '/operations/create',
+                        element: <OperationFormView/>,
+                    },
+                    {
+                        path: '/operations/:operationId/edit',
+                        element: <OperationFormView/>,
                     },
                     {
                         path: '/warehouses',

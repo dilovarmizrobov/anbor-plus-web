@@ -6,28 +6,29 @@ import {
     DialogContent,
     DialogTitle, Grid, TextField,
 } from "@mui/material";
-import * as Yup from "yup";
-import {useAppDispatch, useAppSelector} from "../../../../store/hooks";
-import {useSnackbar} from "notistack";
+import {useAppDispatch, useAppSelector} from "../../store/hooks";
+import {closeMaterialPriceEditModal} from "../../store/reducers/materialPriceEditSlice";
 import {useFormik} from "formik";
-import {
-    closeEditPriceModal,
-    editMaterial,
-    selectOutcomeMaterialList
-} from "../../../../store/reducers/outcomeMaterialListSlice";
-import errorMessageHandler from "../../../../utils/errorMessageHandler";
-import {IReqPriceEdit, IResListMaterial} from "../../../../models/Overhead";
-import appService from "../../../../services/AppService";
+import * as Yup from "yup";
+import errorMessageHandler from "../../utils/errorMessageHandler";
+import {useSnackbar} from "notistack";
+import {IReqPriceEdit} from "../../models/Overhead";
+import {selectMaterialPriceEdit} from "../../store/reducers/materialPriceEditSlice";
 
-const EditPriceModal = () => {
+interface MaterialPriceEditModalProps {
+    onEditPrice: Function;
+    handleEditPrice: Function;
+}
+
+const MaterialPriceEditModal: React.FC<MaterialPriceEditModalProps> = ({onEditPrice, handleEditPrice}) => {
     const dispatch = useAppDispatch()
-    const {materialEditPriceId, materialEditPrice} = useAppSelector(selectOutcomeMaterialList)
+    const {materialId, materialPrice} = useAppSelector(selectMaterialPriceEdit)
     const {enqueueSnackbar} = useSnackbar()
 
     const formik = useFormik<IReqPriceEdit>({
         initialValues: {
-            itemId: materialEditPriceId,
-            price: materialEditPrice,
+            itemId: materialId,
+            price: materialPrice,
             comment: ''
         },
         validationSchema: Yup.object({
@@ -36,8 +37,9 @@ const EditPriceModal = () => {
         }),
         onSubmit: async (values, {setSubmitting}) => {
             try {
-                let outcomeMaterial = await appService.putMaterialPriceEdit(values) as IResListMaterial
-                dispatch(editMaterial(outcomeMaterial))
+                let data: any = await onEditPrice(values)
+                handleEditPrice(data)
+                dispatch(closeMaterialPriceEditModal())
                 enqueueSnackbar('Успешно обновлен', {variant: 'success'})
             } catch (error: any) {
                 setSubmitting(false);
@@ -93,7 +95,7 @@ const EditPriceModal = () => {
                 <Button
                     variant="outlined"
                     color="secondary"
-                    onClick={() => dispatch(closeEditPriceModal())}
+                    onClick={() => dispatch(closeMaterialPriceEditModal())}
                     disabled={formik.isSubmitting}
                 >
                     Отмена
@@ -112,4 +114,4 @@ const EditPriceModal = () => {
     );
 };
 
-export default React.memo(EditPriceModal);
+export default MaterialPriceEditModal;
