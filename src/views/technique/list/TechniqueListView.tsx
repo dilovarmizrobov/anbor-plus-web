@@ -31,10 +31,7 @@ import useDebounce from "../../../hooks/useDebounce";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
 import techniqueService from "../../../services/TechniqueService";
 import LoadingTableBody from "../../../components/LoadingTableBody";
-import EditButtonTable from "../../../components/EditButtonTable";
-import DeleteButtonTable from "../../../components/DeleteButtonTable";
-import {deleteRow} from "../../../store/reducers/techniqueSlice";
-
+import TechniqueRow from "./TechniqueRow";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -53,7 +50,6 @@ const TechniqueListView = () => {
         rowsCount,
         rowsPerPageOptions,
     } = useAppSelector(selectTechnique)
-
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
     const debouncedQuery = useDebounce(query, 500)
@@ -113,6 +109,8 @@ const TechniqueListView = () => {
                                     <Table>
                                         <TableHead>
                                             <TableRow>
+                                                <TableCell/>
+                                                <TableCell/>
                                                 <TableCell>Техники</TableCell>
                                                 <TableCell>Гаражный номер</TableCell>
                                                 <TableCell>Год выпуска</TableCell>
@@ -124,24 +122,7 @@ const TechniqueListView = () => {
                                             rows.length > 0 ? (
                                                 <TableBody>
                                                     {
-                                                        rows.map(row => (
-                                                            <TableRow hover key={row.id}>
-                                                                <TableCell>{row.name}</TableCell>
-                                                                <TableCell>{row.infos.map(info => info.number).join(', ')}</TableCell>
-                                                                <TableCell>{row.infos.map(info => info.incomeDate).join(', ')}</TableCell>
-                                                                <TableCell>{row.infos.map(info => info.releaseYear).join(', ')}</TableCell>
-                                                                <TableCell style={{ width: 165 }}>
-                                                                    <EditButtonTable
-                                                                        to={`/techniques/${row.id}/edit`}
-                                                                    />
-                                                                    <DeleteButtonTable
-                                                                        rowId={row.id!}
-                                                                        onDelete={techniqueService.deleteTechnique}
-                                                                        handleDelete={(rowId: number) => dispatch(deleteRow(rowId))}
-                                                                    />
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        ))
+                                                        rows.map(row => <TechniqueRow key={row.id} row={row} />)
                                                     }
                                                 </TableBody>
                                             ) : <LoadingTableBody loading={rowsLoading} error={rowsError}/>

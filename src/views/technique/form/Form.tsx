@@ -25,7 +25,7 @@ import * as Yup from "yup";
 import techniqueService from "../../../services/TechniqueService";
 import EditTechniqueModal from "./EditTechniqueModal";
 
-const Form:React.FC<{technique?: ITechniqueResponse, categories: IDataOption[]}> = ({technique, categories}) => {
+const Form: React.FC<{technique?: ITechniqueResponse, categories: IDataOption[]}> = ({technique, categories}) => {
     const {enqueueSnackbar} = useSnackbar()
     const navigate = useNavigate()
     const [editTechnique, setEditTechnique] = useState<IGarageInfo>()
@@ -39,7 +39,7 @@ const Form:React.FC<{technique?: ITechniqueResponse, categories: IDataOption[]}>
         setInfos(newInfo)
     }
 
-    const handleEditMark = (info: IGarageInfo, index: number) => {
+    const handleEditTechnique = (info: IGarageInfo, index: number) => {
         setEditTechnique(info)
         setEditTechniqueIndex(index)
     }
@@ -72,35 +72,35 @@ const Form:React.FC<{technique?: ITechniqueResponse, categories: IDataOption[]}>
 
     const techniqueForm = useFormik<ITechniqueRequest>({
         initialValues: {
-            technicCategoryId: technique?.technicCategoryId || categories[0].id,
+            technicCategoryId: technique?.technicCategoryId || 0,
             name: technique?.name || '',
             infos: []
         },
         validationSchema: Yup.object({
-            name: Yup.string().max(255).required()
+            name: Yup.string().max(255).required(),
+            technicCategoryId: Yup.number().not([0], 'Выберите значение').required(),
         }),
         onSubmit: async (values, {setSubmitting, setStatus}) => {
             values.infos = infos
 
-                try {
-                    if (technique){
-                        values.id = technique.id!
+            try {
+                if (technique){
+                    values.id = technique.id!
 
-                        await techniqueService.putUpdateTechnique(values)
-                        enqueueSnackbar('Успешно обновлен', {variant: 'success'})
-                        navigate(-1)
-                    }else {
-                       await techniqueService.postNewTechnique(values)
-                        enqueueSnackbar('Успешно обновлен', {variant: 'success'})
-                        navigate(-1)
-                    }
-
-                }catch (error :any) {
-                    setStatus({success: false})
-                    setSubmitting(false)
-
-                    enqueueSnackbar((error), {variant: 'error'})
+                    await techniqueService.putUpdateTechnique(values)
+                    enqueueSnackbar('Успешно обновлен', {variant: 'success'})
+                    navigate(-1)
+                } else {
+                    await techniqueService.postNewTechnique(values)
+                    enqueueSnackbar('Успешно создан', {variant: 'success'})
+                    navigate(-1)
                 }
+            } catch (error :any) {
+                setStatus({success: false})
+                setSubmitting(false)
+
+                enqueueSnackbar((error), {variant: 'error'})
+            }
 
         }
     })
@@ -123,7 +123,7 @@ const Form:React.FC<{technique?: ITechniqueResponse, categories: IDataOption[]}>
                                     onChange={techniqueForm.handleChange}
                                     name="technicCategoryId"
                                     variant="outlined"
-                                    value={techniqueForm.values.technicCategoryId}
+                                    value={techniqueForm.values.technicCategoryId || ''}
                                     required
                                     InputLabelProps={{ shrink: true }}
                                     SelectProps={{
@@ -149,9 +149,7 @@ const Form:React.FC<{technique?: ITechniqueResponse, categories: IDataOption[]}>
                                     }
                                 </TextField>
                             </Grid>
-                        </Grid>
-                        <Grid container spacing={3} mt={2}>
-                            <Grid item xs={12} md={5}>
+                            <Grid item xs={12} md={6}>
                                 <TextField
                                     fullWidth
                                     error={Boolean(techniqueForm.touched.name && techniqueForm.errors.name)}
@@ -167,9 +165,6 @@ const Form:React.FC<{technique?: ITechniqueResponse, categories: IDataOption[]}>
                                     InputLabelProps={{shrink: true}}
                                 />
                             </Grid>
-                            {/*<Grid item xs={12} md={2}>*/}
-                            {/*    <Typography variant="h5">шт</Typography>*/}
-                            {/*</Grid>*/}
                         </Grid>
                     </Grid>
                     <Grid item xs={12}>
@@ -226,9 +221,10 @@ const Form:React.FC<{technique?: ITechniqueResponse, categories: IDataOption[]}>
                             </Grid>
                             <Grid item xs={12} md={1}>
                                 <Button
-                                    variant="contained"
+                                    variant="outlined"
                                     color="secondary"
                                     onClick={garageForm.submitForm}
+                                    sx={{width: '100%', paddingY: '15px'}}
                                 >
                                     <FiPlusCircle size={20} />
                                 </Button>
@@ -250,7 +246,7 @@ const Form:React.FC<{technique?: ITechniqueResponse, categories: IDataOption[]}>
                                                 <TableCell align="right">
                                                     <IconButton
                                                         size="large"
-                                                        onClick={() => handleEditMark(item, index)}
+                                                        onClick={() => handleEditTechnique(item, index)}
                                                     >
                                                         <FiEdit size={20} />
                                                     </IconButton>

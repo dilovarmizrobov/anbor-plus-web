@@ -3,7 +3,6 @@ import Page from "../../../components/Page";
 import {styled} from "@mui/material/styles";
 import {Box, Container} from "@mui/material";
 import Header from "./Header";
-
 import {IDataOption} from "../../../models";
 import {useSnackbar} from "notistack";
 import {useNavigate} from "react-router-dom";
@@ -47,24 +46,28 @@ const TechniqueCreateView = () => {
             }
         })()
 
-        return () => {cancel = true}
+        return () => {
+            cancel = true
+        }
     }, [enqueueSnackbar, navigate])
 
     return (
         <>
             <Page title="Создание Техники"/>
-            <Root>
-                <Container maxWidth="xl">
-                    <Header/>
-                    <Box mt={3}>
-                        {
-                            !loading && !error && categories.length ? (
+            {
+                !loading && !error && categories.length ? (
+                    <Root>
+                        <Container maxWidth="xl">
+                            <Header/>
+                            <Box mt={3}>
+
                                 <Form categories={categories}/>
-                            ) : <LoadingLayout loading={loading} error={error} />
-                        }
-                    </Box>
-                </Container>
-            </Root>
+
+                            </Box>
+                        </Container>
+                    </Root>
+                ) : <LoadingLayout loading={loading} error={error}/>
+            }
         </>
     );
 };

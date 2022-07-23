@@ -10,7 +10,7 @@ interface ModalProps {
     onAccept: (values: IGarageInfo) => void;
 }
 
-const EditTechniqueModal :React.FC<ModalProps> = ({info, onClose, onAccept}) => {
+const EditTechniqueModal: React.FC<ModalProps> = ({info, onClose, onAccept}) => {
     const garageInfo = useFormik<IGarageInfo>({
         initialValues: {
             number: info?.number || '',
@@ -25,7 +25,7 @@ const EditTechniqueModal :React.FC<ModalProps> = ({info, onClose, onAccept}) => 
         onSubmit: (values) => {
             onAccept(values)
             onClose()
-    }
+        }
     })
 
     return (
