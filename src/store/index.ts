@@ -39,7 +39,7 @@ export const store = configureStore({
         overheadMaterial: overheadMaterialSlice.reducer,
         displacementList: displacementListSlice.reducer,
         displacementMaterialList: displacementMaterialListSlice.reducer,
-        techniqueList: techniqueListSlice.reducer
+        techniqueList: techniqueListSlice.reducer,
         operationList: operationListSlice.reducer,
         operationMaterialList: operationMaterialListSlice.reducer,
         materialPriceHistory: materialPriceHistorySlice.reducer,
