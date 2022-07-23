@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Box, Button, CircularProgress, Grid} from "@mui/material";
+import {Button, CircularProgress} from "@mui/material";
 import {MdOutlineDone} from "react-icons/md";
 import {useAppDispatch, useAppSelector} from "../../../../store/hooks";
 import {operationMaterialListActions, selectOperationMaterialList} from "../../../../store/reducers/operationSlice";
@@ -32,29 +32,23 @@ const ApproveOperation = () => {
     }
 
     return (
-        <Box p={2}>
-            <Grid container spacing={3} justifyContent='right'>
-                <Grid item>
-                    <Button
-                        variant='contained'
-                        sx={{
-                            backgroundColor: '#C5F2C7',
-                            color: '#263238',
-                            '&:hover': {
-                                backgroundColor: '#b2e3b4',
-                                color: '#263238',
-                            },
-                        }}
-                        size='small'
-                        disabled={loading || totalInfo!.approved}
-                        endIcon={loading ? <CircularProgress size={16}/> : (totalInfo!.approved ? <MdOutlineDone/> : undefined)}
-                        onClick={handleApprove}
-                    >
-                        Подтвердить
-                    </Button>
-                </Grid>
-            </Grid>
-        </Box>
+        <Button
+            variant='contained'
+            sx={{
+                backgroundColor: '#C5F2C7',
+                color: '#263238',
+                '&:hover': {
+                    backgroundColor: '#b2e3b4',
+                    color: '#263238',
+                },
+            }}
+            size='small'
+            disabled={loading || totalInfo!.approved}
+            endIcon={loading ? <CircularProgress size={16}/> : (totalInfo!.approved ? <MdOutlineDone/> : undefined)}
+            onClick={handleApprove}
+        >
+            Подтвердить
+        </Button>
     );
 };
 
