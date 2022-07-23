@@ -38,6 +38,9 @@ import DetailTableListView from "./views/outcome/list/material/DetailTableListVi
 import DisplacementFormView from "./views/displacement/form/DisplacementFormView";
 import DisplacementListView from "./views/displacement/list/DisplacementListView";
 import DisplacementMaterialListView from "./views/displacement/list/material/DisplacementMaterialListView";
+import TechniqueListView from "./views/technique/list/TechniqueListView";
+import TechniqueCreateView from "./views/technique/form/TechniqueCreateView";
+import TechniqueEditView from "./views/technique/form/TechniqueEditView";
 
 interface CustomRouteObject extends RouteObject {
     perm?: UserRolesEnum[],
@@ -106,6 +109,18 @@ const routes: CustomRouteObject[] = [
                     {
                         path: '/materials/:materialId/edit',
                         element: <MaterialEditView/>,
+                    },
+                    {
+                      path: '/techniques',
+                      element: <TechniqueListView/>
+                    },
+                    {
+                        path: '/techniques/create',
+                        element: <TechniqueCreateView/>
+                    },
+                    {
+                        path: '/techniques/:techniqueId/edit',
+                        element: <TechniqueEditView/>
                     },
                     {
                         path: '/objects',

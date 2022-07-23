@@ -61,6 +61,10 @@ export const navConfigMain: INavConfig[] = [
                         href: '/materials',
                     },
                     {
+                        title: 'Техника',
+                        href: '/techniques'
+                    },
+                    {
                         title: 'Склады',
                         href: '/warehouses',
                     },
