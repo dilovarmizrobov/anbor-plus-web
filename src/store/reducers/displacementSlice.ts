@@ -7,7 +7,6 @@ interface initialStateListInterface {
     endDate?: string,
     page: number;
     rowsPerPage: number;
-    query: string;
     rowsCount: number;
     rows: IListDisplacement[];
     rowsLoading: boolean;
@@ -21,7 +20,6 @@ const initialStateList: initialStateListInterface = {
     endDate: undefined,
     page: 0,
     rowsPerPage: 20,
-    query: '',
     rowsCount: 0,
     rows: [],
     rowsLoading: false,
@@ -51,15 +49,10 @@ export const displacementListSlice = createSlice({
         changePage: (state, action: PayloadAction<number>) => {
             state.page = action.payload;
         },
-        changeQuery: (state, action:PayloadAction<string>) => {
-            state.page = 0;
-            state.query = action.payload;
-        },
         changeRowsPerPage: (state, action: PayloadAction<number>) => {
             state.rowsPerPage = action.payload;
             state.page = 0;
         },
-
         getListPending: (state) => {
             state.rows = [];
             state.rowsLoading = true;
@@ -86,7 +79,6 @@ export const {
     changeStartDate,
     changeEndDate,
     changePage,
-    changeQuery,
     changeRowsPerPage,
     getListPending,
     getListSuccess,

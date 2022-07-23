@@ -5,7 +5,6 @@ import { IResWarehouseBalance } from "../../models";
 interface InitialState {
     page: number;
     rowsPerPage: number;
-    query: string;
     rowsCount: number;
     rows: IResWarehouseBalance[];
     rowsLoading: boolean;
@@ -17,7 +16,6 @@ interface InitialState {
 const initialState: InitialState = {
     page: 0,
     rowsPerPage: 20,
-    query: '',
     rowsCount: 0,
     rows: [],
     rowsLoading: false,
@@ -29,16 +27,7 @@ export const warehouseBalanceSlice = createSlice({
     name: 'warehouseBalance',
     initialState,
     reducers: {
-        reset: (state) => {
-            let keys = Object.keys(initialState) as Array<never>
-            for (let i = 0; i < keys.length; i++) {
-                state[keys[i]] = initialState[keys[i]]
-            }
-        },
-        changeQuery: (state, action: PayloadAction<string>) => {
-            state.page = 0;
-            state.query = action.payload;
-        },
+        reset: () => initialState,
         changePage: (state, action: PayloadAction<number>) => {
             state.page = action.payload;
         },
@@ -68,7 +57,6 @@ export const warehouseBalanceSlice = createSlice({
 
 export const {
     reset,
-    changeQuery,
     changePage,
     changeRowsPerPage,
     getListPending,

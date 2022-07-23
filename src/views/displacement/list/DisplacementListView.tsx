@@ -6,20 +6,17 @@ import {
     Card,
     Container,
     Grid,
-    InputAdornment,
     Table, TableBody, TableCell,
     TableContainer,
     TableHead, TablePagination,
-    TableRow,
-    TextField
+    TableRow
 } from "@mui/material";
 import Header from "./Header";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import {FiSearch} from "react-icons/fi";
 import CustomDatePicker from "../../../components/CustomDatePicker";
 import {useAppDispatch, useAppSelector} from "../../../store/hooks";
 import {
-    changeEndDate, changePage, changeQuery, changeRowsPerPage, changeStartDate,
+    changeEndDate, changePage, changeRowsPerPage, changeStartDate,
     getListError,
     getListPending,
     getListSuccess,
@@ -31,12 +28,12 @@ import errorMessageHandler from "../../../utils/errorMessageHandler";
 import DisplacementService from "../../../services/DisplacementService";
 import LoadingTableBody from "../../../components/LoadingTableBody";
 import DetailButtonTable from "../../../components/DetailButtonTable";
-import useDebounce from "../../../hooks/useDebounce";
 import EditButtonTable from "../../../components/EditButtonTable";
 import hasPermission from "../../../utils/hasPermisson";
 import PERMISSIONS from "../../../constants/permissions";
 import {selectAuth} from "../../../store/reducers/authSlice";
-
+import TableSearch from "../../../components/TableSearch";
+import {selectTableSearch} from "../../../store/reducers/tableSearchSlice";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -47,7 +44,6 @@ const Root = styled('div')(({theme}) => ({
 const DisplacementListView = () => {
     const {
         page,
-        query,
         rowsPerPage,
         rowsLoading,
         rowsError,
@@ -58,10 +54,14 @@ const DisplacementListView = () => {
         endDate,
     } = useAppSelector(selectDisplacementList)
     const {user} = useAppSelector(selectAuth)
+    const {query} = useAppSelector(selectTableSearch)
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
-    const debouncedQuery = useDebounce(query, 500)
     const isWarehouseman = hasPermission(PERMISSIONS.WAREHOUSEMAN)
+
+    useEffect(() => {
+        dispatch(changePage(0))
+    }, [query])
 
     useEffect(() => () => {
         dispatch(reset())
@@ -73,7 +73,7 @@ const DisplacementListView = () => {
         (async () => {
             try {
                 dispatch(getListPending())
-                const data: any = await DisplacementService.getListDisplacement(page + 1, rowsPerPage, debouncedQuery, startDate, endDate )
+                const data: any = await DisplacementService.getListDisplacement(page + 1, rowsPerPage, query, startDate, endDate )
 
                 if (!cancel) dispatch(getListSuccess({rows: data.content, rowsCount: data.totalElements}))
 
@@ -86,7 +86,7 @@ const DisplacementListView = () => {
         return () => {
             cancel = true
         }
-    }, [ enqueueSnackbar, dispatch, page, rowsPerPage,  debouncedQuery, startDate, endDate])
+    }, [ enqueueSnackbar, dispatch, page, rowsPerPage,  query, startDate, endDate])
 
     return (
         <>
@@ -100,21 +100,7 @@ const DisplacementListView = () => {
                                 <Box mx={2} my={3}>
                                     <Grid container spacing={3}>
                                         <Grid item>
-                                            <TextField
-                                                sx={{width: 300}}
-                                                size="small"
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <InputAdornment position="start">
-                                                            <FiSearch/>
-                                                        </InputAdornment>
-                                                    )
-                                                }}
-                                                onChange={(event) => dispatch(changeQuery(event.target.value))}
-                                                placeholder="Поиск"
-                                                value={query}
-                                                variant="outlined"
-                                            />
+                                            <TableSearch/>
                                         </Grid>
                                         <Grid item>
                                             <Grid container spacing={3}>

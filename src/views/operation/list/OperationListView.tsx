@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {styled} from "@mui/material/styles";
 import {useAppDispatch, useAppSelector} from "../../../store/hooks";
 import {selectOperationList, reset, changePage, changeRowsPerPage,
-    changeQuery, getListPending, getListSuccess, getListError} from "../../../store/reducers/operationSlice";
+    getListPending, getListSuccess, getListError} from "../../../store/reducers/operationSlice";
 import {selectPreviewImage, setPreviewImageUrl} from "../../../store/reducers/previewImageSlice";
 import {useSnackbar} from "notistack";
 import Page from "../../../components/Page";
@@ -10,23 +10,24 @@ import {
     Box,
     Card,
     Container,
-    InputAdornment, Table, TableBody,
+    Table, TableBody,
     TableCell, TableContainer,
     TableHead,
     TablePagination,
     TableRow,
-    TextField, Typography
+    Typography
 } from "@mui/material";
 import PreviewImageModal from "../../../components/PreviewImageModal";
 import Header from "./Header";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import {FiSearch} from "react-icons/fi";
 import {OperationTypeMap, PATH_OVERHEADS_IMAGE} from "../../../constants";
 import EditButtonTable from "../../../components/EditButtonTable";
 import DetailButtonTable from "../../../components/DetailButtonTable";
 import LoadingTableBody from "../../../components/LoadingTableBody";
 import errorMessageHandler from "../../../utils/errorMessageHandler";
 import operationService from "../../../services/operationService";
+import TableSearch from "../../../components/TableSearch";
+import {selectTableSearch} from "../../../store/reducers/tableSearchSlice";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -46,10 +47,15 @@ const StyledImage = styled('div')(() => ({
 }))
 
 const OperationListView = () => {
-    const {rows, rowsLoading, rowsError, rowsCount, page, query, rowsPerPage, rowsPerPageOptions} = useAppSelector(selectOperationList)
+    const {rows, rowsLoading, rowsError, rowsCount, page, rowsPerPage, rowsPerPageOptions} = useAppSelector(selectOperationList)
     const {previewImageUrl} = useAppSelector(selectPreviewImage)
+    const {query} = useAppSelector(selectTableSearch)
     const dispatch = useAppDispatch()
     const {enqueueSnackbar} = useSnackbar()
+
+    useEffect(() => {
+        dispatch(changePage(0))
+    }, [query])
 
     useEffect(() => () => {
         dispatch(reset())
@@ -86,21 +92,7 @@ const OperationListView = () => {
                         <PerfectScrollbar>
                             <Box minWidth={750} sx={{mb: 2}}>
                                 <Box mx={2} my={3}>
-                                    <TextField
-                                        sx={{width: 400}}
-                                        size="small"
-                                        InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment position="start">
-                                                    <FiSearch/>
-                                                </InputAdornment>
-                                            )
-                                        }}
-                                        onChange={(event) => dispatch(changeQuery(event.target.value))}
-                                        placeholder="Поиск"
-                                        value={query}
-                                        variant="outlined"
-                                    />
+                                    <TableSearch/>
                                 </Box>
                                 <TableContainer>
                                     <Table>

@@ -3,7 +3,6 @@ import {IResListMaterial, IResListOperation, IResTotalInfo} from "../../models/O
 import {RootState} from "../index";
 
 interface IInitialStateList {
-    query: string;
     page: number;
     rowsPerPage: number;
     rowsCount: number;
@@ -14,7 +13,6 @@ interface IInitialStateList {
 }
 
 const initialStateList: IInitialStateList = {
-    query: '',
     page: 0,
     rowsPerPage: 20,
     rowsCount: 0,
@@ -29,10 +27,6 @@ export const operationListSlice = createSlice({
     initialState: initialStateList,
     reducers: {
         reset: () => initialStateList,
-        changeQuery: (state, action: PayloadAction<string>) => {
-            state.page = 0;
-            state.query = action.payload;
-        },
         changePage: (state, action: PayloadAction<number>) => {
             state.page = action.payload;
         },
@@ -59,7 +53,6 @@ export const operationListSlice = createSlice({
 
 export const {
     reset,
-    changeQuery,
     changePage,
     changeRowsPerPage,
     getListPending,

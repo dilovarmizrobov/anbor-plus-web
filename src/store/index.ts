@@ -18,6 +18,7 @@ import {displacementMaterialListSlice} from "./reducers/displacementMaterialSlic
 import {operationListSlice, operationMaterialListSlice} from "./reducers/operationSlice";
 import {materialPriceHistorySlice} from "./reducers/materialPriceHistorySlice";
 import {materialPriceEditSlice} from "./reducers/materialPriceEditSlice";
+import {tableSearchSlice} from "./reducers/tableSearchSlice";
 
 export const store = configureStore({
     reducer: {
@@ -41,6 +42,7 @@ export const store = configureStore({
         operationMaterialList: operationMaterialListSlice.reducer,
         materialPriceHistory: materialPriceHistorySlice.reducer,
         materialPriceEdit: materialPriceEditSlice.reducer,
+        tableSearch: tableSearchSlice.reducer,
     },
 })
 
