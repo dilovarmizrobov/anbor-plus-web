@@ -237,7 +237,7 @@ const Form: React.FC<{ material?: IMaterialResponse, categories: IDataOption[] }
                                     color="secondary"
                                     onClick={markForm.submitForm}
                                     disabled={markForm.isSubmitting}
-                                    sx={{width: '100%', paddingY: '15px'}}
+                                    sx={{width: '100%', paddingX: '15px'}}
                                 >
                                     Добавить
                                 </Button>

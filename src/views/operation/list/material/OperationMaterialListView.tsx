@@ -31,6 +31,8 @@ import MaterialPriceEdit from "../../../../components/price-edit/MaterialPriceEd
 import MaterialPriceEditModal from "../../../../components/price-edit/MaterialPriceEditModal";
 import {selectMaterialPriceEdit} from "../../../../store/reducers/materialPriceEditSlice";
 import ApproveOperation from "./ApproveOperation";
+import hasPermission from "../../../../utils/hasPermisson";
+import PERMISSIONS from "../../../../constants/permissions";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -83,6 +85,7 @@ const Content = () => {
         editMaterial} = operationMaterialListActions
     const title = OperationTypeMap.get(totalInfo!.type as OperationTypeEnum) + ` ` + operationId
     const {isOpenMaterialPriceEditModal} = useAppSelector(selectMaterialPriceEdit)
+    const isAdmin = hasPermission(PERMISSIONS.ADMIN)
 
     useEffect(() => {
         let cancel = false;
@@ -114,7 +117,15 @@ const Content = () => {
                     <Card sx={{mt: 3}}>
                         <PerfectScrollbar>
                             <Box minWidth={750}>
-                                <ApproveOperation/>
+                                {isAdmin && (
+                                    <Box p={2}>
+                                        <Grid container spacing={3} justifyContent='right'>
+                                            <Grid item>
+                                                <ApproveOperation/>
+                                            </Grid>
+                                        </Grid>
+                                    </Box>
+                                )}
                                 <TableContainer>
                                     <Table>
                                         <TableHead>
