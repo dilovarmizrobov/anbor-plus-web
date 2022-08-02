@@ -30,6 +30,7 @@ export interface IResListMaterial {
     qty: number;
     unit: MaterialUnitEnum;
     price?: number;
+    offerPrice: number;
     total?: number;
     priceHistory: IPriceHistory[];
 }

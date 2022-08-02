@@ -23,6 +23,9 @@ class OutcomeService {
 
     getOptionOutcomeType = (type: OutcomeTypeEnum) => apiHelper.get(`/overheads/${type}/option`)
 
+    getOptionCategoryTechnic = () => apiHelper.get(`/technics/option`)
+    getOptionTechnic = (categoryTechnicId: number) => apiHelper.get(`/technics/${categoryTechnicId}/info-option`)
+
     postNewOutcome = (outcome: IOutcomeRequest, images: File[]) => new Promise((resolve,reject) => {
         let formData = new FormData()
         const blob = new Blob([JSON.stringify(outcome)], {type: 'application/json'})

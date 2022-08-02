@@ -271,7 +271,7 @@ const OutcomeListView = () => {
                                                 {!isWarehouseman && <TableCell>Сумма Расхода</TableCell>}
                                                 <TableCell>От кого</TableCell>
                                                 <TableCell>Комментарий</TableCell>
-                                                <TableCell />
+                                                <TableCell/>
                                                 <TableCell/>
                                             </TableRow>
                                         </TableHead>
@@ -290,7 +290,7 @@ const OutcomeListView = () => {
                                                                 <TableCell style={{ maxWidth: 185 }}>{row.imageNames.map(url => (
                                                                     <StyledImage key={url} sx={{backgroundImage: `url(${PATH_OVERHEADS_IMAGE + url})`}} onClick={() => dispatch(setPreviewImageUrl(PATH_OVERHEADS_IMAGE + url))}/>
                                                                 ))}</TableCell>
-                                                                <TableCell style={{ width: 165 }}>
+                                                                <TableCell style={{ width: 120 }}>
                                                                     <EditButtonTable to={`/outcomes/${row.id}/edit`} />
                                                                     <DetailButtonTable to={`/outcomes/${row.id}/materials`}/>
                                                                 </TableCell>

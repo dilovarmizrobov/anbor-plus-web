@@ -63,13 +63,15 @@ export enum OverheadTypeEnum {
 
 export enum OutcomeTypeEnum {
     FACILITY = "FACILITY",
-    ENTERPRISE = "ENTERPRISE"
+    ENTERPRISE = "ENTERPRISE",
+    TECHNIC = "TECHNIC",
 }
 
 export const OutcomeTypeMap = new Map(
     [
         [OutcomeTypeEnum.FACILITY, 'Объект'],
-        [OutcomeTypeEnum.ENTERPRISE, 'Предприятия']
+        [OutcomeTypeEnum.ENTERPRISE, 'Предприятия'],
+        [OutcomeTypeEnum.TECHNIC, 'Техника'],
     ]
 )
 
