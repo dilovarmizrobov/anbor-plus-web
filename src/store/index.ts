@@ -15,6 +15,7 @@ import {previewImageSlice} from "./reducers/previewImageSlice";
 import {overheadMaterialSlice} from "./reducers/overheadMaterialSlice";
 import {displacementListSlice} from "./reducers/displacementSlice";
 import {displacementMaterialListSlice} from "./reducers/displacementMaterialSlice";
+import {techniqueListSlice} from "./reducers/techniqueSlice";
 import {operationListSlice, operationMaterialListSlice} from "./reducers/operationSlice";
 import {materialPriceHistorySlice} from "./reducers/materialPriceHistorySlice";
 import {materialPriceEditSlice} from "./reducers/materialPriceEditSlice";
@@ -38,6 +39,7 @@ export const store = configureStore({
         overheadMaterial: overheadMaterialSlice.reducer,
         displacementList: displacementListSlice.reducer,
         displacementMaterialList: displacementMaterialListSlice.reducer,
+        techniqueList: techniqueListSlice.reducer,
         operationList: operationListSlice.reducer,
         operationMaterialList: operationMaterialListSlice.reducer,
         materialPriceHistory: materialPriceHistorySlice.reducer,

@@ -27,14 +27,14 @@ export const navConfigMain: INavConfig[] = [
                 href: '/home',
             },
             {
-                title: 'Расходы',
-                icon: FaUserFriends,
-                href: '/outcomes',
-            },
-            {
                 title: 'Приходы',
                 icon: FaUserFriends,
                 href: '/incomes',
+            },
+            {
+                title: 'Расходы',
+                icon: FaUserFriends,
+                href: '/outcomes',
             },
             {
                 title: 'Остаток',
@@ -66,6 +66,10 @@ export const navConfigMain: INavConfig[] = [
                         href: '/materials',
                     },
                     {
+                        title: 'Техника',
+                        href: '/techniques'
+                    },
+                    {
                         title: 'Склады',
                         href: '/warehouses',
                     },
@@ -80,7 +84,11 @@ export const navConfigMain: INavConfig[] = [
                     {
                         title: 'Снабженцы',
                         href: '/providers'
-                    }
+                    },
+                    {
+                        title: 'Материалы',
+                        href: '/materials',
+                    },
                 ],
             },
         ]
