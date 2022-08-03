@@ -27,6 +27,7 @@ export interface IIncomeResponse {
 
 export interface IIncomeListResponse {
     id: number;
+    number: string;
     createdDate: string;
     categories: string[];
     total: number;

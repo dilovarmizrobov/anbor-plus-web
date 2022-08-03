@@ -18,7 +18,15 @@ class AppService {
     getListOverheadMaterial = (overheadId: string, page: number, size: number, ) =>
         apiHelper.get(`/overheads/${overheadId}/items`, {size, page, })
 
+    getPrintOverhead = (overheadIds: number) =>
+        apiHelper.get(`/overheads/excel/${overheadIds}`)
+
+    getDownloadOverhead = (fileName: string) =>
+        apiHelper.get(`/overheads/excel/download/${fileName}`, {responseType: "blob"})
+
     putMaterialPriceEdit = (priceEdit: IReqPriceEdit) => apiHelper.put<IReqPriceEdit>('/overheads/change-item-price', priceEdit)
+
+
 }
 
 const appService = new AppService()

@@ -266,6 +266,7 @@ const OutcomeListView = () => {
                                         <TableHead>
                                             <TableRow>
                                                 <TableCell>№</TableCell>
+                                                <TableCell>Накладная</TableCell>
                                                 <TableCell>Дата</TableCell>
                                                 <TableCell>Категория</TableCell>
                                                 {!isWarehouseman && <TableCell>Сумма Расхода</TableCell>}
@@ -282,6 +283,7 @@ const OutcomeListView = () => {
                                                         rows.map(row => (
                                                             <TableRow hover key={row.id}>
                                                                 <TableCell>{row.id}</TableCell>
+                                                                <TableCell>{row.number}</TableCell>
                                                                 <TableCell>{row.createdDate}</TableCell>
                                                                 <TableCell>{row.categories.join(', ')}</TableCell>
                                                                 {!isWarehouseman && <TableCell>{row.total}</TableCell>}

@@ -41,6 +41,7 @@ import {IResListMaterial} from "../../../../models/Overhead";
 import MaterialPriceEdit from "../../../../components/price-edit/MaterialPriceEdit";
 import MaterialPriceEditModal from "../../../../components/price-edit/MaterialPriceEditModal";
 import {selectMaterialPriceEdit} from "../../../../store/reducers/materialPriceEditSlice";
+import PrintOverheadButton from "../../../../components/PrintOverheadButton";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -143,11 +144,7 @@ const OutcomeMaterialListView = () => {
                                         )}
                                     </Grid>
                                     <Grid item>
-                                        <IconButton
-                                            color="inherit"
-                                        >
-                                            <FiPrinter/>
-                                        </IconButton>
+                                        <PrintOverheadButton overheadId={outcomeId}/>
                                     </Grid>
                                 </Grid>
                             </Box>

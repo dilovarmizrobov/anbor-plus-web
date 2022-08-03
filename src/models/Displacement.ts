@@ -36,6 +36,7 @@ export interface IListDisplacement {
     currentWarehouse: IDataOption;
     destinationWarehouse: string;
     approved: boolean;
+    number: number;
 }
 
 export interface IDisplacementTotalInfo {
