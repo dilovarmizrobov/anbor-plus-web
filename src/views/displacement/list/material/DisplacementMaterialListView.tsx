@@ -42,6 +42,7 @@ import MaterialPriceEdit from "../../../../components/price-edit/MaterialPriceEd
 import MaterialPriceEditModal from "../../../../components/price-edit/MaterialPriceEditModal";
 import {selectMaterialPriceEdit} from "../../../../store/reducers/materialPriceEditSlice";
 import PriceHistoryModal from "../../../../components/PriceHistoryModal";
+import PrintOverheadButton from "../../../../components/PrintOverheadButton";
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -145,11 +146,7 @@ const DisplacementMaterialListView = () => {
                                             )}
                                         </Grid>
                                         <Grid item>
-                                            <IconButton
-                                                color="inherit"
-                                            >
-                                                <FiPrinter/>
-                                            </IconButton>
+                                            <PrintOverheadButton overheadId={displacementId}/>
                                         </Grid>
                                     </Grid>
                                 </Box>

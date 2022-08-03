@@ -36,6 +36,8 @@ import MaterialPriceEditModal from "../../../../components/price-edit/MaterialPr
 import {selectMaterialPriceEdit} from "../../../../store/reducers/materialPriceEditSlice";
 import PriceHistoryModal from "../../../../components/PriceHistoryModal";
 import {openPriceHistory} from "../../../../store/reducers/materialPriceHistorySlice";
+import PrintOverheadButton from "../../../../components/PrintOverheadButton";
+
 
 const Root = styled('div')(({theme}) => ({
     minHeight: '100%',
@@ -60,6 +62,7 @@ const IncomeMaterialListView = () => {
     const {enqueueSnackbar} = useSnackbar()
     const { incomeId } = useParams()
     const isWarehouseman = hasPermission(PERMISSIONS.WAREHOUSEMAN)
+    const [selected, setSelected] = React.useState<number>()
 
     useEffect(() => () => {
         dispatch(reset())
@@ -85,7 +88,7 @@ const IncomeMaterialListView = () => {
             cancel = true
         }
     }, [enqueueSnackbar, dispatch, page, rowsPerPage, incomeId])
-    
+
     useEffect(() => {
         let cancel = false;
 
@@ -138,11 +141,7 @@ const IncomeMaterialListView = () => {
                                             )}
                                         </Grid>
                                         <Grid item>
-                                            <IconButton
-                                                color="inherit"
-                                            >
-                                                <FiPrinter/>
-                                            </IconButton>
+                                            <PrintOverheadButton overheadId={incomeId}/>
                                         </Grid>
                                     </Grid>
                                 </Box>

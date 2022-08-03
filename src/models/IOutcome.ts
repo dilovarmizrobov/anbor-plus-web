@@ -27,6 +27,7 @@ export interface IOutcomeResponse {
 
 export interface IOutcomeListResponse {
     id: number;
+    number: string;
     createdDate: string;
     categories: string[];
     total: number;
