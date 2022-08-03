@@ -5,15 +5,15 @@ import {
     Box,
     Button,
     Card,
-    CardContent, CircularProgress, Divider,
-    Grid, InputAdornment,
+    CardContent,
+    CircularProgress,
+    Divider,
+    Grid,
+    InputAdornment,
     MenuItem,
     TextField
 } from "@mui/material";
-import {
-    OutcomeTypeEnum,
-    OutcomeTypeMap,
-} from "../../../constants";
+import {OutcomeTypeEnum, OutcomeTypeMap,} from "../../../constants";
 import {IOutcomeRequest, IOutcomeResponse} from "../../../models/IOutcome";
 import outcomeService from "../../../services/outcomeService";
 import {useSnackbar} from "notistack";
@@ -25,22 +25,24 @@ import {reset, selectOverheadMaterial} from "../../../store/reducers/overheadMat
 import OverheadMaterialList from "../../../components/overhead-material/form";
 import OverheadImage, {IOverheadImage, mapToImages} from "../../../components/OverheadImage";
 
-const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IDataOption[] }> = ({outcome,prevProviders}) => {
+const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IDataOption[], prevTechnics?: IDataOption[] }> = ({outcome,prevProviders, prevTechnics}) => {
     const {materials} = useAppSelector(selectOverheadMaterial)
     const {enqueueSnackbar} = useSnackbar();
     const dispatch = useAppDispatch()
     const navigate = useNavigate();
     const [providers, setProviders] = useState<IDataOption[]>(prevProviders || [])
+    const [technics, setTechnics] = useState<IDataOption[]>(prevTechnics || [])
     const [images, setImages] = useState<IOverheadImage[]>(outcome ? mapToImages(outcome.imageNames) : [])
     const [imageFiles, setImageFiles] = useState<File[]>([])
     const [providerLoading, setProviderLoading] = useState(false)
 
     useEffect(() => () => {dispatch(reset())}, [])
 
-    const formik = useFormik<IOutcomeRequest>({
+    const formik = useFormik<IOutcomeRequest & {technicId: number}>({
         initialValues: {
             autoDetail: outcome?.autoDetail || '',
             throwWhom: outcome?.throwWhom || '',
+            technicId: outcome?.technicId || 0,
             fromWhoId: outcome?.fromWhoId || 0,
             comment: outcome?.comment || '',
             typeFrom: outcome?.typeFrom || '' as OutcomeTypeEnum,
@@ -80,13 +82,40 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IDataOption[] 
         }
     })
 
+    const isTechnic = (type: OutcomeTypeEnum) => type === OutcomeTypeEnum.TECHNIC
+
     const getOptionOutcomeType = async(type: OutcomeTypeEnum) => {
         try {
             setProviderLoading(true)
             const data: any = await outcomeService.getOptionOutcomeType(type) as IDataOption[]
 
             setProviders(data)
-            formik.setFieldValue('fromWhoId', 0)
+        } catch (error : any) {
+            enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
+        } finally {
+            setProviderLoading(false)
+        }
+    }
+
+    const getOptionCategoryTechnic = async () => {
+        try {
+            setProviderLoading(true)
+            const data: any = await outcomeService.getOptionCategoryTechnic() as IDataOption[]
+
+            setProviders(data)
+        } catch (error : any) {
+            enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
+        } finally {
+            setProviderLoading(false)
+        }
+    }
+
+    const getOptionTechnic = async(categoryTechnicId: number) => {
+        try {
+            setProviderLoading(true)
+            const data: any = await outcomeService.getOptionTechnic(categoryTechnicId) as IDataOption[]
+
+            setTechnics(data)
         } catch (error : any) {
             enqueueSnackbar(errorMessageHandler(error), {variant: 'error'})
         } finally {
@@ -143,8 +172,16 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IDataOption[] 
                                     name="typeFrom"
                                     onBlur={formik.handleBlur}
                                     onChange={e => {
-                                    formik.handleChange(e)
-                                        getOptionOutcomeType(e.target.value as OutcomeTypeEnum)
+                                        formik.handleChange(e)
+                                        let type = e.target.value as OutcomeTypeEnum;
+
+                                        formik.setFieldValue('fromWhoId', 0)
+
+                                        if (isTechnic(type)) {
+                                            formik.setFieldValue('categoryId', 0)
+                                            setTechnics([])
+                                            getOptionCategoryTechnic()
+                                        } else getOptionOutcomeType(e.target.value as OutcomeTypeEnum)
                                     }}
                                     required
                                     variant="outlined"
@@ -174,54 +211,156 @@ const Form:React.FC<{ outcome?: IOutcomeResponse, prevProviders?: IDataOption[] 
 
                                 </TextField>
                             </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    select
-                                    error={formik.touched.fromWhoId && Boolean(formik.errors.fromWhoId)}
-                                    fullWidth
-                                    helperText={formik.touched.fromWhoId && formik.errors.fromWhoId}
-                                    label="Выберите Предприятие/Обьект"
-                                    placeholder="Выберите Предприятие/Обьект"
-                                    name="fromWhoId"
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    required
-                                    value={formik.values.fromWhoId || ''}
-                                    variant="outlined"
-                                    disabled={providers.length === 0 || providerLoading}
-                                    InputProps={providerLoading ? {
-                                        endAdornment: (
-                                            <InputAdornment position="start">
-                                                <CircularProgress size={20} />
-                                            </InputAdornment>
-                                        )
-                                    } : undefined}
-                                    sx={{
-                                        '& .MuiSelect-icon': {
-                                            visibility: providerLoading ? 'hidden' : 'visible'
-                                        }
-                                    }}
-                                    SelectProps={{
-                                        MenuProps: {
-                                            variant: "selectedMenu",
-                                            anchorOrigin: {
-                                                vertical: "bottom",
-                                                horizontal: "left"
-                                            },
-                                            transformOrigin: {
-                                                vertical: "top",
-                                                horizontal: "left"
-                                            },
-                                        }
-                                    }}
-                                >
-                                    {providers.map(item => (
-                                        <MenuItem key={item.id} value={item.id}>
-                                            {item.name}
-                                        </MenuItem>
-                                    ))}
-                                </TextField>
-                            </Grid>
+                            {isTechnic(formik.values.typeFrom) ? (
+                                <>
+                                    <Grid item xs={12} md={6}>
+                                        <TextField
+                                            select
+                                            error={formik.touched.technicId && Boolean(formik.errors.technicId)}
+                                            fullWidth
+                                            helperText={formik.touched.technicId && formik.errors.technicId}
+                                            label="Выберите категорию"
+                                            name="technicId"
+                                            onBlur={formik.handleBlur}
+                                            onChange={(e) => {
+                                                formik.handleChange(e)
+
+                                                getOptionTechnic(Number(e.target.value))
+                                            }}
+                                            required
+                                            value={formik.values.technicId || ''}
+                                            variant="outlined"
+                                            disabled={providers.length === 0 || providerLoading}
+                                            InputProps={providerLoading ? {
+                                                endAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <CircularProgress size={20} />
+                                                    </InputAdornment>
+                                                )
+                                            } : undefined}
+                                            sx={{
+                                                '& .MuiSelect-icon': {
+                                                    visibility: providerLoading ? 'hidden' : 'visible'
+                                                }
+                                            }}
+                                            SelectProps={{
+                                                MenuProps: {
+                                                    variant: "selectedMenu",
+                                                    anchorOrigin: {
+                                                        vertical: "bottom",
+                                                        horizontal: "left"
+                                                    },
+                                                    transformOrigin: {
+                                                        vertical: "top",
+                                                        horizontal: "left"
+                                                    },
+                                                }
+                                            }}
+                                        >
+                                            {providers.map(item => (
+                                                <MenuItem key={item.id} value={item.id}>
+                                                    {item.name}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
+                                    </Grid>
+                                    <Grid item xs={12} md={6}>
+                                        <TextField
+                                            select
+                                            error={formik.touched.fromWhoId && Boolean(formik.errors.fromWhoId)}
+                                            fullWidth
+                                            helperText={formik.touched.fromWhoId && formik.errors.fromWhoId}
+                                            label="Выберите гаражный номер"
+                                            name="fromWhoId"
+                                            onBlur={formik.handleBlur}
+                                            onChange={formik.handleChange}
+                                            required
+                                            value={formik.values.fromWhoId || ''}
+                                            variant="outlined"
+                                            disabled={technics.length === 0 || providerLoading}
+                                            InputProps={providerLoading ? {
+                                                endAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <CircularProgress size={20} />
+                                                    </InputAdornment>
+                                                )
+                                            } : undefined}
+                                            sx={{
+                                                '& .MuiSelect-icon': {
+                                                    visibility: providerLoading ? 'hidden' : 'visible'
+                                                }
+                                            }}
+                                            SelectProps={{
+                                                MenuProps: {
+                                                    variant: "selectedMenu",
+                                                    anchorOrigin: {
+                                                        vertical: "bottom",
+                                                        horizontal: "left"
+                                                    },
+                                                    transformOrigin: {
+                                                        vertical: "top",
+                                                        horizontal: "left"
+                                                    },
+                                                }
+                                            }}
+                                        >
+                                            {technics.map(item => (
+                                                <MenuItem key={item.id} value={item.id}>
+                                                    {item.name}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
+                                    </Grid>
+                                </>
+                            ) : (
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        select
+                                        error={formik.touched.fromWhoId && Boolean(formik.errors.fromWhoId)}
+                                        fullWidth
+                                        helperText={formik.touched.fromWhoId && formik.errors.fromWhoId}
+                                        label="Выберите Предприятие/Обьект"
+                                        name="fromWhoId"
+                                        onBlur={formik.handleBlur}
+                                        onChange={formik.handleChange}
+                                        required
+                                        value={formik.values.fromWhoId || ''}
+                                        variant="outlined"
+                                        disabled={providers.length === 0 || providerLoading}
+                                        InputProps={providerLoading ? {
+                                            endAdornment: (
+                                                <InputAdornment position="start">
+                                                    <CircularProgress size={20} />
+                                                </InputAdornment>
+                                            )
+                                        } : undefined}
+                                        sx={{
+                                            '& .MuiSelect-icon': {
+                                                visibility: providerLoading ? 'hidden' : 'visible'
+                                            }
+                                        }}
+                                        SelectProps={{
+                                            MenuProps: {
+                                                variant: "selectedMenu",
+                                                anchorOrigin: {
+                                                    vertical: "bottom",
+                                                    horizontal: "left"
+                                                },
+                                                transformOrigin: {
+                                                    vertical: "top",
+                                                    horizontal: "left"
+                                                },
+                                            }
+                                        }}
+                                    >
+                                        {providers.map(item => (
+                                            <MenuItem key={item.id} value={item.id}>
+                                                {item.name}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
+                                </Grid>
+                            )}
                         </Grid>
                     </Grid>
                     <Grid item xs={12}>

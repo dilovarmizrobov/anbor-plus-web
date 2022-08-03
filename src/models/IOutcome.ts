@@ -18,6 +18,7 @@ export interface IOutcomeResponse {
     autoDetail: string;
     throwWhom: string;
     typeFrom: OutcomeTypeEnum;
+    technicId?: number;
     fromWhoId: number;
     comment: string;
     images: string[];

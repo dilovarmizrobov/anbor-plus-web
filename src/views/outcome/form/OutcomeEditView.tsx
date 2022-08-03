@@ -13,6 +13,7 @@ import Form from "./Form";
 import {IDataOption} from "../../../models";
 import {setOverheadMaterials} from "../../../store/reducers/overheadMaterialSlice";
 import {useAppDispatch} from "../../../store/hooks";
+import {OutcomeTypeEnum} from "../../../constants";
 
 const Root = styled('div')(({theme}) => ({
     backgroundColor: theme.palette.background.default,
@@ -29,6 +30,7 @@ const OutcomeEditView = () => {
     const [loading, setLoading] = useState(true)
     const [outcome, setOutcome] = useState<IOutcomeResponse>()
     const [providers, setProviders] = useState<IDataOption[]>([])
+    const [technics, setTechnics] = useState<IDataOption[]>([])
 
     useEffect(() => {
         let cancel = false;
@@ -37,13 +39,22 @@ const OutcomeEditView = () => {
             try {
                 setLoading(true)
 
-                const data: any = await outcomeService.getOutcome(outcomeId || '') as IOutcomeResponse
-                const dataType: any = await outcomeService.getOptionOutcomeType(data.typeFrom) as IDataOption[]
+                const data = await outcomeService.getOutcome(outcomeId || '') as IOutcomeResponse
+                let dataType: IDataOption[] = []
+                let dataTechnics: IDataOption[] = []
+
+                if (data.typeFrom === OutcomeTypeEnum.TECHNIC) {
+                    dataType = await outcomeService.getOptionCategoryTechnic() as IDataOption[]
+                    dataTechnics = await outcomeService.getOptionTechnic(data.technicId!) as IDataOption[]
+                } else {
+                    dataType = await outcomeService.getOptionOutcomeType(data.typeFrom) as IDataOption[]
+                }
 
                 if (!cancel){
                     setOutcome(data)
                     dispatch(setOverheadMaterials(data.overheadItems))
                     setProviders(dataType)
+                    setTechnics(dataTechnics)
                 }
             } catch (error: any) {
                 !cancel && setError(true)
@@ -63,7 +74,7 @@ const OutcomeEditView = () => {
                         <Container maxWidth="xl">
                             <Header title={outcome.throwWhom} />
                             <Box mt={3}>
-                                <Form outcome={outcome} prevProviders={providers} />
+                                <Form outcome={outcome} prevProviders={providers} prevTechnics={technics} />
                             </Box>
                         </Container>
                     </Root>

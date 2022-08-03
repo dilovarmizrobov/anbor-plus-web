@@ -163,6 +163,7 @@ const OutcomeMaterialListView = () => {
                                                 <TableCell>ЕИ</TableCell>
                                                 {!isWarehouseman && (
                                                   <>
+                                                      <TableCell>Средняя цена</TableCell>
                                                       <TableCell>Цена (Расхода)</TableCell>
                                                       <TableCell>Сумма</TableCell>
                                                   </>
@@ -182,6 +183,7 @@ const OutcomeMaterialListView = () => {
                                                             <TableCell>{MaterialUnitMap.get(row.unit)}</TableCell>
                                                             {!isWarehouseman && (
                                                                 <>
+                                                                    <TableCell>{row.offerPrice}</TableCell>
                                                                     <TableCell style={{ width: 140 }}>
                                                                         <MaterialPriceEdit
                                                                             materialId={row.id}

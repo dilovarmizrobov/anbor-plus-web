@@ -208,7 +208,7 @@ const Form: React.FC<{technique?: ITechniqueResponse, categories: IDataOption[]}
                                     fullWidth
                                     helperText={garageForm.touched.releaseYear && garageForm.errors.releaseYear}
                                     label="Год выпуска"
-                                    placeholder="Выберите год"
+                                    placeholder="Введите год выпуска"
                                     variant="outlined"
                                     name="releaseYear"
                                     value={garageForm.values.releaseYear}

@@ -168,6 +168,9 @@ const DisplacementMaterialListView = () => {
                                                 <TableCell>ЕИ</TableCell>
                                                 {!isWarehouseman && (
                                                     <>
+                                                        {displacementTotalInfo?.warehouseId === user!.warehouse.id && (
+                                                            <TableCell>Средняя цена</TableCell>
+                                                        )}
                                                         <TableCell>Цена</TableCell>
                                                         <TableCell>Сумма</TableCell>
                                                     </>
@@ -194,6 +197,7 @@ const DisplacementMaterialListView = () => {
                                                                 )}
                                                                 {!isWarehouseman && (displacementTotalInfo?.warehouseId === user!.warehouse.id) && (
                                                                     <>
+                                                                        <TableCell>{row.offerPrice}</TableCell>
                                                                         <TableCell style={{ width: 140 }}>
                                                                             <MaterialPriceEdit
                                                                                 materialId={row.id}
